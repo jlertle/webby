@@ -1,6 +1,6 @@
 # Webby
 
-// Simple Web Application Server Framework!
+Simple Web Application Server Framework!
 
 ## Installation ##
 
