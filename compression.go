@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// Init Compression Buffer
+// Init Compression Buffer (Call Before Writing to Client)
 func (web *Web) InitCompression() {
 	if web.Env.Get("Connection") == "Upgrade" {
 		return
