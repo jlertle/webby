@@ -129,6 +129,16 @@ func (ro *Router) load(w *Web, reset bool) bool {
 	return false
 }
 
+func (ro *Router) debug(w *Web) {
+	w.Status = 404
+	w.Print("404 Not Found\r\n\r\n")
+	w.Print(w.Req.Host+w.curpath, "\r\n\r\n")
+	w.Print("Rule(s):\r\n")
+	for _, route := range ro.routes {
+		w.Print(route.RegExp, "\r\n")
+	}
+}
+
 // Try to load matching route, output 404 on fail!
 func (ro *Router) Load(w *Web) {
 	if ro.load(w, false) {
@@ -136,6 +146,11 @@ func (ro *Router) Load(w *Web) {
 	}
 
 	if w.IsWebSocketRequest() {
+		return
+	}
+
+	if DEBUG {
+		ro.debug(w)
 		return
 	}
 
@@ -149,6 +164,11 @@ func (ro *Router) LoadReset(w *Web) {
 	}
 
 	if w.IsWebSocketRequest() {
+		return
+	}
+
+	if DEBUG {
+		ro.debug(w)
 		return
 	}
 

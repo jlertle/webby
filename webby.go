@@ -2,8 +2,6 @@
 package webby
 
 import (
-	"compress/flate"
-	"compress/gzip"
 	"fmt"
 	html "html/template"
 	"io"
@@ -58,17 +56,10 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
 	web.initTrueHost()
 	web.initTrueRemoteAddr()
-	web.initCompression()
 	web.initSession()
+	web.Header().Set("Content-Encoding", "plain")
 
-	switch t := web.reswrite.(type) {
-	case *gzip.Writer:
-		defer t.Close()
-	case *flate.Writer:
-		defer t.Close()
-	default:
-		web.firstWrite = false
-	}
+	defer web.closeCompression()
 
 	Boot.Load(web)
 
@@ -98,6 +89,7 @@ func (web *Web) Write(data []byte) (int, error) {
 		if web.Header().Get("Content-Type") == "" {
 			web.Header().Set("Content-Type", http.DetectContentType(data))
 		}
+
 		web.firstWrite = false
 		web.WriteHeader(web.Status)
 	}
@@ -110,7 +102,7 @@ func (web *Web) WriteHeader(num int) {
 	web.cut = true
 
 	if web.firstWrite {
-		web.KillCompression()
+		web.firstWrite = false
 	}
 
 	web.Res.WriteHeader(num)

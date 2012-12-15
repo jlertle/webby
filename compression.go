@@ -6,16 +6,8 @@ import (
 	"strings"
 )
 
-// Compression Enabled
-var CompressionEnabled = true
-
-func (web *Web) initCompression() {
-	web.Header().Set("Content-Encoding", "plain")
-
-	if !CompressionEnabled {
-		return
-	}
-
+// Init Compression Buffer
+func (web *Web) InitCompression() {
 	if web.Env.Get("Connection") == "Upgrade" {
 		return
 	}
@@ -41,10 +33,11 @@ func (web *Web) initCompression() {
 	}
 }
 
-// Kill Compression
-func (web *Web) KillCompression() {
-	web.Header().Set("Content-Encoding", "plain")
-	web.reswrite = web.Res
-	web.firstWrite = false
-	web.cut = true
+func (web *Web) closeCompression() {
+	switch t := web.reswrite.(type) {
+	case *gzip.Writer:
+		t.Close()
+	case *flate.Writer:
+		t.Close()
+	}
 }
