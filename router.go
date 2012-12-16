@@ -1,9 +1,34 @@
 package webby
 
 import (
+	"fmt"
 	"regexp"
 	"sort"
 )
+
+type Param map[string]interface{}
+
+func (pa Param) Add(name, value string) {
+	num, err := toInt(value)
+	if err == nil {
+		pa[name] = num
+	} else {
+		pa[name] = value
+	}
+}
+
+func (pa Param) Get(name string) string {
+	return fmt.Sprint(pa[name])
+}
+
+func (pa Param) GetInt(name string) int64 {
+	num := int64(0)
+	switch t := pa[name].(type) {
+	case int64:
+		num = t
+	}
+	return num
+}
 
 type routerItem struct {
 	RegExp         string
@@ -107,15 +132,11 @@ func (ro *Router) load(w *Web, reset bool) bool {
 
 			w.curpath += matches[0]
 
+			w.Param = Param{}
+
 			for key, name := range names {
 				if name != "" {
-					str := matches[key]
-					num, err := toInt(str)
-					if err == nil {
-						w.Param[name] = num
-					} else {
-						w.Param[name] = str
-					}
+					w.Param.Add(name, matches[key])
 				}
 			}
 

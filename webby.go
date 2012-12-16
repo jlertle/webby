@@ -24,7 +24,7 @@ type Web struct {
 	// Meta, useful for storing login credentail
 	Meta map[string]interface{}
 	// Used by router for storing data of named group in RegExpRule
-	Param map[string]interface{}
+	Param Param
 	// Function to load in html template system.
 	HtmlFunc html.FuncMap
 	// For holding session!
@@ -44,7 +44,7 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		Res:        res,
 		Req:        req,
 		Meta:       map[string]interface{}{},
-		Param:      map[string]interface{}{},
+		Param:      Param{},
 		HtmlFunc:   html.FuncMap{},
 		Session:    nil,
 		path:       req.URL.Path,
