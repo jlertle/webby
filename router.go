@@ -18,11 +18,17 @@ func (pa Param) Add(name, value string) {
 }
 
 func (pa Param) Get(name string) string {
+	if pa[name] == nil {
+		return ""
+	}
 	return fmt.Sprint(pa[name])
 }
 
 func (pa Param) GetInt(name string) int64 {
 	num := int64(0)
+	if pa[name] == nil {
+		return num
+	}
 	switch t := pa[name].(type) {
 	case int64:
 		num = t
