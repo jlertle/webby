@@ -25,6 +25,12 @@ Simple Web Application Server Framework!
 	}
 
 	func (_ index) View(w *webby.Web) {
+		page := w.Param.GetInt("page")
+
+		if page <= 0 {
+			page = 1
+		}
+
 		if w.IsWebSocketRequest() {
 			websocket.Handler(func(ws *websocket.Conn) {
 				index{}.Socket(ws)
@@ -33,11 +39,13 @@ Simple Web Application Server Framework!
 		}
 
 		w.Print("<h1>Hello World!</h1>\r\n")
+		w.Print("Page: ", page, "\r\n")
 	}
 
 	func init() {
 		webby.Route.RegisterHandlerMap(webby.RouteHandlerMap{
 			"^/$": index{},
+			"^/(?P<page>\\d+)/?$": index{},
 		})
 	}
 
