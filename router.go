@@ -1,37 +1,26 @@
 package webby
 
 import (
-	"fmt"
 	"regexp"
 	"sort"
 )
 
-type Param map[string]interface{}
+type Param map[string]string
 
 func (pa Param) Add(name, value string) {
-	num, err := toInt(value)
-	if err == nil {
-		pa[name] = num
-	} else {
-		pa[name] = value
-	}
+	pa[name] = value
 }
 
 func (pa Param) Get(name string) string {
-	if pa[name] == nil {
-		return ""
-	}
-	return fmt.Sprint(pa[name])
+	return pa[name]
 }
 
 func (pa Param) GetInt(name string) int64 {
 	num := int64(0)
-	if pa[name] == nil {
-		return num
-	}
-	switch t := pa[name].(type) {
-	case int64:
-		num = t
+	var err error
+	num, err = toInt(pa[name])
+	if err != nil {
+		return 0
 	}
 	return num
 }
