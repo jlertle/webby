@@ -15,7 +15,7 @@ func (pa Param) Get(name string) string {
 	return pa[name]
 }
 
-func (pa Param) GetInt(name string) int64 {
+func (pa Param) GetInt64(name string) int64 {
 	num := int64(0)
 	var err error
 	num, err = toInt(pa[name])
@@ -23,6 +23,10 @@ func (pa Param) GetInt(name string) int64 {
 		return 0
 	}
 	return num
+}
+
+func (pa Param) GetInt(name string) int {
+	return int(pa.GetInt64(name))
 }
 
 type routerItem struct {
