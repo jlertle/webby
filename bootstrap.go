@@ -27,6 +27,9 @@ func (boot *Bootstrap) RegisterHandler(handlers ...BootstrapHandler) {
 func (boot *Bootstrap) Load(web *Web) {
 	for _, function := range boot.functions {
 		function(web)
+		if web.CutOut() {
+			return
+		}
 	}
 }
 
