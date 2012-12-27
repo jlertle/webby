@@ -139,7 +139,7 @@ func (ro *Router) load(w *Web, reset bool) bool {
 				}
 			}
 
-			w.path = route.RegExpComplied.ReplaceAllString(w.path, "")
+			w.path = w.path[route.RegExpComplied.FindStringIndex(w.path)[1]:]
 
 			route.Function(w)
 			return true
