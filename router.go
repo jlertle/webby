@@ -95,8 +95,9 @@ func (ro *Router) RegisterMap(routeMap RouteMap) {
 }
 
 func (ro *Router) registerHandler(RegExpRule string, handler RouteHandler) {
+	ahandler := handler
 	ro.register(RegExpRule, func(w *Web) {
-		handler.View(w)
+		ahandler.View(w)
 	})
 }
 

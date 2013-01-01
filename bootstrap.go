@@ -17,9 +17,11 @@ func (boot *Bootstrap) Register(functions ...func(*Web)) {
 // Register Handler to Bootstrap.
 func (boot *Bootstrap) RegisterHandler(handlers ...BootstrapHandler) {
 	for _, handler := range handlers {
-		boot.functions = append(boot.functions, func(w *Web) {
-			handler.Boot(w)
-		})
+		ahandler := handler
+		Function := func(w *Web) {
+			ahandler.Boot(w)
+		}
+		boot.functions = append(boot.functions, Function)
 	}
 }
 
