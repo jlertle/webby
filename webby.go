@@ -132,3 +132,8 @@ func (web *Web) Println(a ...interface{}) (int, error) {
 func (web *Web) CutOut() bool {
 	return web.cut
 }
+
+// Cut, useful for serving files!
+func (web *Web) Cut() {
+	web.cut = true
+}
