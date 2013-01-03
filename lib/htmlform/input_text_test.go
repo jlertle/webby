@@ -3,7 +3,6 @@ package htmlform
 import (
 	"fmt"
 	"github.com/CJ-Jackson/webby"
-	"mime/multipart"
 	"net/http"
 	"net/url"
 	"testing"
@@ -36,7 +35,6 @@ func TestFormInputText(t *testing.T) {
 				"text":      []string{"hello"},
 				"textmatch": []string{"hello"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 
@@ -53,7 +51,6 @@ func TestFormInputText(t *testing.T) {
 				"text":      []string{"hello"},
 				"textmatch": []string{"hellofail"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 
@@ -70,7 +67,6 @@ func TestFormInputText(t *testing.T) {
 				"text":      []string{"hellohello"},
 				"textmatch": []string{"hellohello"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 
@@ -87,7 +83,6 @@ func TestFormInputText(t *testing.T) {
 				"text":      []string{"1234"},
 				"textmatch": []string{"1234"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 

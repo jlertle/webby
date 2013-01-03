@@ -3,7 +3,6 @@ package htmlform
 import (
 	"fmt"
 	"github.com/CJ-Jackson/webby"
-	"mime/multipart"
 	"net/http"
 	"net/url"
 	"testing"
@@ -36,7 +35,6 @@ func TestFormInputPassword(t *testing.T) {
 				"password":      []string{"hello"},
 				"passwordmatch": []string{"hello"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 
@@ -53,7 +51,6 @@ func TestFormInputPassword(t *testing.T) {
 				"password":      []string{"hello"},
 				"passwordmatch": []string{"hellofail"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 
@@ -70,7 +67,6 @@ func TestFormInputPassword(t *testing.T) {
 				"password":      []string{"hellohello"},
 				"passwordmatch": []string{"hellohello"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 
@@ -87,7 +83,6 @@ func TestFormInputPassword(t *testing.T) {
 				"password":      []string{"1234"},
 				"passwordmatch": []string{"1234"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 

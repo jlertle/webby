@@ -3,7 +3,6 @@ package htmlform
 import (
 	"fmt"
 	"github.com/CJ-Jackson/webby"
-	"mime/multipart"
 	"net/http"
 	"net/url"
 	"testing"
@@ -28,7 +27,6 @@ func TestTextarea(t *testing.T) {
 			Form: url.Values{
 				"text": []string{"hello"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 
@@ -44,7 +42,6 @@ func TestTextarea(t *testing.T) {
 			Form: url.Values{
 				"text": []string{"hellohello"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 

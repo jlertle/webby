@@ -3,7 +3,6 @@ package htmlform
 import (
 	"fmt"
 	"github.com/CJ-Jackson/webby"
-	"mime/multipart"
 	"net/http"
 	"net/url"
 	"testing"
@@ -37,7 +36,6 @@ func TestSelect(t *testing.T) {
 			Form: url.Values{
 				"select": []string{"car"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 
@@ -53,7 +51,6 @@ func TestSelect(t *testing.T) {
 			Form: url.Values{
 				"select": []string{"motorcycle"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 
@@ -69,7 +66,6 @@ func TestSelect(t *testing.T) {
 			Form: url.Values{
 				"select": []string{""},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 

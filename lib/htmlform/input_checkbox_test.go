@@ -3,7 +3,6 @@ package htmlform
 import (
 	"fmt"
 	"github.com/CJ-Jackson/webby"
-	"mime/multipart"
 	"net/http"
 	"net/url"
 	"testing"
@@ -32,7 +31,6 @@ func TestFormInputCheckbox(t *testing.T) {
 			Form: url.Values{
 				"checkbox": []string{"car", "motorcycle"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 
@@ -48,7 +46,6 @@ func TestFormInputCheckbox(t *testing.T) {
 			Form: url.Values{
 				"checkbox": []string{"car"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 

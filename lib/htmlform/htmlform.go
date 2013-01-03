@@ -136,7 +136,7 @@ func (f *Form) IsValid(w *webby.Web) bool {
 	var files FileHeaders
 	w.ParseForm()
 
-	if w.Req.MultipartForm.Value != nil {
+	if w.Req.MultipartForm != nil {
 		values = Values(w.Req.MultipartForm.Value)
 		files = FileHeaders(w.Req.MultipartForm.File)
 	} else {

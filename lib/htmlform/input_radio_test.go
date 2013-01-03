@@ -3,7 +3,6 @@ package htmlform
 import (
 	"fmt"
 	"github.com/CJ-Jackson/webby"
-	"mime/multipart"
 	"net/http"
 	"net/url"
 	"testing"
@@ -31,7 +30,6 @@ func TestInputRadio(t *testing.T) {
 			Form: url.Values{
 				"radio": []string{"car"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 
@@ -45,7 +43,6 @@ func TestInputRadio(t *testing.T) {
 			Form: url.Values{
 				"radio": []string{"motorbike"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 

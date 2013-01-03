@@ -3,7 +3,6 @@ package htmlform
 import (
 	"fmt"
 	"github.com/CJ-Jackson/webby"
-	"mime/multipart"
 	"net/http"
 	"net/url"
 	"testing"
@@ -32,7 +31,6 @@ func TestInputEmail(t *testing.T) {
 				"email":        []string{"himself@cj-jackson.com"},
 				"emailconfirm": []string{"himself@cj-jackson.com"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 
@@ -49,7 +47,6 @@ func TestInputEmail(t *testing.T) {
 				"email":        []string{"himself@cj-jackson.com"},
 				"emailconfirm": []string{"himselfa@cj-jackson.com"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 
@@ -66,7 +63,6 @@ func TestInputEmail(t *testing.T) {
 				"email":        []string{"himself_cj-jackson.com"},
 				"emailconfirm": []string{"himself_cj-jackson.com"},
 			},
-			MultipartForm: &multipart.Form{},
 		},
 	}
 
