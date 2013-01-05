@@ -2,9 +2,11 @@
 package webby
 
 import (
+	"bufio"
 	"fmt"
 	html "html/template"
 	"io"
+	"net"
 	"net/http"
 )
 
@@ -75,14 +77,18 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
 	Route.Load(web)
 
-	if web.CutOut() || web.IsWebSocketRequest() {
+	if web.CutOut() {
 		return
 	}
 
 	Error500(web)
 }
 
-// Write bytes to Client (http web server or browser)
+// Write writes the data to the connection as part of an HTTP reply.
+// If WriteHeader has not yet been called, Write calls WriteHeader(http.StatusOK)
+// before writing the data.  If the Header does not contain a
+// Content-Type line, Write adds a Content-Type set to the result of passing
+// the initial 512 bytes of written data to DetectContentType.
 func (web *Web) Write(data []byte) (int, error) {
 	web.cut = true
 
@@ -98,7 +104,12 @@ func (web *Web) Write(data []byte) (int, error) {
 	return web.reswrite.Write(data)
 }
 
-// Output Http Header, use Status properly to set error code! As this disable compression!
+// WriteHeader sends an HTTP response header with status code.
+// If WriteHeader is not called explicitly, the first call to Write
+// will trigger an implicit WriteHeader(http.StatusOK).
+// Thus explicit calls to WriteHeader are mainly used to
+// send error codes.
+// Note: Use Status properly to set error code! As this disable compression!
 func (web *Web) WriteHeader(num int) {
 	web.cut = true
 
@@ -107,6 +118,16 @@ func (web *Web) WriteHeader(num int) {
 	}
 
 	web.webInterface.WriteHeader(num)
+}
+
+// Hijack lets the caller take over the connection.
+// After a call to Hijack(), the HTTP server library
+// will not do anything else with the connection.
+// It becomes the caller's responsibility to manage
+// and close the connection.
+func (web *Web) Hijacker() (net.Conn, *bufio.ReadWriter, error) {
+	web.cut = true
+	return web.webInterface.Hijack()
 }
 
 // Print formats using the default formats for its operands and writes to client (http web server or browser).
@@ -132,9 +153,4 @@ func (web *Web) Println(a ...interface{}) (int, error) {
 // true if output was sent to client, otherwise false!
 func (web *Web) CutOut() bool {
 	return web.cut
-}
-
-// Cut, useful for serving files!
-func (web *Web) Cut() {
-	web.cut = true
 }
