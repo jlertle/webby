@@ -49,7 +49,7 @@ skip_port_check:
 	}
 
 set_cookie:
-	http.SetCookie(w.Res, cookie)
+	http.SetCookie(w, cookie)
 }
 
 // Get Cookie

@@ -21,11 +21,11 @@ func (web *Web) InitCompression() {
 
 		switch encoding {
 		case "gzip":
-			web.reswrite = gzip.NewWriter(web.Res)
+			web.reswrite = gzip.NewWriter(web.webInterface)
 			web.Header().Set("Content-Encoding", encoding)
 			return
 		case "deflate":
-			web.reswrite, _ = flate.NewWriter(web.Res, flate.DefaultCompression)
+			web.reswrite, _ = flate.NewWriter(web.webInterface, flate.DefaultCompression)
 			web.Header().Set("Content-Encoding", encoding)
 			return
 		}

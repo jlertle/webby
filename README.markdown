@@ -34,7 +34,7 @@ Simple Web Application Server Framework!
 		if w.IsWebSocketRequest() {
 			websocket.Handler(func(ws *websocket.Conn) {
 				index{}.Socket(ws)
-			}).ServeHTTP(w.Res, w.Req)
+			}).ServeHTTP(w, w.Req)
 			return
 		}
 

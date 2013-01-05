@@ -11,14 +11,19 @@ import (
 // Debug Mode
 var DEBUG = false
 
+type webInterface interface {
+	http.ResponseWriter
+	http.Hijacker
+	http.Flusher
+}
+
 // The Framework Structure
 type Web struct {
+	webInterface
 	// Error Code
 	Status int
 	// Server Environment Variables
 	Env http.Header
-	// Responder, use Web.Print(), Web.Printf() or Web.Println() to output
-	Res http.ResponseWriter
 	// Request
 	Req *http.Request
 	// Meta, useful for storing login credentail
@@ -39,20 +44,21 @@ type Web struct {
 // HTTP Handler
 func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	web := &Web{
-		Status:     http.StatusOK,
-		Env:        req.Header,
-		Res:        res,
-		Req:        req,
-		Meta:       map[string]interface{}{},
-		Param:      Param{},
-		HtmlFunc:   html.FuncMap{},
-		Session:    nil,
-		path:       req.URL.Path,
-		curpath:    "",
-		reswrite:   res,
-		cut:        false,
-		firstWrite: true,
+		webInterface: res.(webInterface),
+		Status:       http.StatusOK,
+		Env:          req.Header,
+		Req:          req,
+		Meta:         map[string]interface{}{},
+		Param:        Param{},
+		HtmlFunc:     html.FuncMap{},
+		Session:      nil,
+		path:         req.URL.Path,
+		curpath:      "",
+		cut:          false,
+		firstWrite:   true,
 	}
+
+	web.reswrite = web.webInterface
 
 	web.initTrueHost()
 	web.initTrueRemoteAddr()
@@ -74,11 +80,6 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	}
 
 	Error500(web)
-}
-
-// HTTP Response Header
-func (web *Web) Header() http.Header {
-	return web.Res.Header()
 }
 
 // Write bytes to Client (http web server or browser)
@@ -105,7 +106,7 @@ func (web *Web) WriteHeader(num int) {
 		web.firstWrite = false
 	}
 
-	web.Res.WriteHeader(num)
+	web.webInterface.WriteHeader(num)
 }
 
 // Print formats using the default formats for its operands and writes to client (http web server or browser).
