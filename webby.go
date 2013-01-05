@@ -125,7 +125,7 @@ func (web *Web) WriteHeader(num int) {
 // will not do anything else with the connection.
 // It becomes the caller's responsibility to manage
 // and close the connection.
-func (web *Web) Hijacker() (net.Conn, *bufio.ReadWriter, error) {
+func (web *Web) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	web.cut = true
 	return web.webInterface.Hijack()
 }
