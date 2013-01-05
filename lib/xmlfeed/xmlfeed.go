@@ -2,6 +2,7 @@
 package xmlfeed
 
 import (
+	"github.com/CJ-Jackson/webby"
 	"time"
 )
 
@@ -26,4 +27,24 @@ type Item struct {
 	Updated     time.Time
 	Name        string
 	Email       string
+}
+
+type XmlFeed interface {
+	Feed(*webby.Web) Channel
+}
+
+type AtomRouteHandler struct {
+	XmlFeed
+}
+
+func (at AtomRouteHandler) View(w *webby.Web) {
+	w.Print(at.Feed(w).Atom())
+}
+
+type RssRouteHandler struct {
+	XmlFeed
+}
+
+func (rss RssRouteHandler) View(w *webby.Web) {
+	w.Print(rss.Feed(w).RSS())
 }

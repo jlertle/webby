@@ -5,7 +5,7 @@ package webby
 // Note:  Overriding is useful for custom 403 page
 var Error403 = func(w *Web) {
 	w.Status = 403
-	w.Print("<h1>403 Forbidded</h1>")
+	w.Print("<h1>403 Forbidden</h1>")
 }
 
 func (web *Web) Error403() {
