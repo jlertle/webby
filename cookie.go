@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-// Set Cookie
-func (w *Web) SetCookie(cookie *http.Cookie) {
+// Prepare Cookie
+func (w *Web) PreCookie(cookie *http.Cookie) *http.Cookie {
 	var num int
 
 	if cookie.Path == "" {
@@ -15,7 +15,7 @@ func (w *Web) SetCookie(cookie *http.Cookie) {
 	}
 
 	if cookie.Domain != "" {
-		goto set_cookie
+		goto release_cookie
 	}
 
 	cookie.Domain = w.Req.Host
@@ -41,15 +41,21 @@ skip_port_check:
 
 	if net.ParseIP(cookie.Domain) != nil {
 		cookie.Domain = ""
-		goto set_cookie
+		goto release_cookie
 	}
 
 	if strings.Count(cookie.Domain, ".") <= 0 {
 		cookie.Domain = ""
 	}
 
-set_cookie:
-	http.SetCookie(w, cookie)
+release_cookie:
+
+	return cookie
+}
+
+// Set Cookie
+func (w *Web) SetCookie(cookie *http.Cookie) {
+	http.SetCookie(w, w.PreCookie(cookie))
 }
 
 // Get Cookie

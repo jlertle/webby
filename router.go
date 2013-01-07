@@ -197,3 +197,23 @@ func (ro *Router) LoadReset(w *Web) {
 }
 
 var Route = &Router{}
+
+// Router View
+func (ro *Router) View(w *Web) {
+	ro.Load(w)
+}
+
+type FuncToRouteHandler struct {
+	Function func(*Web)
+}
+
+func (fn FuncToRouteHandler) View(w *Web) {
+	fn.Function(w)
+}
+
+func RouteHandlerToFunc(ro RouteHandler) func(w *Web) {
+	aro := ro
+	return func(w *Web) {
+		aro.View(w)
+	}
+}
