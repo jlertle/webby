@@ -38,16 +38,16 @@ func (ro RouteHandler) View(w *webby.Web) {
 		form = ro.FetchForm(w)
 	}
 
+	if w.Req.Method == "POST" {
+		goto post
+	}
+
 	if w.Req.URL.RawQuery != "" {
 		if form.IsValid(w) {
 			goto pass
 		} else {
 			goto get
 		}
-	}
-
-	if w.Req.Method == "POST" {
-		goto post
 	}
 
 get:
