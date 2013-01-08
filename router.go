@@ -29,6 +29,34 @@ func (pa Param) GetInt(name string) int {
 	return int(pa.GetInt64(name))
 }
 
+func (pa Param) GetUint64(name string) uint64 {
+	num := uint64(0)
+	var err error
+	num, err = toUint(pa[name])
+	if err != nil {
+		return 0
+	}
+	return num
+}
+
+func (pa Param) GetUint(name string) uint {
+	return uint(pa.GetUint64(name))
+}
+
+func (pa Param) GetFloat64(name string) float64 {
+	num := float64(0)
+	var err error
+	num, err = toFloat(pa[name])
+	if err != nil {
+		return float64(0)
+	}
+	return num
+}
+
+func (pa Param) GetFloat32(name string) float32 {
+	return float32(pa.GetFloat64(name))
+}
+
 type routerItem struct {
 	RegExp         string
 	RegExpComplied *regexp.Regexp

@@ -10,6 +10,16 @@ func toInt(number string) (int64, error) {
 	return strconv.ParseInt(number, 10, 64)
 }
 
+// Convert String to Uint64
+func toUint(number string) (uint64, error) {
+	return strconv.ParseUint(number, 10, 64)
+}
+
+// Convert String to float64
+func toFloat(number string) (float64, error) {
+	return strconv.ParseFloat(number, 64)
+}
+
 func (w *Web) initTrueHost() {
 	switch {
 	case w.Env.Get("X-Forwarded-Host") != "":
