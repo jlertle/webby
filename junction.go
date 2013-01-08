@@ -1,7 +1,7 @@
 package webby
 
 type Junction struct {
-	ALL, GET, POST, DELETE, PUT, AJAX, WS RouteHandler
+	ALL, GET, POST, HEAD, DELETE, PUT, PATCH, OPTIONS, AJAX, WS RouteHandler
 }
 
 func (jn Junction) View(w *Web) {
@@ -30,6 +30,11 @@ func (jn Junction) View(w *Web) {
 			jn.POST.View(w)
 			return
 		}
+	case "HEAD":
+		if jn.HEAD != nil {
+			jn.HEAD.View(w)
+			return
+		}
 	case "DELETE":
 		if jn.DELETE != nil {
 			jn.DELETE.View(w)
@@ -38,6 +43,16 @@ func (jn Junction) View(w *Web) {
 	case "PUT":
 		if jn.PUT != nil {
 			jn.PUT.View(w)
+			return
+		}
+	case "PATCH":
+		if jn.PATCH != nil {
+			jn.PATCH.View(w)
+			return
+		}
+	case "OPTIONS":
+		if jn.OPTIONS != nil {
+			jn.OPTIONS.View(w)
 			return
 		}
 	}
