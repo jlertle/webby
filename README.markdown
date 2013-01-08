@@ -18,11 +18,11 @@ Simple Web Application Server Framework!
 		"net/http"
 	)
 
-	type index struct{}
-
-	func (_ index) Socket(ws *websocket.Conn) {
+	func EchoServer(ws *websocket.Conn) {
 		io.Copy(ws, ws)
 	}
+
+	type index struct{}
 
 	func (_ index) View(w *webby.Web) {
 		page := w.Param.GetInt("page")
@@ -31,21 +31,19 @@ Simple Web Application Server Framework!
 			page = 1
 		}
 
-		if w.IsWebSocketRequest() {
-			websocket.Handler(func(ws *websocket.Conn) {
-				index{}.Socket(ws)
-			}).ServeHTTP(w, w.Req)
-			return
-		}
-
 		w.Print("<h1>Hello World!</h1>\r\n")
 		w.Print("Page: ", page, "\r\n")
 	}
 
 	func init() {
+		index_junc := webby.Junction{
+			WS:  webby.HttpRouteHandler{websocket.Handler(EchoServer)},
+			ALL: index{},
+		}
+
 		webby.Route.RegisterHandlerMap(webby.RouteHandlerMap{
-			"^/$": index{},
-			"^/(?P<page>\\d+)/?$": index{},
+			"^/$": index_junc,
+			"^/(?P<page>\\d+)/?$": index_junc,
 		})
 	}
 
@@ -56,6 +54,7 @@ Simple Web Application Server Framework!
 			log.Fatal("ListenAndServe: ", err)
 		}
 	}
+
 
 Note: This example require websocket library installed; The framework itself can live without that.
 
