@@ -86,7 +86,7 @@ func (pr Protocol) View(w *Web) {
 			pr.HTTP.View(w)
 			return
 		}
-	case "shttp":
+	case "shttp", "https":
 		if pr.HTTPS != nil {
 			pr.HTTPS.View(w)
 			return
