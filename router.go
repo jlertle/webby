@@ -245,3 +245,9 @@ func RouteHandlerToFunc(ro RouteHandler) func(w *Web) {
 		aro.View(w)
 	}
 }
+
+type RouteReset struct{ *Router }
+
+func (ro RouteReset) View(w *Web) {
+	ro.LoadReset(w)
+}
