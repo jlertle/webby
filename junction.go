@@ -12,20 +12,25 @@ func (jn Junction) View(w *Web) {
 		}
 	}
 
-	if w.IsAjaxRequest() {
-		if jn.AJAX != nil {
-			jn.AJAX.View(w)
-			return
-		}
-	}
-
 	switch w.Req.Method {
 	case "GET":
+		if w.IsAjaxRequest() {
+			if jn.AJAX != nil {
+				jn.AJAX.View(w)
+				return
+			}
+		}
 		if jn.GET != nil {
 			jn.GET.View(w)
 			return
 		}
 	case "POST":
+		if w.IsAjaxRequest() {
+			if jn.AJAX != nil {
+				jn.AJAX.View(w)
+				return
+			}
+		}
 		if jn.POST != nil {
 			jn.POST.View(w)
 			return
