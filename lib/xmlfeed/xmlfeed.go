@@ -38,6 +38,7 @@ type AtomRouteHandler struct {
 }
 
 func (at AtomRouteHandler) View(w *webby.Web) {
+	w.InitCompression()
 	w.Print(at.Feed(w).Atom())
 }
 
@@ -46,5 +47,6 @@ type RssRouteHandler struct {
 }
 
 func (rss RssRouteHandler) View(w *webby.Web) {
+	w.InitCompression()
 	w.Print(rss.Feed(w).RSS())
 }
