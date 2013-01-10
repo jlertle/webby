@@ -106,11 +106,11 @@ func New(lang lang.Lang, formhandlers ...FormHandler) *Form {
 	}
 	form := &Form{lang: langg}
 
-	if time.Now().Unix() > _antiClickJack.expire.Unix() {
-		setclickjack()
+	if time.Now().Unix() > _antiCSRF.expire.Unix() {
+		setAntiCSRF()
 	}
 
-	form.fields = append(form.fields, &inputClickJack{Value: _antiClickJack.key})
+	form.fields = append(form.fields, &inputCSRF{Value: _antiCSRF.key})
 	form.fields = append(form.fields, formhandlers...)
 	for _, field := range form.fields {
 		field.SetLang(form.lang)
@@ -207,12 +207,12 @@ func (f *Form) JSON() string {
 	return string(b)
 }
 
-// Get AntiClickJack Key
-func (f *Form) GetAntiClickJackKey() string {
-	if time.Now().Unix() > _antiClickJack.expire.Unix() {
-		setclickjack()
+// Get AntiCSRF Key
+func (f *Form) GetAntiCSRFKey() string {
+	if time.Now().Unix() > _antiCSRF.expire.Unix() {
+		setAntiCSRF()
 	}
-	return _antiClickJack.key
+	return _antiCSRF.key
 }
 
 func htmlRender(buf *bytes.Buffer, htmlstr string, value_map interface{}) {

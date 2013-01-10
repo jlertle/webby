@@ -8,15 +8,15 @@ import (
 )
 
 var (
-	AntiClickJackExpire = 1 * time.Hour
+	AntiCSRFExpire = 1 * time.Hour
 )
 
-type antiClickJack struct {
+type antiCSRF struct {
 	key    string
 	expire time.Time
 }
 
-var _antiClickJack = &antiClickJack{}
+var _antiCSRF = &antiCSRF{}
 
 // Convert Unsigned 64-bit Int to Bytes.
 func uint64ToByte(num uint64) [8]byte {
@@ -32,67 +32,67 @@ func uint64ToByte(num uint64) [8]byte {
 	return buf
 }
 
-func setclickjack() {
+func setAntiCSRF() {
 	curtime := time.Now()
-	_antiClickJack.key = fmt.Sprintf("%x%x", uint64ToByte(uint64(curtime.Unix())),
+	_antiCSRF.key = fmt.Sprintf("%x%x", uint64ToByte(uint64(curtime.Unix())),
 		uint64ToByte(uint64(curtime.UnixNano())))
-	_antiClickJack.expire = curtime.Add(AntiClickJackExpire)
+	_antiCSRF.expire = curtime.Add(AntiCSRFExpire)
 }
 
 func init() {
-	setclickjack()
-	gob.Register(&inputClickJack{})
+	setAntiCSRF()
+	gob.Register(&inputCSRF{})
 }
 
-type inputClickJack struct {
+type inputCSRF struct {
 	Value string
 	error error
 	lang  Lang
 }
 
-func (fo *inputClickJack) Render(buf *bytes.Buffer) {
-	const htmlstr = `<input type="hidden" name="_anti-clickjack" class="anticlickjack" value="{{.Value}}"/>`
+func (fo *inputCSRF) Render(buf *bytes.Buffer) {
+	const htmlstr = `<input type="hidden" name="_anti-CSRF" class="antiCSRF" value="{{.Value}}"/>`
 	if fo.error != nil {
 		htmlRender(buf, fo.lang["ErrorTemplate"], fo.error.Error())
 	}
 	htmlRender(buf, htmlstr, fo)
 }
 
-func (fo *inputClickJack) Validate(values Values, files FileHeaders, single bool) error {
-	fo.Value = values.Get("_anti-clickjack")
+func (fo *inputCSRF) Validate(values Values, files FileHeaders, single bool) error {
+	fo.Value = values.Get("_anti-CSRF")
 
-	if time.Now().Unix() > _antiClickJack.expire.Unix() {
-		setclickjack()
+	if time.Now().Unix() > _antiCSRF.expire.Unix() {
+		setAntiCSRF()
 	}
 
-	if fo.Value != _antiClickJack.key {
-		fo.Value = _antiClickJack.key
-		return FormError(fo.lang["ErrAntiClickjack"])
+	if fo.Value != _antiCSRF.key {
+		fo.Value = _antiCSRF.key
+		return FormError(fo.lang["ErrAntiCSRF"])
 	}
 
 	return nil
 }
 
-func (fo *inputClickJack) GetName() string {
-	return "_anti_clickjack"
+func (fo *inputCSRF) GetName() string {
+	return "_anti_CSRF"
 }
 
-func (fo *inputClickJack) SetError(err error) {
+func (fo *inputCSRF) SetError(err error) {
 	fo.error = err
 }
 
-func (fo *inputClickJack) GetError() error {
+func (fo *inputCSRF) GetError() error {
 	return fo.error
 }
 
-func (fo *inputClickJack) GetStruct() FormHandler {
+func (fo *inputCSRF) GetStruct() FormHandler {
 	return fo
 }
 
-func (fo *inputClickJack) SetLang(lang Lang) {
+func (fo *inputCSRF) SetLang(lang Lang) {
 	fo.lang = lang
 }
 
-func (fo *inputClickJack) GetLang() Lang {
+func (fo *inputCSRF) GetLang() Lang {
 	return fo.lang
 }
