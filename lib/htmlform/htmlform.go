@@ -207,6 +207,14 @@ func (f *Form) JSON() string {
 	return string(b)
 }
 
+// Get AntiClickJack Key
+func (f *Form) GetAntiClickJackKey() string {
+	if time.Now().Unix() > _antiClickJack.expire.Unix() {
+		setclickjack()
+	}
+	return _antiClickJack.key
+}
+
 func htmlRender(buf *bytes.Buffer, htmlstr string, value_map interface{}) {
 	t, err := html.New("html").Parse(htmlstr)
 	if err != nil {

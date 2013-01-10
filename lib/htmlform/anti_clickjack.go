@@ -51,7 +51,7 @@ type inputClickJack struct {
 }
 
 func (fo *inputClickJack) Render(buf *bytes.Buffer) {
-	const htmlstr = `<input type="hidden" name="_anti-clickjack" value="{{.Value}}"/>`
+	const htmlstr = `<input type="hidden" name="_anti-clickjack" class="anticlickjack" value="{{.Value}}"/>`
 	if fo.error != nil {
 		htmlRender(buf, fo.lang["ErrorTemplate"], fo.error.Error())
 	}
