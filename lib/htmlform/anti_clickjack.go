@@ -74,7 +74,7 @@ func (fo *inputCSRF) Validate(values Values, files FileHeaders, single bool) err
 }
 
 func (fo *inputCSRF) GetName() string {
-	return "_anti_CSRF"
+	return "_anti-CSRF"
 }
 
 func (fo *inputCSRF) SetError(err error) {

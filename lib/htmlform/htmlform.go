@@ -158,6 +158,9 @@ func (f *Form) IsValid(w *webby.Web) bool {
 		if err != nil {
 			field.SetError(err)
 			valid = false
+			if field.GetName() == "_anti-CSRF" {
+				break
+			}
 		}
 	}
 
