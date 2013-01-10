@@ -13,4 +13,5 @@ var EnglishGB = Lang{
 	"ErrFieldDoesNotExist":      "Field name does not exist!",
 	"ErrInvalidEmailAddress":    "Invalid Email Address!",
 	"ErrFileRequired":           "File is required!",
+	"ErrAntiClickjack":          "Failed Clickjack validation, click submit again!",
 }

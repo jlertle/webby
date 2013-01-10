@@ -11,6 +11,7 @@ import (
 	"net/textproto"
 	"net/url"
 	"strconv"
+	"time"
 )
 
 type Lang map[string]string
@@ -103,7 +104,14 @@ func New(lang lang.Lang, formhandlers ...FormHandler) *Form {
 	} else {
 		langg = Lang(lang)
 	}
-	form := &Form{langg, formhandlers}
+	form := &Form{lang: langg}
+
+	if time.Now().Unix() > _antiClickJack.expire.Unix() {
+		setclickjack()
+	}
+
+	form.fields = append(form.fields, &inputClickJack{Value: _antiClickJack.key})
+	form.fields = append(form.fields, formhandlers...)
 	for _, field := range form.fields {
 		field.SetLang(form.lang)
 	}
