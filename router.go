@@ -122,6 +122,12 @@ func (ro *Router) RegisterMap(routeMap RouteMap) {
 	sort.Sort(ro.routes)
 }
 
+func NewRouterMap(routeMap RouteMap) *Router {
+	ro := &Router{}
+	ro.RegisterMap(routeMap)
+	return ro
+}
+
 func (ro *Router) registerHandler(RegExpRule string, handler RouteHandler) {
 	ahandler := handler
 	ro.register(RegExpRule, func(w *Web) {
@@ -145,6 +151,12 @@ func (ro *Router) RegisterHandlerMap(routeHandlerMap RouteHandlerMap) {
 		ro.registerHandler(rule, handler)
 	}
 	sort.Sort(ro.routes)
+}
+
+func NewRouterHandlerMap(routeHandlerMap RouteHandlerMap) *Router {
+	ro := &Router{}
+	ro.RegisterHandlerMap(routeHandlerMap)
+	return ro
 }
 
 func (ro *Router) load(w *Web, reset bool) bool {

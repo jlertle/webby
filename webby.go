@@ -69,13 +69,8 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
 	defer web.closeCompression()
 
-	Boot.Load(web)
-
-	if web.CutOut() {
-		return
-	}
-
-	Route.Load(web)
+	bootRoute := BootRoute{Boot, Route}
+	bootRoute.View(web)
 
 	if web.CutOut() {
 		return
