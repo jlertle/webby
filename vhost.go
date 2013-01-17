@@ -56,13 +56,24 @@ func NewVHostMap(hostmap VHostRegExpMap) *VHostRegExp {
 	return vh
 }
 
+func (vh *VHostRegExp) register(RegExpRule string, bootroute BootRoute) {
+	for _, host := range vh.vhost {
+		if host.RegExp == RegExpRule {
+			host.BootRoute = bootroute
+			return
+		}
+	}
+
+	vh.vhost = append(vh.vhost, &vHostRegExpItem{RegExpRule, regexp.MustCompile(RegExpRule), bootroute})
+}
+
 func (vh *VHostRegExp) registerMap(hostmap VHostRegExpMap) {
 	if vh.vhost == nil {
 		vh.vhost = vHostRegs{}
 	}
 
 	for rule, bootroute := range hostmap {
-		vh.vhost = append(vh.vhost, &vHostRegExpItem{rule, regexp.MustCompile(rule), bootroute})
+		vh.register(rule, bootroute)
 	}
 
 	sort.Sort(vh.vhost)
