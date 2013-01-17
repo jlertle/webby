@@ -172,8 +172,6 @@ func (ro *Router) load(w *Web, reset bool) bool {
 
 			w.curpath += matches[0]
 
-			w.Param = Param{}
-
 			for key, name := range names {
 				if name != "" {
 					w.Param.Add(name, matches[key])
