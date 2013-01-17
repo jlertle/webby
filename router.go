@@ -166,24 +166,25 @@ func (ro *Router) load(w *Web, reset bool) bool {
 	}
 
 	for _, route := range ro.routes {
-		if route.RegExpComplied.MatchString(w.path) {
-			names := route.RegExpComplied.SubexpNames()
-			matches := route.RegExpComplied.FindStringSubmatch(w.path)
-
-			w.curpath += matches[0]
-
-			for key, name := range names {
-				if name != "" {
-					w.Param.Add(name, matches[key])
-				}
-			}
-
-			w.path = w.path[route.RegExpComplied.FindStringIndex(w.path)[1]:]
-
-			route.Function(w)
-			return true
-
+		if !route.RegExpComplied.MatchString(w.path) {
+			continue
 		}
+
+		names := route.RegExpComplied.SubexpNames()
+		matches := route.RegExpComplied.FindStringSubmatch(w.path)
+
+		w.curpath += matches[0]
+
+		for key, name := range names {
+			if name != "" {
+				w.Param.Add(name, matches[key])
+			}
+		}
+
+		w.path = w.path[route.RegExpComplied.FindStringIndex(w.path)[1]:]
+
+		route.Function(w)
+		return true
 	}
 	return false
 }

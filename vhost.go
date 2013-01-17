@@ -74,20 +74,22 @@ func (vh *VHostRegExp) AddMap(hostmap VHostRegExpMap) {
 
 func (vh *VHostRegExp) View(w *Web) {
 	for _, host := range vh.vhost {
-		if host.RegExpComplied.MatchString(w.Req.Host) {
-			names := host.RegExpComplied.SubexpNames()
-			matches := host.RegExpComplied.FindStringSubmatch(w.Req.Host)
-
-			for key, name := range names {
-				if name != "" {
-					w.Param.Add(name, matches[key])
-				}
-			}
-
-			host.BootRoute.View(w)
-
-			return
+		if !host.RegExpComplied.MatchString(w.Req.Host) {
+			continue
 		}
+
+		names := host.RegExpComplied.SubexpNames()
+		matches := host.RegExpComplied.FindStringSubmatch(w.Req.Host)
+
+		for key, name := range names {
+			if name != "" {
+				w.Param.Add(name, matches[key])
+			}
+		}
+
+		host.BootRoute.View(w)
+
+		return
 	}
 
 	w.Error404()
