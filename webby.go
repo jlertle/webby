@@ -69,6 +69,9 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
 	defer web.closeCompression()
 
+	web.debugStart()
+	defer web.debugEnd()
+
 	bootRoute := BootRoute{Boot, Route}
 	bootRoute.View(web)
 
@@ -148,4 +151,22 @@ func (web *Web) Println(a ...interface{}) (int, error) {
 // true if output was sent to client, otherwise false!
 func (web *Web) CutOut() bool {
 	return web.cut
+}
+
+func (web *Web) debuginfo(a string) {
+	if !DEBUG {
+		return
+	}
+	fmt.Printf("--\r\n %s  %s, %s, %s, %s, ?%s \r\n--\r\n",
+		a, web.Req.Proto, web.Req.Method,
+		web.Req.Host, web.Req.URL.Path,
+		web.Req.URL.RawQuery)
+}
+
+func (web *Web) debugStart() {
+	web.debuginfo("START")
+}
+
+func (web *Web) debugEnd() {
+	web.debuginfo("END  ")
 }
