@@ -43,7 +43,7 @@ type sessionInterface interface {
 	hit()
 }
 
-var session_map = map[string]sessionInterface{}
+var sessionMap = map[string]sessionInterface{}
 
 // Convert Unsigned 64-bit Int to Bytes.
 func uint64ToByte(num uint64) [8]byte {
@@ -84,7 +84,7 @@ func (_ SessionMemory) Set(w *Web, data interface{}) {
 	}
 
 	w.SetCookie(sesCookie)
-	session_map[sesCookie.Value] = &session{data, time.Now().Add(SessionExpire)}
+	sessionMap[sesCookie.Value] = &session{data, time.Now().Add(SessionExpire)}
 }
 
 func (_ SessionMemory) Init(w *Web) {
@@ -93,7 +93,7 @@ func (_ SessionMemory) Init(w *Web) {
 		return
 	}
 
-	switch t := session_map[sesCookie.Value].(type) {
+	switch t := sessionMap[sesCookie.Value].(type) {
 	case *session:
 		if time.Now().Unix() < t.getExpire().Unix() {
 			w.Session = t.getData()
@@ -112,9 +112,9 @@ func (_ SessionMemory) Destroy(w *Web) {
 		return
 	}
 
-	switch session_map[sesCookie.Value].(type) {
+	switch sessionMap[sesCookie.Value].(type) {
 	case *session:
-		delete(session_map, sesCookie.Value)
+		delete(sessionMap, sesCookie.Value)
 	}
 	sesCookie.MaxAge = -1
 	w.SetCookie(sesCookie)
@@ -142,9 +142,13 @@ func sessionExpiryCheck() {
 	for {
 		time.Sleep(SessionExpiryCheckInterval)
 		curtime := time.Now()
-		for key, value := range session_map {
+		if len(sessionMap) <= 0 {
+			sessionExpiryCheckStarted = false
+			break
+		}
+		for key, value := range sessionMap {
 			if curtime.Unix() > value.getExpire().Unix() {
-				delete(session_map, key)
+				delete(sessionMap, key)
 			}
 		}
 	}
