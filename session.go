@@ -8,9 +8,9 @@ import (
 
 var (
 	SessionCookieName          = "__session"
-	SessionEnabled             = true
 	SessionExpire              = 20 * time.Minute
 	SessionExpiryCheckInterval = 10 * time.Minute
+	sessionExpiryCheckStarted  = false
 )
 
 // Structure of Session
@@ -59,10 +59,18 @@ func uint64ToByte(num uint64) [8]byte {
 	return buf
 }
 
-// Set Session
-func (w *Web) SetSession(data interface{}) {
-	if !SessionEnabled {
-		return
+type SessionHandler interface {
+	Set(*Web, interface{})
+	Init(*Web)
+	Destroy(*Web)
+}
+
+type SessionMemory struct{}
+
+func (_ SessionMemory) Set(w *Web, data interface{}) {
+	if !sessionExpiryCheckStarted {
+		sessionExpiryCheckStarted = true
+		go sessionExpiryCheck()
 	}
 
 	sesCookie, err := w.GetCookie(SessionCookieName)
@@ -79,12 +87,7 @@ func (w *Web) SetSession(data interface{}) {
 	session_map[sesCookie.Value] = &session{data, time.Now().Add(SessionExpire)}
 }
 
-// Init Session
-func (w *Web) initSession() {
-	if !SessionEnabled {
-		return
-	}
-
+func (_ SessionMemory) Init(w *Web) {
 	sesCookie, err := w.GetCookie(SessionCookieName)
 	if err != nil {
 		return
@@ -103,12 +106,7 @@ func (w *Web) initSession() {
 	w.SetCookie(sesCookie)
 }
 
-// Destroy Session
-func (w *Web) DestroySession() {
-	if !SessionEnabled {
-		return
-	}
-
+func (_ SessionMemory) Destroy(w *Web) {
 	sesCookie, err := w.GetCookie(SessionCookieName)
 	if err != nil {
 		return
@@ -122,13 +120,27 @@ func (w *Web) DestroySession() {
 	w.SetCookie(sesCookie)
 }
 
+var SessionDefaultHandler SessionHandler = SessionMemory{}
+
+// Set Session
+func (w *Web) SetSession(data interface{}) {
+	SessionDefaultHandler.Set(w, data)
+}
+
+// Init Session
+func (w *Web) initSession() {
+	SessionDefaultHandler.Init(w)
+}
+
+// Destroy Session
+func (w *Web) DestroySession() {
+	SessionDefaultHandler.Destroy(w)
+}
+
 //	Session Expiry Check in a loop
 func sessionExpiryCheck() {
 	for {
 		time.Sleep(SessionExpiryCheckInterval)
-		if !SessionEnabled {
-			break
-		}
 		curtime := time.Now()
 		for key, value := range session_map {
 			if curtime.Unix() > value.getExpire().Unix() {
@@ -136,9 +148,4 @@ func sessionExpiryCheck() {
 			}
 		}
 	}
-}
-
-//	Start Session Check
-func init() {
-	go sessionExpiryCheck()
 }
