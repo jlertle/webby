@@ -120,21 +120,21 @@ func (_ SessionMemory) Destroy(w *Web) {
 	w.SetCookie(sesCookie)
 }
 
-var SessionDefaultHandler SessionHandler = SessionMemory{}
+var DefaultSessionHandler SessionHandler = SessionMemory{}
 
 // Set Session
 func (w *Web) SetSession(data interface{}) {
-	SessionDefaultHandler.Set(w, data)
+	DefaultSessionHandler.Set(w, data)
 }
 
 // Init Session
 func (w *Web) initSession() {
-	SessionDefaultHandler.Init(w)
+	DefaultSessionHandler.Init(w)
 }
 
 // Destroy Session
 func (w *Web) DestroySession() {
-	SessionDefaultHandler.Destroy(w)
+	DefaultSessionHandler.Destroy(w)
 }
 
 //	Session Expiry Check in a loop
