@@ -10,7 +10,7 @@ var (
 	SessionCookieName          = "__session"
 	SessionExpire              = 20 * time.Minute
 	SessionExpiryCheckInterval = 10 * time.Minute
-	sessionExpiryCheckStarted  = false
+	sessionExpiryCheckActive   = false
 )
 
 // Structure of Session
@@ -68,8 +68,8 @@ type SessionHandler interface {
 type SessionMemory struct{}
 
 func (_ SessionMemory) Set(w *Web, data interface{}) {
-	if !sessionExpiryCheckStarted {
-		sessionExpiryCheckStarted = true
+	if !sessionExpiryCheckActive {
+		sessionExpiryCheckActive = true
 		go sessionExpiryCheck()
 	}
 
@@ -143,7 +143,7 @@ func sessionExpiryCheck() {
 		time.Sleep(SessionExpiryCheckInterval)
 		curtime := time.Now()
 		if len(sessionMap) <= 0 {
-			sessionExpiryCheckStarted = false
+			sessionExpiryCheckActive = false
 			break
 		}
 		for key, value := range sessionMap {
