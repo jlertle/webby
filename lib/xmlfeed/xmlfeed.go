@@ -2,6 +2,7 @@
 package xmlfeed
 
 import (
+	"encoding/gob"
 	"github.com/CJ-Jackson/webby"
 	"time"
 )
@@ -27,6 +28,11 @@ type Item struct {
 	Updated     time.Time
 	Name        string
 	Email       string
+}
+
+func init() {
+	gob.Register(Channel{})
+	gob.Register(Item{})
 }
 
 type XmlFeed interface {
