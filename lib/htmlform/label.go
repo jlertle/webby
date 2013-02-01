@@ -2,6 +2,7 @@ package htmlform
 
 import (
 	"bytes"
+	"encoding/gob"
 )
 
 type Label struct {
@@ -9,6 +10,10 @@ type Label struct {
 	For   string
 	Id    string
 	Class string
+}
+
+func init() {
+	gob.Register(Label{})
 }
 
 func (fo Label) Render(buf *bytes.Buffer) {
@@ -54,4 +59,8 @@ func (fo Label) SetLang(lang Lang) {
 
 func (fo Label) GetLang() Lang {
 	return nil
+}
+
+func (fo Label) Eval() FormHandler {
+	return fo
 }

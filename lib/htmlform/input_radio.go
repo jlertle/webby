@@ -2,6 +2,7 @@ package htmlform
 
 import (
 	"bytes"
+	"encoding/gob"
 )
 
 type InputRadio struct {
@@ -10,6 +11,10 @@ type InputRadio struct {
 	Id       string
 	Class    string
 	Selected bool
+}
+
+func init() {
+	gob.Register(InputRadio{})
 }
 
 func (fo *InputRadio) Render(buf *bytes.Buffer) {
@@ -57,4 +62,8 @@ func (fo *InputRadio) SetLang(lang Lang) {
 
 func (fo *InputRadio) GetLang() Lang {
 	return nil
+}
+
+func (fo InputRadio) Eval() FormHandler {
+	return &fo
 }

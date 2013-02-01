@@ -2,6 +2,7 @@ package htmlform
 
 import (
 	"bytes"
+	"encoding/gob"
 	"fmt"
 	"strings"
 )
@@ -17,6 +18,10 @@ type Textarea struct {
 	Cols    int
 	error   error
 	lang    Lang
+}
+
+func init() {
+	gob.Register(Textarea{})
 }
 
 func (fo *Textarea) Render(buf *bytes.Buffer) {
@@ -108,4 +113,8 @@ func (fo *Textarea) SetLang(lang Lang) {
 
 func (fo *Textarea) GetLang() Lang {
 	return fo.lang
+}
+
+func (fo Textarea) Eval() FormHandler {
+	return &fo
 }

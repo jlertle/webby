@@ -2,6 +2,7 @@ package htmlform
 
 import (
 	"bytes"
+	"encoding/gob"
 	"strings"
 )
 
@@ -16,6 +17,10 @@ type InputFile struct {
 	SizeErr string
 	error   error
 	lang    Lang
+}
+
+func init() {
+	gob.Register(InputFile{})
 }
 
 func (fo *InputFile) Render(buf *bytes.Buffer) {
@@ -108,4 +113,8 @@ func (fo *InputFile) SetLang(lang Lang) {
 
 func (fo *InputFile) GetLang() Lang {
 	return fo.lang
+}
+
+func (fo InputFile) Eval() FormHandler {
+	return &fo
 }

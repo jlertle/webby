@@ -31,6 +31,9 @@ func (ro RouteHandler) View(w *webby.Web) {
 	var form *Form
 
 	switch t := w.Session.(type) {
+	case Form:
+		form = &t
+		w.DestroySession()
 	case *Form:
 		form = t
 		w.DestroySession()

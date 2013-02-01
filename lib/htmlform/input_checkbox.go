@@ -2,6 +2,7 @@ package htmlform
 
 import (
 	"bytes"
+	"encoding/gob"
 )
 
 type InputCheckbox struct {
@@ -13,6 +14,10 @@ type InputCheckbox struct {
 	Mandatory bool
 	error     error
 	lang      Lang
+}
+
+func init() {
+	gob.Register(InputCheckbox{})
 }
 
 func (fo *InputCheckbox) Render(buf *bytes.Buffer) {
@@ -81,4 +86,8 @@ func (fo *InputCheckbox) SetLang(lang Lang) {
 
 func (fo *InputCheckbox) GetLang() Lang {
 	return fo.lang
+}
+
+func (fo InputCheckbox) Eval() FormHandler {
+	return &fo
 }

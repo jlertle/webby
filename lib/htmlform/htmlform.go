@@ -3,6 +3,7 @@ package htmlform
 
 import (
 	"bytes"
+	"encoding/gob"
 	"encoding/json"
 	"github.com/CJ-Jackson/webby"
 	"github.com/CJ-Jackson/webby/lib/htmlform/lang"
@@ -15,6 +16,10 @@ import (
 )
 
 type Lang map[string]string
+
+func init() {
+	gob.Register(Lang{})
+}
 
 var defaultLang = Lang(lang.EnglishGB)
 
@@ -87,6 +92,10 @@ func (fi FileHeaders) GetContentType(name string) string {
 
 type FormError string
 
+func init() {
+	gob.Register(FormError(""))
+}
+
 func (f FormError) Error() string {
 	return string(f)
 }
@@ -94,6 +103,10 @@ func (f FormError) Error() string {
 type Form struct {
 	lang   Lang
 	fields []FormHandler
+}
+
+func init() {
+	gob.Register(Form{})
 }
 
 // Construct New Form Helper

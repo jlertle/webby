@@ -2,6 +2,7 @@ package htmlform
 
 import (
 	"bytes"
+	"encoding/gob"
 	"fmt"
 	"regexp"
 	"strings"
@@ -20,6 +21,10 @@ type InputPassword struct {
 	MustMatchErr string
 	error        error
 	lang         Lang
+}
+
+func init() {
+	gob.Register(InputPassword{})
 }
 
 func (fo *InputPassword) Render(buf *bytes.Buffer) {
@@ -151,4 +156,8 @@ func (fo *InputPassword) SetLang(lang Lang) {
 
 func (fo *InputPassword) GetLang() Lang {
 	return fo.lang
+}
+
+func (fo InputPassword) Eval() FormHandler {
+	return &fo
 }

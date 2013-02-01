@@ -1,8 +1,10 @@
 package webby
 
 import (
+	"encoding/gob"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -102,6 +104,7 @@ func (_ SessionMemory) Init(w *Web) {
 		}
 	}
 
+	delete(sessionMap, sesCookie.Value)
 	sesCookie.MaxAge = -1
 	w.SetCookie(sesCookie)
 }
@@ -116,6 +119,78 @@ func (_ SessionMemory) Destroy(w *Web) {
 	case *session:
 		delete(sessionMap, sesCookie.Value)
 	}
+	sesCookie.MaxAge = -1
+	w.SetCookie(sesCookie)
+}
+
+const sessionFileExt = ".wbs"
+
+type SessionFile struct {
+	Path string
+}
+
+func (se SessionFile) Set(w *Web, data interface{}) {
+	sesCookie, err := w.GetCookie(SessionCookieName)
+
+	if err != nil {
+		sesCookie = &http.Cookie{}
+		curtime := time.Now()
+		sesCookie.Name = SessionCookieName
+		sesCookie.Value = fmt.Sprintf("%x%x", uint64ToByte(uint64(curtime.Unix())),
+			uint64ToByte(uint64(curtime.UnixNano())))
+	}
+
+	w.SetCookie(sesCookie)
+	file, err := os.Create(se.Path + "/" + sesCookie.Value + sessionFileExt)
+	defer file.Close()
+	if err != nil {
+		panic(err)
+	}
+	enc := gob.NewEncoder(file)
+	err = enc.Encode(&session{data, time.Now().Add(SessionExpire)})
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (se SessionFile) Init(w *Web) {
+	sesCookie, err := w.GetCookie(SessionCookieName)
+	if err != nil {
+		return
+	}
+
+	file, err := os.Open(se.Path + "/" + sesCookie.Value + sessionFileExt)
+	defer file.Close()
+	if err != nil {
+		return
+	}
+	dec := gob.NewDecoder(file)
+
+	ses := &session{}
+
+	err = dec.Decode(&ses)
+	if err != nil {
+		panic(err)
+	}
+
+	if time.Now().Unix() < ses.getExpire().Unix() {
+		w.Session = ses.getData()
+		ses.hit()
+		return
+	}
+
+	os.Remove(se.Path + "/" + sesCookie.Value + sessionFileExt)
+	sesCookie.MaxAge = -1
+	w.SetCookie(sesCookie)
+}
+
+func (se SessionFile) Destroy(w *Web) {
+	sesCookie, err := w.GetCookie(SessionCookieName)
+	if err != nil {
+		return
+	}
+
+	os.Remove(se.Path + "/" + sesCookie.Value + sessionFileExt)
 	sesCookie.MaxAge = -1
 	w.SetCookie(sesCookie)
 }

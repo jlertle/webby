@@ -2,6 +2,7 @@ package htmlform
 
 import (
 	"bytes"
+	"encoding/gob"
 )
 
 type Select struct {
@@ -12,6 +13,10 @@ type Select struct {
 	Mandatory bool
 	error     error
 	lang      Lang
+}
+
+func init() {
+	gob.Register(Select{})
 }
 
 func (fo *Select) Render(buf *bytes.Buffer) {
@@ -85,4 +90,8 @@ func (fo *Select) SetLang(lang Lang) {
 
 func (fo *Select) GetLang() Lang {
 	return fo.lang
+}
+
+func (fo Select) Eval() FormHandler {
+	return &fo
 }

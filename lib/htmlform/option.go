@@ -2,6 +2,7 @@ package htmlform
 
 import (
 	"bytes"
+	"encoding/gob"
 )
 
 type Option struct {
@@ -9,6 +10,10 @@ type Option struct {
 	Value    string
 	Label    string
 	Selected bool
+}
+
+func init() {
+	gob.Register(Option{})
 }
 
 func (op *Option) Render(buf *bytes.Buffer) {

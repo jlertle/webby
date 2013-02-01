@@ -2,6 +2,7 @@ package htmlform
 
 import (
 	"bytes"
+	"encoding/gob"
 	"fmt"
 	"regexp"
 	"strings"
@@ -20,6 +21,10 @@ type InputText struct {
 	MustMatchErr string
 	error        error
 	lang         Lang
+}
+
+func init() {
+	gob.Register(InputText{})
 }
 
 func (fo *InputText) Render(buf *bytes.Buffer) {
@@ -151,4 +156,8 @@ func (fo *InputText) SetLang(lang Lang) {
 
 func (fo *InputText) GetLang() Lang {
 	return fo.lang
+}
+
+func (fo InputText) Eval() FormHandler {
+	return &fo
 }

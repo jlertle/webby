@@ -41,7 +41,7 @@ func setAntiCSRF() {
 
 func init() {
 	setAntiCSRF()
-	gob.Register(&inputCSRF{})
+	gob.Register(inputCSRF{})
 }
 
 type inputCSRF struct {
@@ -95,4 +95,8 @@ func (fo *inputCSRF) SetLang(lang Lang) {
 
 func (fo *inputCSRF) GetLang() Lang {
 	return fo.lang
+}
+
+func (fo inputCSRF) Eval() FormHandler {
+	return &fo
 }
