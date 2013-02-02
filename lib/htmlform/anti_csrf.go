@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
+	"github.com/CJ-Jackson/webby/lib/cache"
 	"time"
 )
 
@@ -11,12 +12,7 @@ var (
 	AntiCSRFExpire = 1 * time.Hour
 )
 
-type antiCSRF struct {
-	key    string
-	expire time.Time
-}
-
-var _antiCSRF = &antiCSRF{}
+type antiCSRF string
 
 // Convert Unsigned 64-bit Int to Bytes.
 func uint64ToByte(num uint64) [8]byte {
@@ -32,22 +28,29 @@ func uint64ToByte(num uint64) [8]byte {
 	return buf
 }
 
-func setAntiCSRF() {
-	curtime := time.Now()
-	_antiCSRF.key = fmt.Sprintf("%x%x", uint64ToByte(uint64(curtime.Unix())),
-		uint64ToByte(uint64(curtime.UnixNano())))
-	_antiCSRF.expire = curtime.Add(AntiCSRFExpire)
-}
+func getAntiCSRF() string {
+	switch t := cache.Get("_antiCsrf").(type) {
+	case antiCSRF:
+		return string(t)
+	}
 
-func init() {
-	setAntiCSRF()
-	gob.Register(inputCSRF{})
+	curtime := time.Now()
+	key := antiCSRF(fmt.Sprintf("%x%x", uint64ToByte(uint64(curtime.Unix())),
+		uint64ToByte(uint64(curtime.UnixNano()))))
+	cache.SetAdv("_antiCsrf", key, curtime.Add(AntiCSRFExpire))
+
+	return string(key)
 }
 
 type inputCSRF struct {
 	Value string
 	error error
 	lang  Lang
+}
+
+func init() {
+	gob.Register(inputCSRF{})
+	gob.Register(antiCSRF(""))
 }
 
 func (fo *inputCSRF) Render(buf *bytes.Buffer) {
@@ -61,12 +64,10 @@ func (fo *inputCSRF) Render(buf *bytes.Buffer) {
 func (fo *inputCSRF) Validate(values Values, files FileHeaders, single bool) error {
 	fo.Value = values.Get("_anti-CSRF")
 
-	if time.Now().Unix() > _antiCSRF.expire.Unix() {
-		setAntiCSRF()
-	}
+	currentKey := getAntiCSRF()
 
-	if fo.Value != _antiCSRF.key {
-		fo.Value = _antiCSRF.key
+	if fo.Value != currentKey {
+		fo.Value = currentKey
 		return FormError(fo.lang["ErrAntiCSRF"])
 	}
 

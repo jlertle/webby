@@ -12,7 +12,6 @@ import (
 	"net/textproto"
 	"net/url"
 	"strconv"
-	"time"
 )
 
 type Lang map[string]string
@@ -119,11 +118,7 @@ func New(lang lang.Lang, formhandlers ...FormHandler) *Form {
 	}
 	form := &Form{lang: langg}
 
-	if time.Now().Unix() > _antiCSRF.expire.Unix() {
-		setAntiCSRF()
-	}
-
-	form.fields = append(form.fields, &inputCSRF{Value: _antiCSRF.key})
+	form.fields = append(form.fields, &inputCSRF{Value: getAntiCSRF()})
 	form.fields = append(form.fields, formhandlers...)
 	for _, field := range form.fields {
 		field.SetLang(form.lang)
@@ -225,10 +220,7 @@ func (f *Form) JSON() string {
 
 // Get AntiCSRF Key
 func (f *Form) GetAntiCSRFKey() string {
-	if time.Now().Unix() > _antiCSRF.expire.Unix() {
-		setAntiCSRF()
-	}
-	return _antiCSRF.key
+	return getAntiCSRF()
 }
 
 func htmlRender(buf *bytes.Buffer, htmlstr string, value_map interface{}) {
