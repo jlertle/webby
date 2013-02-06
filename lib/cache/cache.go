@@ -5,6 +5,7 @@ import (
 	"encoding/gob"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 )
 
@@ -18,7 +19,10 @@ func init() {
 }
 
 var (
-	cache_list             = map[string]interface{}{}
+	cache_list = struct {
+		sync.RWMutex
+		m map[string]interface{}
+	}{m: map[string]interface{}{}}
 	cacheExpiryCheckActive = false
 )
 
@@ -37,18 +41,24 @@ func (c CacheMemory) Set(key string, value interface{}) {
 }
 
 func (_ CacheMemory) SetAdv(key string, value interface{}, expire time.Time) {
+	cache_list.Lock()
+	defer cache_list.Unlock()
+
 	if !cacheExpiryCheckActive {
 		cacheExpiryCheckActive = true
 		go cacheExpiryCheck()
 	}
-	cache_list[key] = cache{value, expire}
+	cache_list.m[key] = cache{value, expire}
 }
 
-func (_ CacheMemory) Get(key string) interface{} {
-	switch t := cache_list[key].(type) {
+func (c CacheMemory) Get(key string) interface{} {
+	cache_list.RLock()
+	defer cache_list.RUnlock()
+
+	switch t := cache_list.m[key].(type) {
 	case cache:
 		if time.Now().Unix() > t.Expire.Unix() {
-			delete(cache_list, key)
+			c.Delete(key)
 			return nil
 		}
 		return t.Content
@@ -57,17 +67,22 @@ func (_ CacheMemory) Get(key string) interface{} {
 }
 
 func (_ CacheMemory) Delete(key string) {
-	delete(cache_list, key)
+	cache_list.Lock()
+	defer cache_list.Unlock()
+	delete(cache_list.m, key)
 }
 
-func (_ CacheMemory) Purge(beginWith string) {
+func (c CacheMemory) Purge(beginWith string) {
+	cache_list.RLock()
+	defer cache_list.RUnlock()
+
 	beginWith_len := len(beginWith)
-	for key, _ := range cache_list {
+	for key, _ := range cache_list.m {
 		if len(key) < beginWith_len {
 			continue
 		}
 		if beginWith == key[:beginWith_len] {
-			delete(cache_list, key)
+			c.Delete(key)
 		}
 	}
 }
@@ -162,18 +177,27 @@ func Purge(beginWith string) {
 func cacheExpiryCheck() {
 	for {
 		time.Sleep(10 * time.Minute)
-		if len(cache_list) <= 0 {
+
+		cache_list.Lock()
+		cache_list.RLock()
+
+		if len(cache_list.m) <= 0 {
 			cacheExpiryCheckActive = false
+			cache_list.Unlock()
+			cache_list.RUnlock()
 			break
 		}
 		curtime := time.Now()
-		for key, value := range cache_list {
+		for key, value := range cache_list.m {
 			switch t := value.(type) {
 			case cache:
 				if curtime.Unix() > t.Expire.Unix() {
-					delete(cache_list, key)
+					delete(cache_list.m, key)
 				}
 			}
 		}
+
+		cache_list.Lock()
+		cache_list.Unlock()
 	}
 }

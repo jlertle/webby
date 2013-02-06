@@ -5,6 +5,7 @@ import (
 	html "html/template"
 	"io"
 	"io/ioutil"
+	"sync"
 	"time"
 )
 
@@ -71,7 +72,10 @@ type htmlFileCacheStruct struct {
 	expire  time.Time
 }
 
-var htmlFileCache = map[string]interface{}{}
+var htmlFileCache = struct {
+	sync.RWMutex
+	m map[string]interface{}
+}{m: map[string]interface{}{}}
 
 var HtmlTemplateCacheExpire = 24 * time.Hour
 
@@ -83,7 +87,10 @@ func (w *Web) GetHtmlFile(htmlfile string) string {
 	var content_in_byte []byte
 	var err error
 
-	switch t := htmlFileCache[htmlfile].(type) {
+	htmlFileCache.RLock()
+	defer htmlFileCache.RUnlock()
+
+	switch t := htmlFileCache.m[htmlfile].(type) {
 	case htmlFileCacheStruct:
 		if time.Now().Unix() > t.expire.Unix() {
 			goto getfile_and_cache
@@ -99,7 +106,9 @@ getfile_and_cache:
 	}
 	content = string(content_in_byte)
 	if !DEBUG {
-		htmlFileCache[htmlfile] = htmlFileCacheStruct{content, time.Now().Add(HtmlTemplateCacheExpire)}
+		htmlFileCache.Lock()
+		defer htmlFileCache.Unlock()
+		htmlFileCache.m[htmlfile] = htmlFileCacheStruct{content, time.Now().Add(HtmlTemplateCacheExpire)}
 	}
 
 return_content:

@@ -6,16 +6,36 @@ import (
 	"strings"
 )
 
-// Use host name as string (e.g example.com)
-type VHost map[string]BootRoute
+type vHost struct {
+	name string
+	boot BootRoute
+}
 
-func (v VHost) View(w *Web) {
-	for host, bootroute := range v {
-		if len(host) > len(w.Req.Host) {
+// Use host name as string (e.g example.com)
+type VHost struct {
+	hosts []vHost
+}
+
+// Use host name as string (e.g example.com)
+type VHostMap map[string]BootRoute
+
+func NewVHost(hosts VHostMap) *VHost {
+	v := &VHost{}
+
+	for host, bootroute := range hosts {
+		v.hosts = append(v.hosts, vHost{host, bootroute})
+	}
+
+	return v
+}
+
+func (v *VHost) View(w *Web) {
+	for _, host := range v.hosts {
+		if len(host.name) > len(w.Req.Host) {
 			continue
 		}
-		if strings.ToLower(host) == strings.ToLower(w.Req.Host[:len(host)]) {
-			bootroute.View(w)
+		if strings.ToLower(host.name) == strings.ToLower(w.Req.Host[:len(host.name)]) {
+			host.boot.View(w)
 			return
 		}
 	}

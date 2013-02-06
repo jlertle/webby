@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 )
 
@@ -45,7 +46,10 @@ type sessionInterface interface {
 	hit()
 }
 
-var sessionMap = map[string]sessionInterface{}
+var sessionMap = struct {
+	sync.RWMutex
+	m map[string]sessionInterface
+}{m: map[string]sessionInterface{}}
 
 // Convert Unsigned 64-bit Int to Bytes.
 func uint64ToByte(num uint64) [8]byte {
@@ -70,6 +74,9 @@ type SessionHandler interface {
 type SessionMemory struct{}
 
 func (_ SessionMemory) Set(w *Web, data interface{}) {
+	sessionMap.Lock()
+	defer sessionMap.Unlock()
+
 	if !sessionExpiryCheckActive {
 		sessionExpiryCheckActive = true
 		go sessionExpiryCheck()
@@ -86,16 +93,21 @@ func (_ SessionMemory) Set(w *Web, data interface{}) {
 	}
 
 	w.SetCookie(sesCookie)
-	sessionMap[sesCookie.Value] = &session{data, time.Now().Add(SessionExpire)}
+	sessionMap.m[sesCookie.Value] = &session{data, time.Now().Add(SessionExpire)}
 }
 
 func (_ SessionMemory) Init(w *Web) {
+	sessionMap.Lock()
+	sessionMap.RLock()
+	defer sessionMap.Unlock()
+	defer sessionMap.RUnlock()
+
 	sesCookie, err := w.GetCookie(SessionCookieName)
 	if err != nil {
 		return
 	}
 
-	switch t := sessionMap[sesCookie.Value].(type) {
+	switch t := sessionMap.m[sesCookie.Value].(type) {
 	case *session:
 		if time.Now().Unix() < t.getExpire().Unix() {
 			w.Session = t.getData()
@@ -104,20 +116,23 @@ func (_ SessionMemory) Init(w *Web) {
 		}
 	}
 
-	delete(sessionMap, sesCookie.Value)
+	delete(sessionMap.m, sesCookie.Value)
 	sesCookie.MaxAge = -1
 	w.SetCookie(sesCookie)
 }
 
 func (_ SessionMemory) Destroy(w *Web) {
+	sessionMap.Lock()
+	defer sessionMap.Unlock()
+
 	sesCookie, err := w.GetCookie(SessionCookieName)
 	if err != nil {
 		return
 	}
 
-	switch sessionMap[sesCookie.Value].(type) {
+	switch sessionMap.m[sesCookie.Value].(type) {
 	case *session:
-		delete(sessionMap, sesCookie.Value)
+		delete(sessionMap.m, sesCookie.Value)
 	}
 	sesCookie.MaxAge = -1
 	w.SetCookie(sesCookie)
@@ -217,14 +232,23 @@ func sessionExpiryCheck() {
 	for {
 		time.Sleep(SessionExpiryCheckInterval)
 		curtime := time.Now()
-		if len(sessionMap) <= 0 {
+
+		sessionMap.Lock()
+		sessionMap.RLock()
+
+		if len(sessionMap.m) <= 0 {
 			sessionExpiryCheckActive = false
+			sessionMap.Unlock()
+			sessionMap.RUnlock()
 			break
 		}
-		for key, value := range sessionMap {
+		for key, value := range sessionMap.m {
 			if curtime.Unix() > value.getExpire().Unix() {
-				delete(sessionMap, key)
+				delete(sessionMap.m, key)
 			}
 		}
+
+		sessionMap.Unlock()
+		sessionMap.RUnlock()
 	}
 }

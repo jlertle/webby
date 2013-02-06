@@ -2,19 +2,25 @@ package webby
 
 import (
 	"fmt"
+	"sync"
 )
 
 type URLReverseMap map[string]string
 
 type URLReverse struct {
+	sync.RWMutex
 	urls URLReverseMap
 }
 
 func (u *URLReverse) register(name, format string) {
+	u.Lock()
+	defer u.Unlock()
 	u.urls[name] = format
 }
 
 func (u *URLReverse) initUrls() {
+	u.Lock()
+	defer u.Unlock()
 	if u.urls == nil {
 		u.urls = URLReverseMap{}
 	}
@@ -44,6 +50,8 @@ func (u *URLReverse) RegisterMap(urls URLReverseMap) *URLReverse {
 
 // Print relative URL to string
 func (u *URLReverse) Print(name string, a ...interface{}) string {
+	u.RLock()
+	defer u.RUnlock()
 	return fmt.Sprintf(u.urls[name], a...)
 }
 
