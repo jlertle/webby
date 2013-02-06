@@ -123,7 +123,9 @@ func (_ SessionMemory) Init(w *Web) {
 
 func (_ SessionMemory) Destroy(w *Web) {
 	sessionMap.Lock()
+	sessionMap.RLock()
 	defer sessionMap.Unlock()
+	defer sessionMap.RUnlock()
 
 	sesCookie, err := w.GetCookie(SessionCookieName)
 	if err != nil {
