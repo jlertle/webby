@@ -87,8 +87,8 @@ func (w *Web) GetHtmlFile(htmlfile string) string {
 	var content_in_byte []byte
 	var err error
 
-	htmlFileCache.RLock()
-	defer htmlFileCache.RUnlock()
+	htmlFileCache.Lock()
+	defer htmlFileCache.Unlock()
 
 	switch t := htmlFileCache.m[htmlfile].(type) {
 	case htmlFileCacheStruct:
@@ -106,8 +106,8 @@ getfile_and_cache:
 	}
 	content = string(content_in_byte)
 	if !DEBUG {
-		htmlFileCache.Lock()
-		defer htmlFileCache.Unlock()
+		//htmlFileCache.Lock()
+		//defer htmlFileCache.Unlock()
 		htmlFileCache.m[htmlfile] = htmlFileCacheStruct{content, time.Now().Add(HtmlTemplateCacheExpire)}
 	}
 
