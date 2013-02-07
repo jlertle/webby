@@ -1,12 +1,25 @@
 package webby
 
+import (
+	"sync"
+)
+
 type BootstrapHandler interface {
 	Boot(*Web)
 }
 
 // Bootstrap Struct
 type Bootstrap struct {
+	sync.RWMutex
 	functions []func(*Web)
+}
+
+func (boot *Bootstrap) getFunction() []func(*Web) {
+	boot.RLock()
+	defer boot.RUnlock()
+	functions := []func(*Web){}
+	functions = append(functions, boot.functions...)
+	return functions
 }
 
 // Register Functions to Bootstrap.
@@ -39,7 +52,7 @@ func NewBootstrapRegHandler(handlers ...BootstrapHandler) *Bootstrap {
 
 // Load Functions in Bootstrap.
 func (boot *Bootstrap) Load(web *Web) {
-	for _, function := range boot.functions {
+	for _, function := range boot.getFunction() {
 		function(web)
 		if web.CutOut() {
 			return
