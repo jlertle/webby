@@ -13,7 +13,7 @@ type vHost struct {
 
 // Use host name as string (e.g example.com)
 type VHost struct {
-	hosts []vHost
+	hosts []*vHost
 }
 
 // Use host name as string (e.g example.com)
@@ -23,7 +23,7 @@ func NewVHost(hosts VHostMap) *VHost {
 	v := &VHost{}
 
 	for host, bootroute := range hosts {
-		v.hosts = append(v.hosts, vHost{host, bootroute})
+		v.hosts = append(v.hosts, &vHost{host, bootroute})
 	}
 
 	return v
