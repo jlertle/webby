@@ -106,8 +106,6 @@ getfile_and_cache:
 	}
 	content = string(content_in_byte)
 	if !DEBUG {
-		//htmlFileCache.Lock()
-		//defer htmlFileCache.Unlock()
 		htmlFileCache.m[htmlfile] = htmlFileCacheStruct{content, time.Now().Add(HtmlTemplateCacheExpire)}
 	}
 

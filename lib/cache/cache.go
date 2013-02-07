@@ -193,6 +193,6 @@ func cacheExpiryCheck() {
 			}
 		}
 
-		cache_list.Unlock()
+		cache_list.RUnlock()
 	}
 }
