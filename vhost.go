@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"sync"
 )
 
 type vHost struct {
@@ -13,6 +14,7 @@ type vHost struct {
 
 // Use host name as string (e.g example.com)
 type VHost struct {
+	sync.RWMutex
 	hosts []*vHost
 }
 
@@ -29,8 +31,16 @@ func NewVHost(hosts VHostMap) *VHost {
 	return v
 }
 
+func (v *VHost) getHosts() []*vHost {
+	v.RLock()
+	defer v.RUnlock()
+	hosts := []*vHost{}
+	hosts = append(hosts, v.hosts...)
+	return hosts
+}
+
 func (v *VHost) View(w *Web) {
-	for _, host := range v.hosts {
+	for _, host := range v.getHosts() {
 		if len(host.name) > len(w.Req.Host) {
 			continue
 		}
@@ -67,6 +77,7 @@ func (vh vHostRegs) Swap(i, j int) {
 }
 
 type VHostRegExp struct {
+	sync.RWMutex
 	vhost vHostRegs
 }
 
@@ -74,6 +85,14 @@ func NewVHostMap(hostmap VHostRegExpMap) *VHostRegExp {
 	vh := &VHostRegExp{}
 	vh.registerMap(hostmap)
 	return vh
+}
+
+func (vh *VHostRegExp) getHosts() vHostRegs {
+	vh.RLock()
+	defer vh.RUnlock()
+	hosts := vHostRegs{}
+	hosts = append(hosts, vh.vhost...)
+	return hosts
 }
 
 func (vh *VHostRegExp) register(RegExpRule string, bootroute BootRoute) {
@@ -104,7 +123,7 @@ func (vh *VHostRegExp) AddMap(hostmap VHostRegExpMap) {
 }
 
 func (vh *VHostRegExp) View(w *Web) {
-	for _, host := range vh.vhost {
+	for _, host := range vh.getHosts() {
 		if !host.RegExpComplied.MatchString(w.Req.Host) {
 			continue
 		}

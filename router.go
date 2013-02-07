@@ -3,6 +3,7 @@ package webby
 import (
 	"regexp"
 	"sort"
+	"sync"
 )
 
 type Param map[string]string
@@ -90,7 +91,16 @@ func (ro routes) Swap(i, j int) {
 
 // Router (Controller)
 type Router struct {
+	sync.RWMutex
 	routes routes
+}
+
+func (ro *Router) getRoutes() routes {
+	ro.RLock()
+	defer ro.RUnlock()
+	route := routes{}
+	route = append(route, ro.routes...)
+	return route
 }
 
 func (ro *Router) register(RegExpRule string, Function func(*Web)) {
@@ -165,7 +175,7 @@ func (ro *Router) load(w *Web, reset bool) bool {
 		w.curpath = ""
 	}
 
-	for _, route := range ro.routes {
+	for _, route := range ro.getRoutes() {
 		if !route.RegExpComplied.MatchString(w.path) {
 			continue
 		}
@@ -194,7 +204,7 @@ func (ro *Router) debug(w *Web) {
 	w.Print("404 Not Found\r\n\r\n")
 	w.Print(w.Req.Host+w.curpath, "\r\n\r\n")
 	w.Print("Rule(s):\r\n")
-	for _, route := range ro.routes {
+	for _, route := range ro.getRoutes() {
 		w.Print(route.RegExp, "\r\n")
 	}
 }
