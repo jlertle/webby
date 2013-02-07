@@ -118,8 +118,6 @@ func (_ SessionMemory) Init(w *Web) {
 		}
 	}
 
-	sessionMap.Unlock()
-
 	deleteSessionFromMap(sesCookie.Value)
 	sesCookie.MaxAge = -1
 	w.SetCookie(sesCookie)
@@ -237,12 +235,10 @@ func sessionExpiryCheck() {
 		time.Sleep(SessionExpiryCheckInterval)
 		curtime := time.Now()
 
-		sessionMap.Lock()
 		sessionMap.RLock()
 
 		if len(sessionMap.m) <= 0 {
 			sessionExpiryCheckActive = false
-			sessionMap.Unlock()
 			sessionMap.RUnlock()
 			break
 		}
@@ -252,7 +248,6 @@ func sessionExpiryCheck() {
 			}
 		}
 
-		sessionMap.Unlock()
 		sessionMap.RUnlock()
 	}
 }

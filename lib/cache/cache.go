@@ -176,12 +176,10 @@ func cacheExpiryCheck() {
 	for {
 		time.Sleep(10 * time.Minute)
 
-		cache_list.Lock()
 		cache_list.RLock()
 
 		if len(cache_list.m) <= 0 {
 			cacheExpiryCheckActive = false
-			cache_list.Unlock()
 			cache_list.RUnlock()
 			break
 		}
@@ -195,7 +193,6 @@ func cacheExpiryCheck() {
 			}
 		}
 
-		cache_list.Lock()
 		cache_list.Unlock()
 	}
 }
