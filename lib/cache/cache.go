@@ -67,8 +67,6 @@ func (c CacheMemory) Get(key string) interface{} {
 }
 
 func (_ CacheMemory) Delete(key string) {
-	cache_list.Lock()
-	defer cache_list.Unlock()
 	delete(cache_list.m, key)
 }
 

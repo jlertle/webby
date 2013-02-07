@@ -96,11 +96,13 @@ func (_ SessionMemory) Set(w *Web, data interface{}) {
 	sessionMap.m[sesCookie.Value] = &session{data, time.Now().Add(SessionExpire)}
 }
 
+func deleteSessionFromMap(key string) {
+	delete(sessionMap.m, key)
+}
+
 func (_ SessionMemory) Init(w *Web) {
 	sessionMap.Lock()
-	sessionMap.RLock()
 	defer sessionMap.Unlock()
-	defer sessionMap.RUnlock()
 
 	sesCookie, err := w.GetCookie(SessionCookieName)
 	if err != nil {
@@ -116,15 +118,15 @@ func (_ SessionMemory) Init(w *Web) {
 		}
 	}
 
-	delete(sessionMap.m, sesCookie.Value)
+	sessionMap.Unlock()
+
+	deleteSessionFromMap(sesCookie.Value)
 	sesCookie.MaxAge = -1
 	w.SetCookie(sesCookie)
 }
 
 func (_ SessionMemory) Destroy(w *Web) {
-	sessionMap.Lock()
 	sessionMap.RLock()
-	defer sessionMap.Unlock()
 	defer sessionMap.RUnlock()
 
 	sesCookie, err := w.GetCookie(SessionCookieName)
@@ -134,7 +136,7 @@ func (_ SessionMemory) Destroy(w *Web) {
 
 	switch sessionMap.m[sesCookie.Value].(type) {
 	case *session:
-		delete(sessionMap.m, sesCookie.Value)
+		deleteSessionFromMap(sesCookie.Value)
 	}
 	sesCookie.MaxAge = -1
 	w.SetCookie(sesCookie)
