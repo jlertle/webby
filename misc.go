@@ -22,6 +22,10 @@ func toFloat(number string) (float64, error) {
 
 func (w *Web) initTrueHost() {
 	switch {
+	case w.Env.Get("Host") != "":
+		w.Req.Host = w.Env.Get("Host")
+		w.Req.URL.Host = w.Env.Get("Host")
+		return
 	case w.Env.Get("X-Forwarded-Host") != "":
 		w.Req.Host = w.Env.Get("X-Forwarded-Host")
 		w.Req.URL.Host = w.Env.Get("X-Forwarded-Host")
@@ -36,7 +40,11 @@ func (w *Web) initTrueHost() {
 }
 
 func (w *Web) initTrueRemoteAddr() {
-	if w.Env.Get("X-Forwarded-For") != "" {
+	switch {
+	case w.Env.Get("X-Real-Ip") != "":
+		w.Req.RemoteAddr = w.Env.Get("X-Real-Ip") + ":1234"
+		return
+	case w.Env.Get("X-Forwarded-For") != "":
 		w.Req.RemoteAddr = w.Env.Get("X-Forwarded-For") + ":1234"
 		return
 	}
