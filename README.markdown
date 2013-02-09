@@ -68,4 +68,6 @@ http://go.pkgdoc.org/github.com/CJ-Jackson/webby
 
 ## Note ##
 
-Webby here will only cover two components of the MVC, the View and the Controller, it's come with no Model, I decided not to include ORM because SQL is no longer the exclusive Database System as it once was years ago.  Basically use an existing dedicated ORM framework such as <https://github.com/astaxie/beedb> or <https://github.com/coopernurse/gorp>!  It should be easy to integrate into the web framework!
+Webby here will only cover two components of the MVC, the View and the Controller, the Model is up to you, I decided not to include ORM because SQL is no longer the exclusive Database System as it once was years ago (Now there NoSQL).  Basically use an existing dedicated ORM framework such as <https://github.com/astaxie/beedb> or <https://github.com/coopernurse/gorp>!  It should be easy to integrate into the web framework!
+
+You can build your own database system, I don't recommend that!
