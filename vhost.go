@@ -81,7 +81,7 @@ type VHostRegExp struct {
 	vhost vHostRegs
 }
 
-func NewVHostMap(hostmap VHostRegExpMap) *VHostRegExp {
+func NewVHostRegExp(hostmap VHostRegExpMap) *VHostRegExp {
 	vh := &VHostRegExp{}
 	vh.registerMap(hostmap)
 	return vh
