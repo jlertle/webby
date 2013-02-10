@@ -61,7 +61,7 @@ func (pa Param) GetFloat32(name string) float32 {
 type routerItem struct {
 	RegExp         string
 	RegExpComplied *regexp.Regexp
-	Function       func(*Web)
+	Route          RouteHandler
 }
 
 // Route Map, use RegExp as key!
@@ -103,20 +103,20 @@ func (ro *Router) getRoutes() routes {
 	return route
 }
 
-func (ro *Router) register(RegExpRule string, Function func(*Web)) {
+func (ro *Router) register(RegExpRule string, handler RouteHandler) {
 	for _, route := range ro.routes {
 		if route.RegExp == RegExpRule {
-			route.Function = Function
+			route.Route = handler
 			return
 		}
 	}
 
-	ro.routes = append(ro.routes, &routerItem{RegExpRule, regexp.MustCompile(RegExpRule), Function})
+	ro.routes = append(ro.routes, &routerItem{RegExpRule, regexp.MustCompile(RegExpRule), handler})
 }
 
 // Register rule and function to Router
 func (ro *Router) Register(RegExpRule string, Function func(*Web)) {
-	ro.register(RegExpRule, Function)
+	ro.register(RegExpRule, FuncToRouteHandler{Function})
 	sort.Sort(ro.routes)
 }
 
@@ -127,7 +127,7 @@ func (ro *Router) RegisterMap(routeMap RouteMap) {
 	}
 
 	for rule, function := range routeMap {
-		ro.register(rule, function)
+		ro.register(rule, FuncToRouteHandler{function})
 	}
 	sort.Sort(ro.routes)
 }
@@ -138,16 +138,9 @@ func NewRouterMap(routeMap RouteMap) *Router {
 	return ro
 }
 
-func (ro *Router) registerHandler(RegExpRule string, handler RouteHandler) {
-	ahandler := handler
-	ro.register(RegExpRule, func(w *Web) {
-		ahandler.View(w)
-	})
-}
-
 // Register rule and handler to Router
 func (ro *Router) RegisterHandler(RegExpRule string, handler RouteHandler) {
-	ro.registerHandler(RegExpRule, handler)
+	ro.register(RegExpRule, handler)
 	sort.Sort(ro.routes)
 }
 
@@ -158,7 +151,7 @@ func (ro *Router) RegisterHandlerMap(routeHandlerMap RouteHandlerMap) {
 	}
 
 	for rule, handler := range routeHandlerMap {
-		ro.registerHandler(rule, handler)
+		ro.register(rule, handler)
 	}
 	sort.Sort(ro.routes)
 }
@@ -193,7 +186,7 @@ func (ro *Router) load(w *Web, reset bool) bool {
 
 		w.path = w.path[route.RegExpComplied.FindStringIndex(w.path)[1]:]
 
-		route.Function(w)
+		route.Route.View(w)
 		return true
 	}
 	return false

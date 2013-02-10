@@ -8,23 +8,33 @@ type BootstrapHandler interface {
 	Boot(*Web)
 }
 
+type FuncToBootstrapHandler struct {
+	function func(*Web)
+}
+
+func (fn FuncToBootstrapHandler) Boot(w *Web) {
+	fn.function(w)
+}
+
 // Bootstrap Struct
 type Bootstrap struct {
 	sync.RWMutex
-	functions []func(*Web)
+	boots []BootstrapHandler
 }
 
-func (boot *Bootstrap) getFunction() []func(*Web) {
+func (boot *Bootstrap) getBoots() []BootstrapHandler {
 	boot.RLock()
 	defer boot.RUnlock()
-	functions := []func(*Web){}
-	functions = append(functions, boot.functions...)
-	return functions
+	boots := []BootstrapHandler{}
+	boots = append(boots, boot.boots...)
+	return boots
 }
 
 // Register Functions to Bootstrap.
 func (boot *Bootstrap) Register(functions ...func(*Web)) {
-	boot.functions = append(boot.functions, functions...)
+	for _, function := range functions {
+		boot.boots = append(boot.boots, FuncToBootstrapHandler{function})
+	}
 }
 
 func NewBootstrapReg(functions ...func(*Web)) *Bootstrap {
@@ -35,13 +45,7 @@ func NewBootstrapReg(functions ...func(*Web)) *Bootstrap {
 
 // Register Handler to Bootstrap.
 func (boot *Bootstrap) RegisterHandler(handlers ...BootstrapHandler) {
-	for _, handler := range handlers {
-		ahandler := handler
-		Function := func(w *Web) {
-			ahandler.Boot(w)
-		}
-		boot.functions = append(boot.functions, Function)
-	}
+	boot.boots = append(boot.boots, handlers...)
 }
 
 func NewBootstrapRegHandler(handlers ...BootstrapHandler) *Bootstrap {
@@ -52,8 +56,8 @@ func NewBootstrapRegHandler(handlers ...BootstrapHandler) *Bootstrap {
 
 // Load Functions in Bootstrap.
 func (boot *Bootstrap) Load(web *Web) {
-	for _, function := range boot.getFunction() {
-		function(web)
+	for _, bt := range boot.getBoots() {
+		bt.Boot(web)
 		if web.CutOut() {
 			return
 		}
