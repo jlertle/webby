@@ -73,7 +73,7 @@ type htmlFileCacheStruct struct {
 }
 
 var htmlFileCache = struct {
-	sync.RWMutex
+	sync.Mutex
 	m map[string]interface{}
 }{m: map[string]interface{}{}}
 

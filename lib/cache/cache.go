@@ -20,7 +20,7 @@ func init() {
 
 var (
 	cache_list = struct {
-		sync.RWMutex
+		sync.Mutex
 		m map[string]interface{}
 	}{m: map[string]interface{}{}}
 	cacheExpiryCheckActive = false
@@ -52,13 +52,13 @@ func (_ CacheMemory) SetAdv(key string, value interface{}, expire time.Time) {
 }
 
 func (c CacheMemory) Get(key string) interface{} {
-	cache_list.RLock()
-	defer cache_list.RUnlock()
+	cache_list.Lock()
+	defer cache_list.Unlock()
 
 	switch t := cache_list.m[key].(type) {
 	case cache:
 		if time.Now().Unix() > t.Expire.Unix() {
-			c.Delete(key)
+			c.delete(key)
 			return nil
 		}
 		return t.Content
@@ -66,13 +66,19 @@ func (c CacheMemory) Get(key string) interface{} {
 	return nil
 }
 
-func (_ CacheMemory) Delete(key string) {
+func (_ CacheMemory) delete(key string) {
 	delete(cache_list.m, key)
 }
 
+func (c CacheMemory) Delete(key string) {
+	cache_list.Lock()
+	defer cache_list.Unlock()
+	c.delete(key)
+}
+
 func (c CacheMemory) Purge(beginWith string) {
-	cache_list.RLock()
-	defer cache_list.RUnlock()
+	cache_list.Lock()
+	defer cache_list.Unlock()
 
 	beginWith_len := len(beginWith)
 	for key, _ := range cache_list.m {
@@ -80,7 +86,7 @@ func (c CacheMemory) Purge(beginWith string) {
 			continue
 		}
 		if beginWith == key[:beginWith_len] {
-			c.Delete(key)
+			c.delete(key)
 		}
 	}
 }
@@ -176,11 +182,11 @@ func cacheExpiryCheck() {
 	for {
 		time.Sleep(10 * time.Minute)
 
-		cache_list.RLock()
+		cache_list.Lock()
 
 		if len(cache_list.m) <= 0 {
 			cacheExpiryCheckActive = false
-			cache_list.RUnlock()
+			cache_list.Unlock()
 			break
 		}
 		curtime := time.Now()
@@ -193,6 +199,6 @@ func cacheExpiryCheck() {
 			}
 		}
 
-		cache_list.RUnlock()
+		cache_list.Unlock()
 	}
 }

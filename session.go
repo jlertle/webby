@@ -47,7 +47,7 @@ type sessionInterface interface {
 }
 
 var sessionMap = struct {
-	sync.RWMutex
+	sync.Mutex
 	m map[string]sessionInterface
 }{m: map[string]sessionInterface{}}
 
@@ -124,8 +124,8 @@ func (_ SessionMemory) Init(w *Web) {
 }
 
 func (_ SessionMemory) Destroy(w *Web) {
-	sessionMap.RLock()
-	defer sessionMap.RUnlock()
+	sessionMap.Lock()
+	defer sessionMap.Unlock()
 
 	sesCookie, err := w.GetCookie(SessionCookieName)
 	if err != nil {
@@ -235,11 +235,11 @@ func sessionExpiryCheck() {
 		time.Sleep(SessionExpiryCheckInterval)
 		curtime := time.Now()
 
-		sessionMap.RLock()
+		sessionMap.Lock()
 
 		if len(sessionMap.m) <= 0 {
 			sessionExpiryCheckActive = false
-			sessionMap.RUnlock()
+			sessionMap.Unlock()
 			break
 		}
 		for key, value := range sessionMap.m {
@@ -248,6 +248,6 @@ func sessionExpiryCheck() {
 			}
 		}
 
-		sessionMap.RUnlock()
+		sessionMap.Unlock()
 	}
 }
