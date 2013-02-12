@@ -20,10 +20,10 @@ func init() {
 	gob.Register(Lang{})
 }
 
-var defaultLang = Lang(lang.EnglishGB)
+var defaultLang = "EnglishGB"
 
-func DefaultLang(lang lang.Lang) {
-	defaultLang = Lang(lang)
+func DefaultLang(str string) {
+	defaultLang = str
 }
 
 type Values url.Values
@@ -109,12 +109,12 @@ func init() {
 }
 
 // Construct New Form Helper
-func New(lang lang.Lang, formhandlers ...FormHandler) *Form {
+func New(lng lang.Lang, formhandlers ...FormHandler) *Form {
 	var langg Lang
-	if lang == nil {
-		langg = defaultLang
+	if lng == nil {
+		langg = Lang(lang.Langs.Get(defaultLang))
 	} else {
-		langg = Lang(lang)
+		langg = Lang(lng)
 	}
 	form := &Form{lang: langg}
 
@@ -124,6 +124,12 @@ func New(lang lang.Lang, formhandlers ...FormHandler) *Form {
 		field.SetLang(form.lang)
 	}
 	return form
+}
+
+// Construct New Form Helper and Get Language by String
+func NewLang(langstr string, formhandlers ...FormHandler) *Form {
+	langg := lang.Langs.Get(langstr)
+	return New(langg, formhandlers...)
 }
 
 func (f *Form) Render() string {
