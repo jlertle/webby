@@ -13,6 +13,8 @@ import (
 // Debug Mode
 var DEBUG = false
 
+var RootView RouteHandler = BootRoute{Boot, Route}
+
 type webInterface interface {
 	http.ResponseWriter
 	http.Hijacker
@@ -72,8 +74,7 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	web.debugStart()
 	defer web.debugEnd()
 
-	bootRoute := BootRoute{Boot, Route}
-	bootRoute.View(web)
+	RootView.View(web)
 
 	if web.CutOut() {
 		return
