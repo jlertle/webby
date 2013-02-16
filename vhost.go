@@ -107,6 +107,9 @@ func (vh *VHostRegExp) register(RegExpRule string, bootroute BootRoute) {
 }
 
 func (vh *VHostRegExp) registerMap(hostmap VHostRegExpMap) {
+	vh.Lock()
+	defer vh.Unlock()
+
 	if vh.vhost == nil {
 		vh.vhost = vHostRegs{}
 	}

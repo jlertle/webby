@@ -104,6 +104,8 @@ func (ro *Router) getRoutes() routes {
 }
 
 func (ro *Router) register(RegExpRule string, handler RouteHandler) {
+	ro.Lock()
+	defer ro.Unlock()
 	for _, route := range ro.routes {
 		if route.RegExp == RegExpRule {
 			route.Route = handler
@@ -112,6 +114,12 @@ func (ro *Router) register(RegExpRule string, handler RouteHandler) {
 	}
 
 	ro.routes = append(ro.routes, &routerItem{RegExpRule, regexp.MustCompile(RegExpRule), handler})
+}
+
+func (ro *Router) sortout() {
+	ro.Lock()
+	defer ro.Unlock()
+	sort.Sort(ro.routes)
 }
 
 // Register rule and function to Router
@@ -129,7 +137,7 @@ func (ro *Router) RegisterMap(routeMap RouteMap) {
 	for rule, function := range routeMap {
 		ro.register(rule, FuncToRouteHandler{function})
 	}
-	sort.Sort(ro.routes)
+	ro.sortout()
 }
 
 func NewRouterMap(routeMap RouteMap) *Router {
@@ -141,7 +149,7 @@ func NewRouterMap(routeMap RouteMap) *Router {
 // Register rule and handler to Router
 func (ro *Router) RegisterHandler(RegExpRule string, handler RouteHandler) {
 	ro.register(RegExpRule, handler)
-	sort.Sort(ro.routes)
+	ro.sortout()
 }
 
 // Register Handler Map to Router
@@ -153,7 +161,7 @@ func (ro *Router) RegisterHandlerMap(routeHandlerMap RouteHandlerMap) {
 	for rule, handler := range routeHandlerMap {
 		ro.register(rule, handler)
 	}
-	sort.Sort(ro.routes)
+	ro.sortout()
 }
 
 func NewRouterHandlerMap(routeHandlerMap RouteHandlerMap) *Router {

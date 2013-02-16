@@ -32,6 +32,8 @@ func (boot *Bootstrap) getBoots() []BootstrapHandler {
 
 // Register Functions to Bootstrap.
 func (boot *Bootstrap) Register(functions ...func(*Web)) {
+	boot.Lock()
+	defer boot.Unlock()
 	for _, function := range functions {
 		boot.boots = append(boot.boots, FuncToBootstrapHandler{function})
 	}
@@ -45,6 +47,8 @@ func NewBootstrapReg(functions ...func(*Web)) *Bootstrap {
 
 // Register Handler to Bootstrap.
 func (boot *Bootstrap) RegisterHandler(handlers ...BootstrapHandler) {
+	boot.Lock()
+	defer boot.Unlock()
 	boot.boots = append(boot.boots, handlers...)
 }
 
