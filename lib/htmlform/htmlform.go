@@ -118,7 +118,12 @@ func New(lng lang.Lang, formhandlers ...FormHandler) *Form {
 	}
 	form := &Form{lang: langg}
 
-	form.fields = append(form.fields, &inputCSRF{Value: getAntiCSRF()})
+	if AntiCSRFJavaScriptMode {
+		form.fields = append(form.fields, &inputCSRF{})
+	} else {
+		form.fields = append(form.fields, &inputCSRF{Value: getAntiCSRF()})
+	}
+
 	form.fields = append(form.fields, formhandlers...)
 	for _, field := range form.fields {
 		field.SetLang(form.lang)
@@ -222,11 +227,6 @@ func (f *Form) getmap() map[string]FormHandler {
 func (f *Form) JSON() string {
 	b, _ := json.Marshal(f.getmap())
 	return string(b)
-}
-
-// Get AntiCSRF Key
-func (f *Form) GetAntiCSRFKey() string {
-	return getAntiCSRF()
 }
 
 func htmlRender(buf *bytes.Buffer, htmlstr string, value_map interface{}) {

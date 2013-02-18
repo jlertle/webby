@@ -28,6 +28,7 @@ func TestInputEmail(t *testing.T) {
 	web := &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
+				"_anti-CSRF":   []string{GetAntiCSRFKey()},
 				"email":        []string{"himself@cj-jackson.com"},
 				"emailconfirm": []string{"himself@cj-jackson.com"},
 			},
@@ -44,6 +45,7 @@ func TestInputEmail(t *testing.T) {
 	web = &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
+				"_anti-CSRF":   []string{GetAntiCSRFKey()},
 				"email":        []string{"himself@cj-jackson.com"},
 				"emailconfirm": []string{"himselfa@cj-jackson.com"},
 			},
@@ -60,6 +62,7 @@ func TestInputEmail(t *testing.T) {
 	web = &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
+				"_anti-CSRF":   []string{GetAntiCSRFKey()},
 				"email":        []string{"himself_cj-jackson.com"},
 				"emailconfirm": []string{"himself_cj-jackson.com"},
 			},

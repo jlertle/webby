@@ -32,8 +32,9 @@ func TestFormInputText(t *testing.T) {
 	web := &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"text":      []string{"hello"},
-				"textmatch": []string{"hello"},
+				"_anti-CSRF": []string{GetAntiCSRFKey()},
+				"text":       []string{"hello"},
+				"textmatch":  []string{"hello"},
 			},
 		},
 	}
@@ -48,8 +49,9 @@ func TestFormInputText(t *testing.T) {
 	web = &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"text":      []string{"hello"},
-				"textmatch": []string{"hellofail"},
+				"_anti-CSRF": []string{GetAntiCSRFKey()},
+				"text":       []string{"hello"},
+				"textmatch":  []string{"hellofail"},
 			},
 		},
 	}
@@ -64,8 +66,9 @@ func TestFormInputText(t *testing.T) {
 	web = &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"text":      []string{"hellohello"},
-				"textmatch": []string{"hellohello"},
+				"_anti-CSRF": []string{GetAntiCSRFKey()},
+				"text":       []string{"hellohello"},
+				"textmatch":  []string{"hellohello"},
 			},
 		},
 	}
@@ -80,8 +83,9 @@ func TestFormInputText(t *testing.T) {
 	web = &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"text":      []string{"1234"},
-				"textmatch": []string{"1234"},
+				"_anti-CSRF": []string{GetAntiCSRFKey()},
+				"text":       []string{"1234"},
+				"textmatch":  []string{"1234"},
 			},
 		},
 	}

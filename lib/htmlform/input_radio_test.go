@@ -28,7 +28,8 @@ func TestInputRadio(t *testing.T) {
 	web := &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"radio": []string{"car"},
+				"_anti-CSRF": []string{GetAntiCSRFKey()},
+				"radio":      []string{"car"},
 			},
 		},
 	}
@@ -41,7 +42,8 @@ func TestInputRadio(t *testing.T) {
 	web = &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"radio": []string{"motorbike"},
+				"_anti-CSRF": []string{GetAntiCSRFKey()},
+				"radio":      []string{"motorbike"},
 			},
 		},
 	}

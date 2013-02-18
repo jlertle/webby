@@ -3,13 +3,16 @@ package htmlform
 import (
 	"bytes"
 	"encoding/gob"
+	"encoding/json"
 	"fmt"
+	"github.com/CJ-Jackson/webby"
 	"github.com/CJ-Jackson/webby/lib/cache"
 	"time"
 )
 
 var (
-	AntiCSRFExpire = 1 * time.Hour
+	AntiCSRFExpire         = 1 * time.Hour
+	AntiCSRFJavaScriptMode = false
 )
 
 type antiCSRF string
@@ -40,6 +43,11 @@ func getAntiCSRF() string {
 	cache.SetAdv("_antiCsrf", key, curtime.Add(AntiCSRFExpire))
 
 	return string(key)
+}
+
+// Get AntiCSRF Key
+func GetAntiCSRFKey() string {
+	return getAntiCSRF()
 }
 
 type inputCSRF struct {
@@ -100,4 +108,19 @@ func (fo *inputCSRF) GetLang() Lang {
 
 func (fo inputCSRF) Eval() FormHandler {
 	return &fo
+}
+
+type CSRFRouteHandler struct {
+	Key string `json:"key"`
+}
+
+func (_ CSRFRouteHandler) View(w *webby.Web) {
+	w.Header().Set("X-Frame-Options", "SAMEORIGIN")
+	if !w.IsAjaxRequest() {
+		w.Error404()
+		return
+	}
+	csrf := CSRFRouteHandler{Key: getAntiCSRF()}
+	enc := json.NewEncoder(w)
+	enc.Encode(csrf)
 }
