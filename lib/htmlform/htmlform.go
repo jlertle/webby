@@ -271,3 +271,15 @@ func htmlRender(buf *bytes.Buffer, htmlstr string, value_map interface{}) {
 func toInt(number string) (int64, error) {
 	return strconv.ParseInt(number, 10, 64)
 }
+
+func init() {
+	webby.MainBoot.Register(func(w *webby.Web) {
+		w.HtmlFunc["render_form"] = func(f *Form) string {
+			return f.Web(w).Render()
+		}
+
+		w.HtmlFunc["render_form_slices"] = func(f *Form) []string {
+			return f.Web(w).RenderSlices()
+		}
+	})
+}
