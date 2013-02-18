@@ -68,6 +68,7 @@ func (boot *Bootstrap) Load(web *Web) {
 	}
 }
 
+var MainBoot = &Bootstrap{}
 var Boot = &Bootstrap{}
 
 type BootRoute struct {

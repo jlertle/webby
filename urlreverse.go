@@ -68,5 +68,5 @@ func (w *Web) URLReverse(name string, a ...interface{}) string {
 }
 
 func init() {
-	Boot.Register(urlBootstrap)
+	MainBoot.Register(urlBootstrap)
 }

@@ -7,12 +7,14 @@ import (
 	"fmt"
 	"github.com/CJ-Jackson/webby"
 	"github.com/CJ-Jackson/webby/lib/cache"
+	"net/http"
 	"time"
 )
 
 var (
 	AntiCSRFExpire         = 1 * time.Hour
 	AntiCSRFJavaScriptMode = false
+	AntiCSRFCookieMode     = false
 )
 
 type antiCSRF string
@@ -31,6 +33,12 @@ func uint64ToByte(num uint64) [8]byte {
 	return buf
 }
 
+func genAntiCSRF() string {
+	curtime := time.Now()
+	return fmt.Sprintf("%x%x", uint64ToByte(uint64(curtime.Unix())),
+		uint64ToByte(uint64(curtime.UnixNano())))
+}
+
 func getAntiCSRF() string {
 	switch t := cache.Get("_antiCsrf").(type) {
 	case antiCSRF:
@@ -38,8 +46,7 @@ func getAntiCSRF() string {
 	}
 
 	curtime := time.Now()
-	key := antiCSRF(fmt.Sprintf("%x%x", uint64ToByte(uint64(curtime.Unix())),
-		uint64ToByte(uint64(curtime.UnixNano()))))
+	key := antiCSRF(genAntiCSRF())
 	cache.SetAdv("_antiCsrf", key, curtime.Add(AntiCSRFExpire))
 
 	return string(key)
@@ -54,6 +61,7 @@ type inputCSRF struct {
 	Value string
 	error error
 	lang  Lang
+	web   *webby.Web
 }
 
 func init() {
@@ -71,6 +79,32 @@ func (fo *inputCSRF) Render(buf *bytes.Buffer) {
 
 func (fo *inputCSRF) Validate(values Values, files FileHeaders, single bool) error {
 	fo.Value = values.Get("_anti-CSRF")
+
+	var cookie *http.Cookie
+	var err error
+
+	if !AntiCSRFCookieMode {
+		goto current_key
+	}
+
+	if fo.web == nil {
+		goto current_key
+	}
+
+	cookie, err = fo.web.GetCookie("__antiCsrf")
+	if err != nil {
+		fmt.Println("cookie fail")
+		return FormError(fo.lang["ErrAntiCSRF"])
+	}
+
+	if cookie.Value != fo.Value {
+		fmt.Println("value fail")
+		return FormError(fo.lang["ErrAntiCSRF"])
+	}
+
+	return nil
+
+current_key:
 
 	currentKey := getAntiCSRF()
 
@@ -120,7 +154,20 @@ func (_ CSRFRouteHandler) View(w *webby.Web) {
 		w.Error404()
 		return
 	}
-	csrf := CSRFRouteHandler{Key: getAntiCSRF()}
 	enc := json.NewEncoder(w)
-	enc.Encode(csrf)
+	if AntiCSRFCookieMode {
+		cookie, _ := w.GetCookie("__antiCsrf")
+
+		enc.Encode(CSRFRouteHandler{Key: cookie.Value})
+		return
+	}
+	enc.Encode(CSRFRouteHandler{Key: getAntiCSRF()})
+}
+
+func init() {
+	webby.MainBoot.Register(func(w *webby.Web) {
+		w.HtmlFunc["csrf"] = func(f *Form) *Form {
+			return f.Web(w)
+		}
+	})
 }

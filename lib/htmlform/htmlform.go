@@ -9,9 +9,11 @@ import (
 	"github.com/CJ-Jackson/webby/lib/htmlform/lang"
 	html "html/template"
 	"mime/multipart"
+	"net/http"
 	"net/textproto"
 	"net/url"
 	"strconv"
+	"time"
 )
 
 type Lang map[string]string
@@ -118,7 +120,7 @@ func New(lng lang.Lang, formhandlers ...FormHandler) *Form {
 	}
 	form := &Form{lang: langg}
 
-	if AntiCSRFJavaScriptMode {
+	if AntiCSRFJavaScriptMode || AntiCSRFCookieMode {
 		form.fields = append(form.fields, &inputCSRF{})
 	} else {
 		form.fields = append(form.fields, &inputCSRF{Value: getAntiCSRF()})
@@ -129,6 +131,31 @@ func New(lng lang.Lang, formhandlers ...FormHandler) *Form {
 		field.SetLang(form.lang)
 	}
 	return form
+}
+
+func (f *Form) Web(w *webby.Web) *Form {
+	if !AntiCSRFCookieMode {
+		return f
+	}
+
+	f.fields[0].(*inputCSRF).web = w
+
+	cookie, err := w.GetCookie("__antiCsrf")
+	if err != nil {
+		cookie = &http.Cookie{
+			Name:    "__antiCsrf",
+			Value:   genAntiCSRF(),
+			Expires: time.Now().AddDate(0, 1, 0),
+		}
+		w.SetCookie(cookie)
+		w.Req.AddCookie(cookie)
+	}
+
+	if f.fields[0].(*inputCSRF).Value == "" {
+		f.fields[0].(*inputCSRF).Value = cookie.Value
+	}
+
+	return f
 }
 
 // Construct New Form Helper and Get Language by String

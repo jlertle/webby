@@ -33,7 +33,7 @@ func html_bootstrap(w *Web) {
 }
 
 func init() {
-	Boot.Register(html_bootstrap)
+	MainBoot.Register(html_bootstrap)
 }
 
 func (w *Web) parseHtml(htmlstr string, value_map interface{}, buf io.Writer) {
