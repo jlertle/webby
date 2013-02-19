@@ -93,12 +93,11 @@ func (fo *inputCSRF) Validate(values Values, files FileHeaders, single bool) err
 
 	cookie, err = fo.web.GetCookie("__antiCsrf")
 	if err != nil {
-		fmt.Println("cookie fail")
 		return FormError(fo.lang["ErrAntiCSRF"])
 	}
 
 	if cookie.Value != fo.Value {
-		fmt.Println("value fail")
+		fo.Value = cookie.Value
 		return FormError(fo.lang["ErrAntiCSRF"])
 	}
 
