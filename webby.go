@@ -8,6 +8,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"runtime/debug"
 )
 
 // Debug Mode
@@ -61,6 +62,20 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		cut:          false,
 		firstWrite:   true,
 	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println(r)
+			debug.PrintStack()
+			if DEBUG {
+				web.Status = 500
+				web.Println("500 Internal Server Error")
+				web.Printf("\r\n%s\r\n\r\n%s", r, debug.Stack())
+				return
+			}
+			web.Error500()
+		}
+	}()
 
 	web.reswrite = web.webInterface
 
