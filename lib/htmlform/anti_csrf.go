@@ -162,11 +162,3 @@ func (_ CSRFRouteHandler) View(w *webby.Web) {
 	}
 	enc.Encode(CSRFRouteHandler{Key: getAntiCSRF()})
 }
-
-func init() {
-	webby.MainBoot.Register(func(w *webby.Web) {
-		w.HtmlFunc["csrf"] = func(f *Form) *Form {
-			return f.Web(w)
-		}
-	})
-}

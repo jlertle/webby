@@ -102,8 +102,9 @@ func (f FormError) Error() string {
 }
 
 type Form struct {
-	lang   Lang
-	fields []FormHandler
+	lang      Lang
+	fields    []FormHandler
+	stripCsrf bool
 }
 
 func init() {
@@ -118,7 +119,7 @@ func New(lng lang.Lang, formhandlers ...FormHandler) *Form {
 	} else {
 		langg = Lang(lng)
 	}
-	form := &Form{lang: langg}
+	form := &Form{lang: langg, stripCsrf: false}
 
 	if AntiCSRFJavaScriptMode || AntiCSRFCookieMode {
 		form.fields = append(form.fields, &inputCSRF{})
@@ -168,6 +169,10 @@ func (f *Form) Render() string {
 	buf := &bytes.Buffer{}
 	defer buf.Reset()
 	for _, field := range f.fields {
+		if f.stripCsrf {
+			f.stripCsrf = false
+			continue
+		}
 		field.Render(buf)
 	}
 	return buf.String()
@@ -177,6 +182,10 @@ func (f *Form) RenderSlices() []string {
 	buf := &bytes.Buffer{}
 	var slices []string
 	for _, field := range f.fields {
+		if f.stripCsrf {
+			f.stripCsrf = false
+			continue
+		}
 		field.Render(buf)
 		slices = append(slices, buf.String())
 		buf.Reset()
@@ -274,12 +283,20 @@ func toInt(number string) (int64, error) {
 
 func init() {
 	webby.MainBoot.Register(func(w *webby.Web) {
+		// Render Form
 		w.HtmlFunc["render_form"] = func(f *Form) string {
 			return f.Web(w).Render()
 		}
 
+		// Render Form Slices
 		w.HtmlFunc["render_form_slices"] = func(f *Form) []string {
 			return f.Web(w).RenderSlices()
+		}
+
+		// Remove csrf field!
+		w.HtmlFunc["strip_csrf"] = func(f *Form) *Form {
+			f.stripCsrf = true
+			return f
 		}
 	})
 }
