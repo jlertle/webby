@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"runtime/debug"
+	"time"
 )
 
 // Debug Mode
@@ -63,6 +64,13 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		firstWrite:   true,
 	}
 
+	web.reswrite = web.webInterface
+
+	web.initTrueHost()
+	web.initTrueRemoteAddr()
+	web.initSession()
+	web.Header().Set("Content-Encoding", "plain")
+
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println(r)
@@ -70,19 +78,33 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 			if DEBUG {
 				web.Status = 500
 				web.Println("500 Internal Server Error")
+
+				web.Printf("\r\n%s, %s, %s, %s, ?%s IP:%s\r\n",
+					web.Req.Proto, web.Req.Method,
+					web.Req.Host, web.Req.URL.Path,
+					web.Req.URL.RawQuery, web.Req.RemoteAddr)
+
 				web.Printf("\r\n%s\r\n\r\n%s", r, debug.Stack())
+
+				web.ParseForm()
+
+				web.Println("\r\nRequest Header:")
+				web.Println(web.Req.Header)
+
+				web.Println("\r\nForm Values:")
+				web.Println(web.Req.Form)
+
+				web.Println("\r\nForm Values (Multipart):")
+				web.Println(web.Req.MultipartForm)
+
+				web.Println("\r\nTime:")
+				web.Println(time.Now())
+
 				return
 			}
 			web.Error500()
 		}
 	}()
-
-	web.reswrite = web.webInterface
-
-	web.initTrueHost()
-	web.initTrueRemoteAddr()
-	web.initSession()
-	web.Header().Set("Content-Encoding", "plain")
 
 	defer web.closeCompression()
 
@@ -179,10 +201,10 @@ func (web *Web) debuginfo(a string) {
 	if !DEBUG {
 		return
 	}
-	fmt.Printf("--\r\n %s  %s, %s, %s, %s, ?%s \r\n--\r\n",
+	fmt.Printf("--\r\n %s  %s, %s, %s, %s, ?%s IP:%s \r\n--\r\n",
 		a, web.Req.Proto, web.Req.Method,
 		web.Req.Host, web.Req.URL.Path,
-		web.Req.URL.RawQuery)
+		web.Req.URL.RawQuery, web.Req.RemoteAddr)
 }
 
 func (web *Web) debugStart() {
