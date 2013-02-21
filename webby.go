@@ -214,3 +214,15 @@ func (web *Web) debugStart() {
 func (web *Web) debugEnd() {
 	web.debuginfo("END  ")
 }
+
+// Check for Error
+func (web *Web) Check(err error) {
+	Check(err)
+}
+
+// Check for Error
+func Check(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
