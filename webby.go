@@ -73,8 +73,7 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println(r)
-			debug.PrintStack()
+			DefaultPanicHandler.Panic(web, r, debug.Stack())
 			if DEBUG {
 				web.Status = 500
 				web.Println("500 Internal Server Error")
@@ -86,10 +85,10 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
 				web.Printf("\r\n%s\r\n\r\n%s", r, debug.Stack())
 
-				web.ParseForm()
-
 				web.Println("\r\nRequest Header:")
 				web.Println(web.Req.Header)
+
+				web.ParseForm()
 
 				web.Println("\r\nForm Values:")
 				web.Println(web.Req.Form)
@@ -213,16 +212,4 @@ func (web *Web) debugStart() {
 
 func (web *Web) debugEnd() {
 	web.debuginfo("END  ")
-}
-
-// Check for Error
-func (web *Web) Check(err error) {
-	Check(err)
-}
-
-// Check for Error
-func Check(err error) {
-	if err != nil {
-		panic(err)
-	}
 }
