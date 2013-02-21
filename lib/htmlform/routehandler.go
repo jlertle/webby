@@ -12,6 +12,7 @@ type RouteInterface interface {
 	PostFail(*webby.Web)
 }
 
+// Only suitable with the simplist of form!
 type RouteHandler struct {
 	RouteInterface
 }

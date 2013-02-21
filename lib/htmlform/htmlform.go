@@ -193,19 +193,8 @@ func (f *Form) RenderSlices() []string {
 	return slices
 }
 
-func (f *Form) IsValid(w *webby.Web) bool {
+func (f *Form) isValid(values Values, files FileHeaders) bool {
 	valid := true
-	var values Values
-	var files FileHeaders
-	w.ParseForm()
-
-	if w.Req.MultipartForm != nil {
-		values = Values(w.Req.MultipartForm.Value)
-		files = FileHeaders(w.Req.MultipartForm.File)
-	} else {
-		values = Values(w.Req.Form)
-		files = nil
-	}
 
 	for _, field := range f.fields {
 		field.SetError(nil)
@@ -220,6 +209,60 @@ func (f *Form) IsValid(w *webby.Web) bool {
 	}
 
 	return valid
+}
+
+func (f *Form) IsValid(w *webby.Web) bool {
+	f.Web(w)
+
+	var values Values
+	var files FileHeaders
+	w.ParseForm()
+
+	if w.Req.MultipartForm != nil {
+		values = Values(w.Req.MultipartForm.Value)
+		files = FileHeaders(w.Req.MultipartForm.File)
+	} else {
+		values = Values(w.Req.Form)
+		files = nil
+	}
+
+	return f.isValid(values, files)
+}
+
+// For the more complexed form!
+func (f *Form) IsValidSlot(w *webby.Web, slot int) bool {
+	f.Web(w)
+
+	values := Values{}
+	files := FileHeaders{}
+
+	if w.Req.MultipartForm != nil {
+		for key, value := range w.Req.MultipartForm.Value {
+			if len(value) > slot {
+				values[key] = append(values[key], value[slot])
+			}
+		}
+
+		values["_anti-CSRF"] = w.Req.MultipartForm.Value["_anti-CSRF"]
+
+		for key, value := range w.Req.MultipartForm.File {
+			if len(value) > slot {
+				files[key] = append(files[key], value[slot])
+			}
+		}
+	} else {
+		for key, value := range w.Req.Form {
+			if len(value) > slot {
+				values[key] = append(values[key], value[slot])
+			}
+		}
+
+		values["_anti-CSRF"] = w.Req.Form["_anti-CSRF"]
+
+		files = nil
+	}
+
+	return f.isValid(values, files)
 }
 
 // Very Useful for AJAX Validater that require server-side validation

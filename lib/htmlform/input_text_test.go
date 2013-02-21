@@ -33,13 +33,17 @@ func TestFormInputText(t *testing.T) {
 		Req: &http.Request{
 			Form: url.Values{
 				"_anti-CSRF": []string{GetAntiCSRFKey()},
-				"text":       []string{"hello"},
-				"textmatch":  []string{"hello"},
+				"text":       []string{"hello", "123"},
+				"textmatch":  []string{"hello", "hello"},
 			},
 		},
 	}
 
 	if !form.IsValid(web) {
+		t.Fail()
+	}
+
+	if form.IsValidSlot(web, 1) {
 		t.Fail()
 	}
 
