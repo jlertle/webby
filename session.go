@@ -159,9 +159,8 @@ func (se SessionFile) Set(w *Web, data interface{}) {
 
 	w.SetCookie(sesCookie)
 	file, err := os.Create(se.Path + "/" + sesCookie.Value + sessionFileExt)
-	if err != nil {
-		panic(err)
-	}
+	w.Check(err)
+
 	defer file.Close()
 	enc := gob.NewEncoder(file)
 	err = enc.Encode(&session{data, time.Now().Add(SessionExpire)})

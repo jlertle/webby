@@ -57,16 +57,14 @@ func (u *URLReverse) Print(name string, a ...interface{}) string {
 
 var URLRev = &URLReverse{}
 
-func urlBootstrap(w *Web) {
-	w.HtmlFunc["url"] = func(name string, a ...interface{}) string {
-		return URLRev.Print(name, a...)
-	}
-}
-
 func (w *Web) URLReverse(name string, a ...interface{}) string {
 	return URLRev.Print(name, a...)
 }
 
 func init() {
-	MainBoot.Register(urlBootstrap)
+	MainBoot.Register(func(w *Web) {
+		w.HtmlFunc["url"] = func(name string, a ...interface{}) string {
+			return URLRev.Print(name, a...)
+		}
+	})
 }
