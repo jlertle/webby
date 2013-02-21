@@ -9,31 +9,33 @@ import (
 	"time"
 )
 
-func htmlraw(str string) html.HTML {
-	return html.HTML(str)
-}
-
-func htmlattr(str string) html.HTMLAttr {
-	return html.HTMLAttr(str)
-}
-
-func js(str string) html.JS {
-	return html.JS(str)
-}
-
-func jsstr(str string) html.JSStr {
-	return html.JSStr(str)
-}
-
-func html_bootstrap(w *Web) {
-	w.HtmlFunc["html"] = htmlraw
-	w.HtmlFunc["htmlattr"] = htmlattr
-	w.HtmlFunc["js"] = js
-	w.HtmlFunc["jsstr"] = jsstr
-}
-
 func init() {
-	MainBoot.Register(html_bootstrap)
+	MainBoot.Register(func(w *Web) {
+		// HTML Marksafe
+		w.HtmlFunc["html"] = func(str string) html.HTML {
+			return html.HTML(str)
+		}
+
+		// HTML Attr MarkSafe
+		w.HtmlFunc["htmlattr"] = func(str string) html.HTMLAttr {
+			return html.HTMLAttr(str)
+		}
+
+		// JS Marksafe
+		w.HtmlFunc["js"] = func(str string) html.JS {
+			return html.JS(str)
+		}
+
+		// JS String Marksafe
+		w.HtmlFunc["jsstr"] = func(str string) html.JSStr {
+			return html.JSStr(str)
+		}
+
+		// CSS Marksafe
+		w.HtmlFunc["css"] = func(str string) html.CSS {
+			return html.CSS(str)
+		}
+	})
 }
 
 func (w *Web) parseHtml(htmlstr string, value_map interface{}, buf io.Writer) {
