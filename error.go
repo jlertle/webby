@@ -28,7 +28,7 @@ func (_ PanicConsole) Panic(web *Web, r interface{}, stack []byte) {
 	fmt.Print(r, "\r\n", string(stack))
 }
 
-const panicFileExt = ".err"
+const panicFileExt = ".txt"
 
 type PanicFile struct {
 	Path string
