@@ -93,9 +93,9 @@ func (c CacheMemory) Purge(beginWith string) {
 
 const CacheFileExt = ".wbc"
 
-// Note: Remember the filename limit is 255 with the majority of modern file systems!
+// Note: Remember the filename limit is 255 (minus '.wbc' 251) with the majority of modern file systems!
 // Avoid using reserved characters such as / ? \ % * : | " < >
-// Hashes such as SHA256 is advisable and recommended!
+// Hashes such as SHA256 is advisable when possible!
 type CacheFile struct {
 	Path string
 }
