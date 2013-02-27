@@ -5,6 +5,7 @@ import (
 	"encoding/gob"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 )
@@ -93,11 +94,22 @@ func (c CacheMemory) Purge(beginWith string) {
 
 const CacheFileExt = ".wbc"
 
-// Note: Remember the filename limit is 255 (minus '.wbc' 251) with the majority of modern file systems!
-// Avoid using reserved characters such as / ? \ % * : | " < >
+// Note: Remember the filename limit is 255 (251 while subtracting '.wbc') with the majority of modern file systems!
+// Avoid using reserved characters such as ? % * : | " < >!
+// It can create directories so \ / are allowed!
 // Hashes such as SHA256 is advisable when possible!
 type CacheFile struct {
 	Path string
+}
+
+func (c CacheFile) checkErr(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (c CacheFile) checkKey(key string) string {
+	return strings.Replace(key, `\`, "/", -1)
 }
 
 func (c CacheFile) Set(key string, value interface{}) {
@@ -105,20 +117,23 @@ func (c CacheFile) Set(key string, value interface{}) {
 }
 
 func (c CacheFile) SetAdv(key string, value interface{}, expire time.Time) {
-	file, err := os.Create(c.Path + "/" + key + CacheFileExt)
-	if err != nil {
-		panic(err)
+	key = c.checkKey(key)
+
+	if strings.Contains(key, "/") {
+		c.checkErr(os.MkdirAll(filepath.Dir(c.Path+"/"+key), 0755))
 	}
+
+	file, err := os.Create(c.Path + "/" + key + CacheFileExt)
+	c.checkErr(err)
 	defer file.Close()
 
 	enc := gob.NewEncoder(file)
 	err = enc.Encode(cache{value, expire})
-	if err != nil {
-		panic(err)
-	}
+	c.checkErr(err)
 }
 
 func (c CacheFile) Get(key string) interface{} {
+	key = c.checkKey(key)
 	file, err := os.Open(c.Path + "/" + key + CacheFileExt)
 	if err != nil {
 		return nil
@@ -142,10 +157,12 @@ func (c CacheFile) Get(key string) interface{} {
 }
 
 func (c CacheFile) Delete(key string) {
+	key = c.checkKey(key)
 	os.Remove(c.Path + "/" + key + CacheFileExt)
 }
 
 func (c CacheFile) Purge(beginWith string) {
+	beginWith = c.checkKey(beginWith)
 	matches, err := filepath.Glob(c.Path + "/" + beginWith + "*" + CacheFileExt)
 	if err != nil {
 		return
