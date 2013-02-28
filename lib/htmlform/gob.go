@@ -15,8 +15,9 @@ type gobFormHandler struct {
 }
 
 type gobForm struct {
-	Fields []gobFormHandler
-	Lang   Lang
+	Fields   []gobFormHandler
+	Lang     Lang
+	AllowGet bool
 }
 
 func init() {
@@ -28,7 +29,7 @@ func (f *Form) GobEncode() ([]byte, error) {
 	buf := &bytes.Buffer{}
 	defer buf.Reset()
 
-	form := gobForm{Lang: f.lang}
+	form := gobForm{Lang: f.lang, AllowGet: f.allowGet}
 
 	for _, value := range f.fields {
 		value.SetLang(nil)
@@ -60,6 +61,7 @@ func (f *Form) GobDecode(b []byte) error {
 	}
 
 	f.lang = form.Lang
+	f.allowGet = form.AllowGet
 
 	for _, value := range form.Fields {
 		avalue := value.Form.(gobEval).Eval()

@@ -100,8 +100,9 @@ func (f FormError) Error() string {
 }
 
 type Form struct {
-	lang   Lang
-	fields []FormHandler
+	lang     Lang
+	fields   []FormHandler
+	allowGet bool
 }
 
 func init() {
@@ -116,7 +117,7 @@ func New(lng lang.Lang, formhandlers ...FormHandler) *Form {
 	} else {
 		langg = Lang(lng)
 	}
-	form := &Form{lang: langg, fields: formhandlers}
+	form := &Form{lang: langg, fields: formhandlers, allowGet: false}
 
 	for _, field := range form.fields {
 		field.SetLang(form.lang)
@@ -128,6 +129,12 @@ func New(lng lang.Lang, formhandlers ...FormHandler) *Form {
 func NewLang(langstr string, formhandlers ...FormHandler) *Form {
 	langg := lang.Langs.Get(langstr)
 	return New(langg, formhandlers...)
+}
+
+// Allow Get Request (Beware: Get Request can bypass CSRF protection.)
+func (f *Form) AllowGet() *Form {
+	f.allowGet = true
+	return f
 }
 
 func (f *Form) Render() string {
@@ -150,7 +157,17 @@ func (f *Form) RenderSlices() []string {
 	return slices
 }
 
-func (f *Form) isValid(values Values, files FileHeaders) bool {
+func (f *Form) isValid(w *webby.Web, values Values, files FileHeaders) bool {
+	if f.allowGet {
+		goto validation
+	}
+
+	if w.Req.Method == "GET" {
+		return false
+	}
+
+validation:
+
 	valid := true
 
 	for _, field := range f.fields {
@@ -181,7 +198,7 @@ func (f *Form) IsValid(w *webby.Web) bool {
 		files = nil
 	}
 
-	return f.isValid(values, files)
+	return f.isValid(w, values, files)
 }
 
 // For the more complexed form!
@@ -211,7 +228,7 @@ func (f *Form) IsValidSlot(w *webby.Web, slot int) bool {
 		files = nil
 	}
 
-	return f.isValid(values, files)
+	return f.isValid(w, values, files)
 }
 
 // Very Useful for AJAX Validater that require server-side validation
