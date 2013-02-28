@@ -9,11 +9,9 @@ import (
 	"github.com/CJ-Jackson/webby/lib/htmlform/lang"
 	html "html/template"
 	"mime/multipart"
-	"net/http"
 	"net/textproto"
 	"net/url"
 	"strconv"
-	"time"
 )
 
 type Lang map[string]string
@@ -102,9 +100,8 @@ func (f FormError) Error() string {
 }
 
 type Form struct {
-	lang      Lang
-	fields    []FormHandler
-	stripCsrf bool
+	lang   Lang
+	fields []FormHandler
 }
 
 func init() {
@@ -119,44 +116,12 @@ func New(lng lang.Lang, formhandlers ...FormHandler) *Form {
 	} else {
 		langg = Lang(lng)
 	}
-	form := &Form{lang: langg, stripCsrf: false}
+	form := &Form{lang: langg, fields: formhandlers}
 
-	if AntiCSRFJavaScriptMode || AntiCSRFCookieMode {
-		form.fields = append(form.fields, &inputCSRF{})
-	} else {
-		form.fields = append(form.fields, &inputCSRF{Value: getAntiCSRF()})
-	}
-
-	form.fields = append(form.fields, formhandlers...)
 	for _, field := range form.fields {
 		field.SetLang(form.lang)
 	}
 	return form
-}
-
-func (f *Form) Web(w *webby.Web) *Form {
-	if !AntiCSRFCookieMode {
-		return f
-	}
-
-	f.fields[0].(*inputCSRF).web = w
-
-	cookie, err := w.GetCookie("__antiCsrf")
-	if err != nil {
-		cookie = &http.Cookie{
-			Name:    "__antiCsrf",
-			Value:   genAntiCSRF(),
-			Expires: time.Now().AddDate(0, 1, 0),
-		}
-		w.SetCookie(cookie)
-		w.Req.AddCookie(cookie)
-	}
-
-	if f.fields[0].(*inputCSRF).Value == "" {
-		f.fields[0].(*inputCSRF).Value = cookie.Value
-	}
-
-	return f
 }
 
 // Construct New Form Helper and Get Language by String
@@ -169,10 +134,6 @@ func (f *Form) Render() string {
 	buf := &bytes.Buffer{}
 	defer buf.Reset()
 	for _, field := range f.fields {
-		if f.stripCsrf {
-			f.stripCsrf = false
-			continue
-		}
 		field.Render(buf)
 	}
 	return buf.String()
@@ -182,10 +143,6 @@ func (f *Form) RenderSlices() []string {
 	buf := &bytes.Buffer{}
 	var slices []string
 	for _, field := range f.fields {
-		if f.stripCsrf {
-			f.stripCsrf = false
-			continue
-		}
 		field.Render(buf)
 		slices = append(slices, buf.String())
 		buf.Reset()
@@ -212,8 +169,6 @@ func (f *Form) isValid(values Values, files FileHeaders) bool {
 }
 
 func (f *Form) IsValid(w *webby.Web) bool {
-	f.Web(w)
-
 	var values Values
 	var files FileHeaders
 	w.ParseForm()
@@ -231,8 +186,6 @@ func (f *Form) IsValid(w *webby.Web) bool {
 
 // For the more complexed form!
 func (f *Form) IsValidSlot(w *webby.Web, slot int) bool {
-	f.Web(w)
-
 	values := Values{}
 	files := FileHeaders{}
 
@@ -242,8 +195,6 @@ func (f *Form) IsValidSlot(w *webby.Web, slot int) bool {
 				values[key] = append(values[key], value[slot])
 			}
 		}
-
-		values["_anti-CSRF"] = w.Req.MultipartForm.Value["_anti-CSRF"]
 
 		for key, value := range w.Req.MultipartForm.File {
 			if len(value) > slot {
@@ -256,8 +207,6 @@ func (f *Form) IsValidSlot(w *webby.Web, slot int) bool {
 				values[key] = append(values[key], value[slot])
 			}
 		}
-
-		values["_anti-CSRF"] = w.Req.Form["_anti-CSRF"]
 
 		files = nil
 	}
@@ -328,18 +277,12 @@ func init() {
 	webby.MainBoot.Register(func(w *webby.Web) {
 		// Render Form
 		w.HtmlFunc["render_form"] = func(f *Form) string {
-			return f.Web(w).Render()
+			return f.Render()
 		}
 
 		// Render Form Slices
 		w.HtmlFunc["render_form_slices"] = func(f *Form) []string {
-			return f.Web(w).RenderSlices()
-		}
-
-		// Remove csrf field!
-		w.HtmlFunc["strip_csrf"] = func(f *Form) *Form {
-			f.stripCsrf = true
-			return f
+			return f.RenderSlices()
 		}
 	})
 }

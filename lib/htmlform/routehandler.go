@@ -42,8 +42,6 @@ func (ro RouteHandler) View(w *webby.Web) {
 		form = ro.FetchForm(w)
 	}
 
-	form.Web(w)
-
 	if w.Req.Method == "POST" {
 		goto post
 	}
