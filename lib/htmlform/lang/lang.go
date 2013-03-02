@@ -1,4 +1,4 @@
-// HTML Form Helper Language Library!
+// HTML Form Helper Internationalization Library!
 package lang
 
 import (
