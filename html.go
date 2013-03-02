@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	MainBoot.Register(func(w *Web) {
+	HtmlFuncBoot.Register(func(w *Web) {
 		// HTML Marksafe
 		w.HtmlFunc["html"] = func(str string) html.HTML {
 			return html.HTML(str)

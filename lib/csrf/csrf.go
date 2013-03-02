@@ -11,7 +11,12 @@ import (
 
 const cookieName = "csrf_token"
 
-var IncludeGetRequest = false
+var (
+	// Just to avoid ugly url patterns!
+	IncludeGetRequest = false
+	// Modulisation is pretty use for large site! Or when you want to specify the correct placement for csrf checking!
+	Modulised = false
+)
 
 // Convert Unsigned 64-bit Int to Bytes.
 func uint64ToByte(num uint64) [8]byte {
@@ -48,8 +53,7 @@ func getCookie(w *webby.Web) *http.Cookie {
 }
 
 func fail(w *webby.Web) {
-	w.WriteHeader(403)
-	w.Println("403: Forbidden: Failed CSRF Validation!")
+	w.Error403()
 }
 
 func multipartCheck(w *webby.Web) {
@@ -80,34 +84,48 @@ func formCheck(w *webby.Web) {
 	}
 }
 
+type Check struct{}
+
+func (_ Check) Boot(w *webby.Web) {
+	if IncludeGetRequest {
+		goto parse_form
+	}
+
+	if w.Req.Method == "GET" {
+		return
+	}
+
+parse_form:
+
+	w.ParseForm()
+
+	if w.Req.MultipartForm != nil {
+		multipartCheck(w)
+		return
+	}
+
+	formCheck(w)
+}
+
 func init() {
-	webby.MainBoot.Register(func(w *webby.Web) {
+	webby.HtmlFuncBoot.Register(func(w *webby.Web) {
+		// Get CSRF Token input field
 		w.HtmlFunc["csrf_token"] = func() html.HTML {
 			const htmlstr = `<input type="hidden" name="{{.Name}}" class="{{.Name}}" value="{{.Value}}" />`
 			return html.HTML(w.ParseHtml(htmlstr, getCookie(w)))
 		}
 
+		// Get CSRF Token Key
 		w.HtmlFunc["csrf_token_key_only"] = func() string {
 			return getCookie(w).Value
 		}
+	})
 
-		if IncludeGetRequest {
-			goto parse_form
-		}
-
-		if w.Req.Method == "GET" {
+	webby.MainBoot.Register(func(w *webby.Web) {
+		if Modulised {
 			return
 		}
 
-	parse_form:
-
-		w.ParseForm()
-
-		if w.Req.MultipartForm != nil {
-			multipartCheck(w)
-			return
-		}
-
-		formCheck(w)
+		Check{}.Boot(w)
 	})
 }

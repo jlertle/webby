@@ -291,7 +291,7 @@ func toInt(number string) (int64, error) {
 }
 
 func init() {
-	webby.MainBoot.Register(func(w *webby.Web) {
+	webby.HtmlFuncBoot.Register(func(w *webby.Web) {
 		// Render Form
 		w.HtmlFunc["render_form"] = func(f *Form) string {
 			return f.Render()

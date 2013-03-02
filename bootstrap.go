@@ -68,8 +68,14 @@ func (boot *Bootstrap) Load(web *Web) {
 	}
 }
 
+// For Allowing Libraries to Automatically Plugin into this Framework. 
 var MainBoot = &Bootstrap{}
+
+// For Allowing Web Application to Add Function the Framework.
 var Boot = &Bootstrap{}
+
+// For Allowing Libraries to Add Function to the Html Template Engine!
+var HtmlFuncBoot = &Bootstrap{}
 
 type BootRoute struct {
 	BOOT   *Bootstrap

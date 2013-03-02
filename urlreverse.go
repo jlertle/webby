@@ -62,7 +62,7 @@ func (w *Web) URLReverse(name string, a ...interface{}) string {
 }
 
 func init() {
-	MainBoot.Register(func(w *Web) {
+	HtmlFuncBoot.Register(func(w *Web) {
 		w.HtmlFunc["url"] = func(name string, a ...interface{}) string {
 			return URLRev.Print(name, a...)
 		}

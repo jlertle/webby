@@ -110,6 +110,12 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	web.debugStart()
 	defer web.debugEnd()
 
+	HtmlFuncBoot.Load(web)
+
+	if web.CutOut() {
+		return
+	}
+
 	MainBoot.Load(web)
 
 	if web.CutOut() {
