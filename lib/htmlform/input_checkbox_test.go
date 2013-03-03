@@ -29,8 +29,7 @@ func TestFormInputCheckbox(t *testing.T) {
 	web := &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"_anti-CSRF": []string{GetAntiCSRFKey()},
-				"checkbox":   []string{"car", "motorcycle"},
+				"checkbox": []string{"car", "motorcycle"},
 			},
 		},
 	}
@@ -45,8 +44,7 @@ func TestFormInputCheckbox(t *testing.T) {
 	web = &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"_anti-CSRF": []string{GetAntiCSRFKey()},
-				"checkbox":   []string{"car"},
+				"checkbox": []string{"car"},
 			},
 		},
 	}

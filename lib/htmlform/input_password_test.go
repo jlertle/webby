@@ -32,7 +32,6 @@ func TestFormInputPassword(t *testing.T) {
 	web := &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"_anti-CSRF":    []string{GetAntiCSRFKey()},
 				"password":      []string{"hello"},
 				"passwordmatch": []string{"hello"},
 			},
@@ -49,7 +48,6 @@ func TestFormInputPassword(t *testing.T) {
 	web = &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"_anti-CSRF":    []string{GetAntiCSRFKey()},
 				"password":      []string{"hello"},
 				"passwordmatch": []string{"hellofail"},
 			},
@@ -66,7 +64,6 @@ func TestFormInputPassword(t *testing.T) {
 	web = &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"_anti-CSRF":    []string{GetAntiCSRFKey()},
 				"password":      []string{"hellohello"},
 				"passwordmatch": []string{"hellohello"},
 			},
@@ -83,7 +80,6 @@ func TestFormInputPassword(t *testing.T) {
 	web = &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"_anti-CSRF":    []string{GetAntiCSRFKey()},
 				"password":      []string{"1234"},
 				"passwordmatch": []string{"1234"},
 			},

@@ -25,8 +25,7 @@ func TestTextarea(t *testing.T) {
 	web := &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"_anti-CSRF": []string{GetAntiCSRFKey()},
-				"text":       []string{"hello"},
+				"text": []string{"hello"},
 			},
 		},
 	}
@@ -41,8 +40,7 @@ func TestTextarea(t *testing.T) {
 	web = &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"_anti-CSRF": []string{GetAntiCSRFKey()},
-				"text":       []string{"hellohello"},
+				"text": []string{"hellohello"},
 			},
 		},
 	}

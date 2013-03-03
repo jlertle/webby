@@ -34,8 +34,7 @@ func TestSelect(t *testing.T) {
 	web := &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"_anti-CSRF": []string{GetAntiCSRFKey()},
-				"select":     []string{"car"},
+				"select": []string{"car"},
 			},
 		},
 	}
@@ -50,8 +49,7 @@ func TestSelect(t *testing.T) {
 	web = &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"_anti-CSRF": []string{GetAntiCSRFKey()},
-				"select":     []string{"motorcycle"},
+				"select": []string{"motorcycle"},
 			},
 		},
 	}
@@ -66,8 +64,7 @@ func TestSelect(t *testing.T) {
 	web = &webby.Web{
 		Req: &http.Request{
 			Form: url.Values{
-				"_anti-CSRF": []string{GetAntiCSRFKey()},
-				"select":     []string{""},
+				"select": []string{""},
 			},
 		},
 	}
