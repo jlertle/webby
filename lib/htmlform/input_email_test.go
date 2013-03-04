@@ -11,7 +11,7 @@ import (
 func TestInputEmail(t *testing.T) {
 	fmt.Println("InputEmail Test:\r\n")
 
-	form := New(nil,
+	form := New(
 		&InputEmail{
 			Name: "email",
 		},

@@ -11,7 +11,7 @@ import (
 func TestFormInputText(t *testing.T) {
 	fmt.Println("InputText Test:\r\n")
 
-	form := New(nil,
+	form := New(
 		&InputText{
 			Name:       "text",
 			MinChar:    1,

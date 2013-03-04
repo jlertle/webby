@@ -11,7 +11,7 @@ import (
 func TestInputRadio(t *testing.T) {
 	fmt.Println("InputRadio Test:\r\n")
 
-	form := New(nil,
+	form := New(
 		&InputRadio{
 			Name:  "radio",
 			Value: "car",

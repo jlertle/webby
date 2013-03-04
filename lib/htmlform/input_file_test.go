@@ -8,7 +8,7 @@ import (
 func TestInputFile(t *testing.T) {
 	fmt.Println("InputFile Test:\r\n")
 
-	form := New(nil,
+	form := New(
 		&InputFile{
 			Name: "file",
 			Mime: []string{"image/jpeg", "image/png"},

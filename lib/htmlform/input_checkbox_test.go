@@ -11,7 +11,7 @@ import (
 func TestFormInputCheckbox(t *testing.T) {
 	fmt.Println("InputCheckbox Test:\r\n")
 
-	form := New(nil,
+	form := New(
 		&InputCheckbox{
 			Name:  "checkbox",
 			Value: "car",

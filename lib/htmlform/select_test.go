@@ -11,7 +11,7 @@ import (
 func TestSelect(t *testing.T) {
 	fmt.Println("Select Test:\r\n")
 
-	form := New(nil,
+	form := New(
 		&Select{
 			Name:      "select",
 			Mandatory: true,

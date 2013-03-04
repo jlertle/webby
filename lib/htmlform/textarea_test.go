@@ -11,7 +11,7 @@ import (
 func TestTextarea(t *testing.T) {
 	fmt.Println("Textarea Test:\r\n")
 
-	form := New(nil,
+	form := New(
 		&Textarea{
 			Name:    "text",
 			MinChar: 1,

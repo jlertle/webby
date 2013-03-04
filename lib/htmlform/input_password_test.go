@@ -11,7 +11,7 @@ import (
 func TestFormInputPassword(t *testing.T) {
 	fmt.Println("InputPassword Test:\r\n")
 
-	form := New(nil,
+	form := New(
 		&InputPassword{
 			Name:       "password",
 			MinChar:    1,

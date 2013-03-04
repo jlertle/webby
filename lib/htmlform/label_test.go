@@ -8,7 +8,7 @@ import (
 func TestLabelForm(t *testing.T) {
 	fmt.Println("Label Test: \r\n")
 
-	form := New(nil,
+	form := New(
 		Label{
 			Name:  "Label",
 			For:   "label",
@@ -19,7 +19,7 @@ func TestLabelForm(t *testing.T) {
 
 	fmt.Println(form.Render())
 
-	form = New(nil,
+	form = New(
 		Label{
 			Name: "Label",
 			For:  "label",
@@ -28,7 +28,7 @@ func TestLabelForm(t *testing.T) {
 
 	fmt.Println(form.Render())
 
-	form = New(nil,
+	form = New(
 		Label{
 			Name: "Label",
 		},

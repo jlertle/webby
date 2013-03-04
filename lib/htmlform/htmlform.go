@@ -110,25 +110,21 @@ func init() {
 }
 
 // Construct New Form Helper
-func New(lng lang.Lang, formhandlers ...FormHandler) *Form {
-	var langg Lang
-	if lng == nil {
-		langg = Lang(lang.Langs.Get(defaultLang))
-	} else {
-		langg = Lang(lng)
-	}
-	form := &Form{lang: langg, fields: formhandlers, allowGet: false}
+func New(formhandlers ...FormHandler) *Form {
+	f := &Form{fields: formhandlers, allowGet: false}
 
-	for _, field := range form.fields {
-		field.SetLang(form.lang)
-	}
-	return form
+	return f.Lang(defaultLang)
 }
 
-// Construct New Form Helper and Get Language by String
-func NewLang(langstr string, formhandlers ...FormHandler) *Form {
-	langg := lang.Langs.Get(langstr)
-	return New(langg, formhandlers...)
+// Set Language
+func (f *Form) Lang(lng string) *Form {
+	f.lang = Lang(lang.Langs.Get(lng))
+
+	for _, field := range f.fields {
+		field.SetLang(f.lang)
+	}
+
+	return f
 }
 
 // Allow Get Request (Beware: Get Request can bypass CSRF protection.)
@@ -176,9 +172,6 @@ validation:
 		if err != nil {
 			field.SetError(err)
 			valid = false
-			if field.GetName() == "_anti-CSRF" {
-				break
-			}
 		}
 	}
 
