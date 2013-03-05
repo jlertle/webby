@@ -7,9 +7,9 @@ var Error403 = func(w *Web) {
 	w.Print("<h1>403 Forbidden</h1>")
 }
 
-func (web *Web) Error403() {
-	web.Status = 403
-	Error403(web)
+func (w *Web) Error403() {
+	w.Status = 403
+	Error403(w)
 }
 
 // Overridable Error404 Function
@@ -19,9 +19,9 @@ var Error404 = func(w *Web) {
 	w.Print("<h1>404 Not Found</h1>")
 }
 
-func (web *Web) Error404() {
-	web.Status = 404
-	Error404(web)
+func (w *Web) Error404() {
+	w.Status = 404
+	Error404(w)
 }
 
 // Overridable Error500 Function
@@ -31,9 +31,9 @@ var Error500 = func(w *Web) {
 	w.Print("<h1>500 Internal Server Error</h1>")
 }
 
-func (web *Web) Error500() {
-	web.Status = 500
-	Error500(web)
+func (w *Web) Error500() {
+	w.Status = 500
+	Error500(w)
 }
 
 // Default Index View
