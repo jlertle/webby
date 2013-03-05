@@ -7,7 +7,7 @@ import (
 )
 
 // Prepare Cookie
-func (w *Web) PreCookie(cookie *http.Cookie) *http.Cookie {
+func (w *Web) preCookie(cookie *http.Cookie) *http.Cookie {
 	var num int
 
 	if cookie.Path == "" {
@@ -55,7 +55,7 @@ release_cookie:
 
 // Set Cookie
 func (w *Web) SetCookie(cookie *http.Cookie) {
-	http.SetCookie(w, w.PreCookie(cookie))
+	http.SetCookie(w, w.preCookie(cookie))
 }
 
 // Get Cookie
