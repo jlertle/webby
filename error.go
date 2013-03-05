@@ -7,7 +7,7 @@ import (
 )
 
 // Check for Error
-func (web *Web) Check(err error) {
+func (w *Web) Check(err error) {
 	Check(err)
 }
 
@@ -24,7 +24,7 @@ type PanicHandler interface {
 
 type PanicConsole struct{}
 
-func (_ PanicConsole) Panic(web *Web, r interface{}, stack []byte) {
+func (_ PanicConsole) Panic(w *Web, r interface{}, stack []byte) {
 	fmt.Print(r, "\r\n", string(stack))
 }
 
@@ -34,7 +34,7 @@ type PanicFile struct {
 	Path string
 }
 
-func (p PanicFile) Panic(web *Web, r interface{}, stack []byte) {
+func (p PanicFile) Panic(w *Web, r interface{}, stack []byte) {
 	filename := p.Path + fmt.Sprintf("/%d_%d", time.Now().Unix(), time.Now().UnixNano()) + panicFileExt
 	file, err := os.Create(filename)
 	if err != nil {
@@ -43,22 +43,22 @@ func (p PanicFile) Panic(web *Web, r interface{}, stack []byte) {
 	defer file.Close()
 
 	fmt.Fprintf(file, "\r\n%s, %s, %s, %s, ?%s IP:%s\r\n",
-		web.Req.Proto, web.Req.Method,
-		web.Req.Host, web.Req.URL.Path,
-		web.Req.URL.RawQuery, web.Req.RemoteAddr)
+		w.Req.Proto, w.Req.Method,
+		w.Req.Host, w.Req.URL.Path,
+		w.Req.URL.RawQuery, w.Req.RemoteAddr)
 
 	fmt.Fprintf(file, "\r\n%s\r\n\r\n%s", r, stack)
 
 	fmt.Fprintln(file, "\r\nRequest Header:")
-	fmt.Fprintln(file, web.Req.Header)
+	fmt.Fprintln(file, w.Req.Header)
 
-	web.ParseForm()
+	w.ParseForm()
 
 	fmt.Fprintln(file, "\r\nForm Values:")
-	fmt.Fprintln(file, web.Req.Form)
+	fmt.Fprintln(file, w.Req.Form)
 
 	fmt.Fprintln(file, "\r\nForm Values (Multipart):")
-	fmt.Fprintln(file, web.Req.MultipartForm)
+	fmt.Fprintln(file, w.Req.MultipartForm)
 
 	fmt.Fprintln(file, "\r\nTime:")
 	fmt.Fprintln(file, time.Now())

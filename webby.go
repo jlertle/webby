@@ -49,7 +49,7 @@ type Web struct {
 
 // HTTP Handler
 func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
-	web := &Web{
+	w := &Web{
 		webInterface: res.(webInterface),
 		Status:       http.StatusOK,
 		Env:          req.Header,
@@ -64,71 +64,71 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		firstWrite:   true,
 	}
 
-	web.reswrite = web.webInterface
+	w.reswrite = w.webInterface
 
-	web.initTrueHost()
-	web.initTrueRemoteAddr()
-	web.initSession()
-	web.Header().Set("Content-Encoding", "plain")
+	w.initTrueHost()
+	w.initTrueRemoteAddr()
+	w.initSession()
+	w.Header().Set("Content-Encoding", "plain")
 
 	defer func() {
 		if r := recover(); r != nil {
-			DefaultPanicHandler.Panic(web, r, debug.Stack())
+			DefaultPanicHandler.Panic(w, r, debug.Stack())
 			if DEBUG {
-				web.Status = 500
-				web.Println("500 Internal Server Error")
+				w.Status = 500
+				w.Println("500 Internal Server Error")
 
-				web.Printf("\r\n%s, %s, %s, %s, ?%s IP:%s\r\n",
-					web.Req.Proto, web.Req.Method,
-					web.Req.Host, web.Req.URL.Path,
-					web.Req.URL.RawQuery, web.Req.RemoteAddr)
+				w.Printf("\r\n%s, %s, %s, %s, ?%s IP:%s\r\n",
+					w.Req.Proto, w.Req.Method,
+					w.Req.Host, w.Req.URL.Path,
+					w.Req.URL.RawQuery, w.Req.RemoteAddr)
 
-				web.Printf("\r\n%s\r\n\r\n%s", r, debug.Stack())
+				w.Printf("\r\n%s\r\n\r\n%s", r, debug.Stack())
 
-				web.Println("\r\nRequest Header:")
-				web.Println(web.Req.Header)
+				w.Println("\r\nRequest Header:")
+				w.Println(w.Req.Header)
 
-				web.ParseForm()
+				w.ParseForm()
 
-				web.Println("\r\nForm Values:")
-				web.Println(web.Req.Form)
+				w.Println("\r\nForm Values:")
+				w.Println(w.Req.Form)
 
-				web.Println("\r\nForm Values (Multipart):")
-				web.Println(web.Req.MultipartForm)
+				w.Println("\r\nForm Values (Multipart):")
+				w.Println(w.Req.MultipartForm)
 
-				web.Println("\r\nTime:")
-				web.Println(time.Now())
+				w.Println("\r\nTime:")
+				w.Println(time.Now())
 
 				return
 			}
-			web.Error500()
+			w.Error500()
 		}
 	}()
 
-	defer web.closeCompression()
+	defer w.closeCompression()
 
-	web.debugStart()
-	defer web.debugEnd()
+	w.debugStart()
+	defer w.debugEnd()
 
-	HtmlFuncBoot.Load(web)
+	HtmlFuncBoot.Load(w)
 
-	if web.CutOut() {
+	if w.CutOut() {
 		return
 	}
 
-	MainBoot.Load(web)
+	MainBoot.Load(w)
 
-	if web.CutOut() {
+	if w.CutOut() {
 		return
 	}
 
-	RootView.View(web)
+	RootView.View(w)
 
-	if web.CutOut() {
+	if w.CutOut() {
 		return
 	}
 
-	Error500(web)
+	Error500(w)
 }
 
 // Write writes the data to the connection as part of an HTTP reply.
@@ -136,19 +136,19 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 // before writing the data.  If the Header does not contain a
 // Content-Type line, Write adds a Content-Type set to the result of passing
 // the initial 512 bytes of written data to DetectContentType.
-func (web *Web) Write(data []byte) (int, error) {
-	web.cut = true
+func (w *Web) Write(data []byte) (int, error) {
+	w.cut = true
 
-	if web.firstWrite {
-		if web.Header().Get("Content-Type") == "" {
-			web.Header().Set("Content-Type", http.DetectContentType(data))
+	if w.firstWrite {
+		if w.Header().Get("Content-Type") == "" {
+			w.Header().Set("Content-Type", http.DetectContentType(data))
 		}
 
-		web.firstWrite = false
-		web.WriteHeader(web.Status)
+		w.firstWrite = false
+		w.WriteHeader(w.Status)
 	}
 
-	return web.reswrite.Write(data)
+	return w.reswrite.Write(data)
 }
 
 // WriteHeader sends an HTTP response header with status code.
@@ -157,14 +157,14 @@ func (web *Web) Write(data []byte) (int, error) {
 // Thus explicit calls to WriteHeader are mainly used to
 // send error codes.
 // Note: Use Status properly to set error code! As this disable compression!
-func (web *Web) WriteHeader(num int) {
-	web.cut = true
+func (w *Web) WriteHeader(num int) {
+	w.cut = true
 
-	if web.firstWrite {
-		web.firstWrite = false
+	if w.firstWrite {
+		w.firstWrite = false
 	}
 
-	web.webInterface.WriteHeader(num)
+	w.webInterface.WriteHeader(num)
 }
 
 // Hijack lets the caller take over the connection.
@@ -172,50 +172,50 @@ func (web *Web) WriteHeader(num int) {
 // will not do anything else with the connection.
 // It becomes the caller's responsibility to manage
 // and close the connection.
-func (web *Web) Hijack() (net.Conn, *bufio.ReadWriter, error) {
-	web.cut = true
-	return web.webInterface.Hijack()
+func (w *Web) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	w.cut = true
+	return w.webInterface.Hijack()
 }
 
 // Print formats using the default formats for its operands and writes to client (http web server or browser).
 // Spaces are added between operands when neither is a string.
 // It returns the number of bytes written and any write error encountered.
-func (web *Web) Print(a ...interface{}) (int, error) {
-	return fmt.Fprint(web, a...)
+func (w *Web) Print(a ...interface{}) (int, error) {
+	return fmt.Fprint(w, a...)
 }
 
 // Printf formats according to a format specifier and writes to client (http web server or browser).
 // It returns the number of bytes written and any write error encountered.
-func (web *Web) Printf(format string, a ...interface{}) (int, error) {
-	return fmt.Fprintf(web, format, a...)
+func (w *Web) Printf(format string, a ...interface{}) (int, error) {
+	return fmt.Fprintf(w, format, a...)
 }
 
 // Println formats using the default formats for its operands and writes to client (http web server or browser).
 // Spaces are always added between operands and a newline is appended.
 // It returns the number of bytes written and any write error encountered.
-func (web *Web) Println(a ...interface{}) (int, error) {
-	return fmt.Fprintln(web, a...)
+func (w *Web) Println(a ...interface{}) (int, error) {
+	return fmt.Fprintln(w, a...)
 }
 
 // true if output was sent to client, otherwise false!
-func (web *Web) CutOut() bool {
-	return web.cut
+func (w *Web) CutOut() bool {
+	return w.cut
 }
 
-func (web *Web) debuginfo(a string) {
+func (w *Web) debuginfo(a string) {
 	if !DEBUG {
 		return
 	}
 	fmt.Printf("--\r\n %s  %s, %s, %s, %s, ?%s IP:%s \r\n--\r\n",
-		a, web.Req.Proto, web.Req.Method,
-		web.Req.Host, web.Req.URL.Path,
-		web.Req.URL.RawQuery, web.Req.RemoteAddr)
+		a, w.Req.Proto, w.Req.Method,
+		w.Req.Host, w.Req.URL.Path,
+		w.Req.URL.RawQuery, w.Req.RemoteAddr)
 }
 
-func (web *Web) debugStart() {
-	web.debuginfo("START")
+func (w *Web) debugStart() {
+	w.debuginfo("START")
 }
 
-func (web *Web) debugEnd() {
-	web.debuginfo("END  ")
+func (w *Web) debugEnd() {
+	w.debuginfo("END  ")
 }

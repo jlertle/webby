@@ -43,13 +43,9 @@ func (w *Web) parseHtml(htmlstr string, value_map interface{}, buf io.Writer) {
 		buf = w
 	}
 	t, err := html.New("html").Funcs(w.HtmlFunc).Parse(htmlstr)
-	if err != nil {
-		buf.Write([]byte(err.Error()))
-	}
+	w.Check(err)
 	err = t.Execute(buf, value_map)
-	if err != nil {
-		buf.Write([]byte(err.Error()))
-	}
+	w.Check(err)
 }
 
 // Parse HTML
@@ -119,14 +115,14 @@ return_content:
 //
 // Note: Marksafe functions/filters avaliable are 'html', 'htmlattr', 'js' and 'jsattr'.
 // DO NOT USE THIS WITH LARGE FILES.
-func (web *Web) ParseHtmlFile(htmlfile string, value_map interface{}) string {
-	return web.ParseHtml(web.GetHtmlFile(htmlfile), value_map)
+func (w *Web) ParseHtmlFile(htmlfile string, value_map interface{}) string {
+	return w.ParseHtml(w.GetHtmlFile(htmlfile), value_map)
 }
 
 // Parse HTML File and Send Response to Client
 //
 // Note: Marksafe functions/filters avaliable are 'html', 'htmlattr', 'js' and 'jsattr'.
 // DO NOT USE THIS WITH LARGE FILES.
-func (web *Web) ParseHtmlFileSend(htmlfile string, value_map interface{}) {
-	web.ParseHtmlSend(web.GetHtmlFile(htmlfile), value_map)
+func (w *Web) ParseHtmlFileSend(htmlfile string, value_map interface{}) {
+	w.ParseHtmlSend(w.GetHtmlFile(htmlfile), value_map)
 }

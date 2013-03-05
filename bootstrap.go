@@ -9,11 +9,11 @@ type BootstrapHandler interface {
 }
 
 type FuncToBootstrapHandler struct {
-	function func(*Web)
+	Function func(*Web)
 }
 
 func (fn FuncToBootstrapHandler) Boot(w *Web) {
-	fn.function(w)
+	fn.Function(w)
 }
 
 // Bootstrap Struct
@@ -59,13 +59,17 @@ func NewBootstrapRegHandler(handlers ...BootstrapHandler) *Bootstrap {
 }
 
 // Load Functions in Bootstrap.
-func (boot *Bootstrap) Load(web *Web) {
+func (boot *Bootstrap) Load(w *Web) {
 	for _, bt := range boot.getBoots() {
-		bt.Boot(web)
-		if web.CutOut() {
+		bt.Boot(w)
+		if w.CutOut() {
 			return
 		}
 	}
+}
+
+func (boot *Bootstrap) Boot(w *Web) {
+	boot.Load(w)
 }
 
 // For Allowing Libraries to Automatically Plugin into this Framework. 
@@ -82,19 +86,19 @@ type BootRoute struct {
 	ROUTER *Router
 }
 
-func (bo BootRoute) View(web *Web) {
+func (bo BootRoute) View(w *Web) {
 	if bo.BOOT != nil {
-		bo.BOOT.Load(web)
+		bo.BOOT.Load(w)
 
-		if web.CutOut() {
+		if w.CutOut() {
 			return
 		}
 	}
 
 	if bo.ROUTER != nil {
-		bo.ROUTER.LoadReset(web)
+		bo.ROUTER.LoadReset(w)
 
-		if web.CutOut() {
+		if w.CutOut() {
 			return
 		}
 	}
