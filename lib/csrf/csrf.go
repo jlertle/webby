@@ -41,13 +41,7 @@ func genKey() string {
 func getCookie(w *webby.Web) *http.Cookie {
 	cookie, err := w.Req.Cookie(cookieName)
 	if err != nil {
-		cookie = &http.Cookie{
-			Name:    cookieName,
-			Value:   genKey(),
-			Expires: time.Now().AddDate(0, 1, 0),
-		}
-		w.SetCookie(cookie)
-		w.Req.AddCookie(cookie)
+		cookie = w.NewCookie(cookieName).Value(genKey()).Expires(time.Now().AddDate(0, 1, 0)).SaveRes().SaveReq().Get()
 	}
 	return cookie
 }

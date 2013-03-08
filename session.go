@@ -3,7 +3,6 @@ package webby
 import (
 	"encoding/gob"
 	"fmt"
-	"net/http"
 	"os"
 	"sync"
 	"time"
@@ -85,11 +84,8 @@ func (_ SessionMemory) Set(w *Web, data interface{}) {
 	sesCookie, err := w.GetCookie(SessionCookieName)
 
 	if err != nil {
-		sesCookie = &http.Cookie{}
 		curtime := time.Now()
-		sesCookie.Name = SessionCookieName
-		sesCookie.Value = fmt.Sprintf("%x%x", uint64ToByte(uint64(curtime.Unix())),
-			uint64ToByte(uint64(curtime.UnixNano())))
+		sesCookie = w.NewCookie(SessionCookieName).Value(fmt.Sprintf("%x%x", uint64ToByte(uint64(curtime.Unix())), uint64ToByte(uint64(curtime.UnixNano())))).Get()
 	}
 
 	w.SetCookie(sesCookie)
@@ -119,8 +115,7 @@ func (_ SessionMemory) Init(w *Web) {
 	}
 
 	deleteSessionFromMap(sesCookie.Value)
-	sesCookie.MaxAge = -1
-	w.SetCookie(sesCookie)
+	w.DeleteCookie(sesCookie.Name)
 }
 
 func (_ SessionMemory) Destroy(w *Web) {
@@ -136,8 +131,7 @@ func (_ SessionMemory) Destroy(w *Web) {
 	case *session:
 		deleteSessionFromMap(sesCookie.Value)
 	}
-	sesCookie.MaxAge = -1
-	w.SetCookie(sesCookie)
+	w.DeleteCookie(sesCookie.Name)
 }
 
 const sessionFileExt = ".wbs"
@@ -150,11 +144,8 @@ func (se SessionFile) Set(w *Web, data interface{}) {
 	sesCookie, err := w.GetCookie(SessionCookieName)
 
 	if err != nil {
-		sesCookie = &http.Cookie{}
 		curtime := time.Now()
-		sesCookie.Name = SessionCookieName
-		sesCookie.Value = fmt.Sprintf("%x%x", uint64ToByte(uint64(curtime.Unix())),
-			uint64ToByte(uint64(curtime.UnixNano())))
+		sesCookie = w.NewCookie(SessionCookieName).Value(fmt.Sprintf("%x%x", uint64ToByte(uint64(curtime.Unix())), uint64ToByte(uint64(curtime.UnixNano())))).Get()
 	}
 
 	w.SetCookie(sesCookie)
@@ -196,8 +187,7 @@ func (se SessionFile) Init(w *Web) {
 	}
 
 	os.Remove(se.Path + "/" + sesCookie.Value + sessionFileExt)
-	sesCookie.MaxAge = -1
-	w.SetCookie(sesCookie)
+	w.DeleteCookie(sesCookie.Name)
 }
 
 func (se SessionFile) Destroy(w *Web) {
@@ -207,8 +197,7 @@ func (se SessionFile) Destroy(w *Web) {
 	}
 
 	os.Remove(se.Path + "/" + sesCookie.Value + sessionFileExt)
-	sesCookie.MaxAge = -1
-	w.SetCookie(sesCookie)
+	w.DeleteCookie(sesCookie.Name)
 }
 
 var DefaultSessionHandler SessionHandler = SessionMemory{}
