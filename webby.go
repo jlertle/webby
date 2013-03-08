@@ -25,7 +25,6 @@ type webInterface interface {
 
 // The Framework Structure
 type Web struct {
-	webInterface
 	// Error Code
 	Status int
 	// Server Environment Variables
@@ -39,7 +38,8 @@ type Web struct {
 	// Function to load in html template system.
 	HtmlFunc html.FuncMap
 	// For holding session!
-	Session    interface{}
+	Session interface{}
+	webInterface
 	path       string
 	curpath    string
 	reswrite   io.Writer
