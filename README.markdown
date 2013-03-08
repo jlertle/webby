@@ -70,4 +70,4 @@ http://go.pkgdoc.org/github.com/CJ-Jackson/webby
 
 ## Note ##
 
-Note this framework does not have an ORM but can co-exist with an ORM Framework, an Google App Engine user probably won't need an ORM Framework!
+Note this framework does not have an ORM but can co-exist with an ORM Framework, a Google App Engine user probably won't need an ORM Framework!
