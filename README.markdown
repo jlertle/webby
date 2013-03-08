@@ -1,6 +1,8 @@
 # Webby
 
-Simple Web Application Server Framework!
+A Very Nice Web Framework that can be used as a standalone or embedded Web Framework!
+
+It's built on top of the standard package 'net/http'!
 
 ## Installation ##
 
@@ -68,6 +70,4 @@ http://go.pkgdoc.org/github.com/CJ-Jackson/webby
 
 ## Note ##
 
-Webby here will only cover two components of the MVC, the View and the Controller, the Model is up to you, I decided not to include ORM because SQL is no longer the exclusive Database System as it once was years ago (Now there NoSQL).  Basically use an existing dedicated ORM framework such as <https://github.com/astaxie/beedb> or <https://github.com/coopernurse/gorp>!  It should be easy to integrate into the web framework!
-
-You can build your own database system, I don't recommend that!
+Note this framework does not have an ORM but can co-exist with an ORM Framework, an Google App Engine user probably won't need an ORM Framework!
