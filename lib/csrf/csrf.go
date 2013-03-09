@@ -14,7 +14,7 @@ const cookieName = "csrf_token"
 var (
 	// Just to avoid ugly url patterns!
 	IncludeGetRequest = false
-	// Modulisation is pretty use for large site! Or when you want to specify the correct placement for csrf checking!
+	// Modulisation is pretty useful for large site! Or when you want to specify the correct placement for csrf checking!
 	Modulised = false
 )
 
