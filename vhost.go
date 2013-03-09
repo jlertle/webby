@@ -12,7 +12,7 @@ type vHost struct {
 	boot BootRoute
 }
 
-// Use host name as string (e.g example.com)
+// Implement RouteHandler interface.
 type VHost struct {
 	sync.RWMutex
 	hosts []*vHost
@@ -76,6 +76,7 @@ func (vh vHostRegs) Swap(i, j int) {
 	vh[i], vh[j] = vh[j], vh[i]
 }
 
+// Implement RouteHandler interface.
 type VHostRegExp struct {
 	sync.RWMutex
 	vhost vHostRegs

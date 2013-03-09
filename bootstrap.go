@@ -81,6 +81,7 @@ var Boot = &Bootstrap{}
 // For Allowing Libraries to Add Function to the Html Template Engine!
 var HtmlFuncBoot = &Bootstrap{}
 
+// Implement RouteHandler interface.
 type BootRoute struct {
 	BOOT   *Bootstrap
 	ROUTER *Router

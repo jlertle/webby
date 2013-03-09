@@ -89,7 +89,7 @@ func (ro routes) Swap(i, j int) {
 	ro[i], ro[j] = ro[j], ro[i]
 }
 
-// Router (Controller)
+// Router (Controller), implement 'RouterHandler' interface
 type Router struct {
 	sync.RWMutex
 	routes routes
@@ -253,6 +253,7 @@ func (ro *Router) View(w *Web) {
 	ro.Load(w)
 }
 
+// Implement RouteHandler interface!
 type FuncToRouteHandler struct {
 	Function func(*Web)
 }
@@ -268,6 +269,7 @@ func RouteHandlerToFunc(ro RouteHandler) func(w *Web) {
 	}
 }
 
+// Reset Url, Implement RouteHandler interface!
 type RouteReset struct{ *Router }
 
 func (ro RouteReset) View(w *Web) {

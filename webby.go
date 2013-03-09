@@ -23,7 +23,8 @@ type webInterface interface {
 	http.Flusher
 }
 
-// The Framework Structure
+// The Framework Structure, it's implement the interfaces of 'net/http.ResponseWriter',
+// 'net/http.Hijacker', 'net/http.Flusher' and 'net/http.Handler'
 type Web struct {
 	// Error Code
 	Status int

@@ -4,6 +4,7 @@ import (
 	"strings"
 )
 
+// Demuxer for Request Method. Implement RouteHandler interface!
 type Junction struct {
 	ALL, GET, POST, HEAD, DELETE, PUT, PATCH, OPTIONS, AJAX, WS RouteHandler
 }
@@ -75,6 +76,7 @@ func (jn Junction) View(w *Web) {
 	return
 }
 
+// Demuxer for Protocol. Implement RouteHandler interface.
 type Protocol struct {
 	ALL, HTTP, HTTPS RouteHandler
 }

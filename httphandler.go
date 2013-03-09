@@ -4,6 +4,7 @@ import (
 	"net/http"
 )
 
+// 'net/http.Handler' Adapter.  Implement RouterHandler interface 
 type HttpRouteHandler struct {
 	http.Handler
 }
