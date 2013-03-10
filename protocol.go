@@ -31,3 +31,39 @@ func (pr Protocol) View(w *Web) {
 	w.Error404()
 	return
 }
+
+// Chainable version of Protocol
+type PipeProtocol struct {
+	pr Protocol
+}
+
+func NewProtocol() PipeProtocol {
+	return PipeProtocol{Protocol{}}
+}
+
+func (pi PipeProtocol) Get() Protocol {
+	return pi.pr
+}
+
+func (pi PipeProtocol) Http(http RouteHandler) PipeProtocol {
+	pi.pr.HTTP = http
+	return pi
+}
+
+func (pi PipeProtocol) Https(https RouteHandler) PipeProtocol {
+	pi.pr.HTTPS = https
+	return pi
+}
+
+func (pi PipeProtocol) All(all RouteHandler) PipeProtocol {
+	pi.pr.ALL = all
+	return pi
+}
+
+func (pi PipeProtocol) Any(any RouteHandler) PipeProtocol {
+	return pi.All(any)
+}
+
+func (pi PipeProtocol) Fallback(fallback RouteHandler) PipeProtocol {
+	return pi.All(fallback)
+}

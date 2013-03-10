@@ -73,7 +73,7 @@ func (w *Web) DeleteCookie(name string) {
 	})
 }
 
-// Pipeable version of 'net/http.Cookie'
+// Chainable version of 'net/http.Cookie'
 type PipeCookie struct {
 	w *Web
 	c *http.Cookie

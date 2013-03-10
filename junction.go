@@ -72,7 +72,7 @@ func (jn Junction) View(w *Web) {
 	return
 }
 
-// Pipeable version of Junction
+// Chainable version of Junction
 type PipeJunction struct {
 	jn Junction
 }
