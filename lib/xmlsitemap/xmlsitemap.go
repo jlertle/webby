@@ -13,3 +13,36 @@ type Url struct {
 	ChangeFreq string
 	Priority   float64
 }
+
+// Chainable version of Url
+type PipeUrl struct {
+	url Url
+}
+
+func NewUrl() PipeUrl {
+	return PipeUrl{Url{}}
+}
+
+func (pi PipeUrl) Get() Url {
+	return pi.url
+}
+
+func (pi PipeUrl) Loc(loc string) PipeUrl {
+	pi.url.Loc = loc
+	return pi
+}
+
+func (pi PipeUrl) LastMod(lastMod time.Time) PipeUrl {
+	pi.url.LastMod = lastMod
+	return pi
+}
+
+func (pi PipeUrl) ChangeFreq(changeFreq string) PipeUrl {
+	pi.url.ChangeFreq = changeFreq
+	return pi
+}
+
+func (pi PipeUrl) Priority(priority float64) PipeUrl {
+	pi.url.Priority = priority
+	return pi
+}
