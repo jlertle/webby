@@ -8,6 +8,6 @@ func CurTime() time.Time {
 	return time.Now()
 }
 
-func (w *Web) Curtime() time.Time {
+func (w *Web) CurTime() time.Time {
 	return CurTime()
 }
