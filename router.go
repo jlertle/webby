@@ -225,7 +225,7 @@ func (ro *Router) Load(w *Web) {
 		return
 	}
 
-	Error404(w)
+	w.Error404()
 }
 
 // Reset to root and try to load matching route, output 404 on fail!
@@ -243,7 +243,7 @@ func (ro *Router) LoadReset(w *Web) {
 		return
 	}
 
-	Error404(w)
+	w.Error404()
 }
 
 var Route = &Router{}
