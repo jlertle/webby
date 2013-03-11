@@ -1,6 +1,8 @@
 package webby
 
 import (
+	"encoding/json"
+	"encoding/xml"
 	"regexp"
 	"strconv"
 )
@@ -96,4 +98,14 @@ var stripPortFromAddr = regexp.MustCompile("^(.*)(:(\\d+))$")
 // Get Remote Address (IP Address) without port number!
 func (w *Web) RemoteAddr() string {
 	return stripPortFromAddr.FindStringSubmatch(w.Req.RemoteAddr)[1]
+}
+
+// Output in JSON
+func (w *Web) JsonSend(v interface{}) {
+	json.NewEncoder(w).Encode(v)
+}
+
+// Output in XML
+func (w *Web) XmlSend(v interface{}) {
+	xml.NewEncoder(w).Encode(v)
 }
