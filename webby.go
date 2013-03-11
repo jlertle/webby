@@ -25,6 +25,14 @@ type webInterface interface {
 	http.Flusher
 }
 
+type webPrivate struct {
+	path       string
+	curpath    string
+	reswrite   io.Writer
+	cut        bool
+	firstWrite bool
+}
+
 // The Framework Structure, it's implement the interfaces of 'net/http.ResponseWriter',
 // 'net/http.Hijacker', 'net/http.Flusher' and 'net/http.Handler'
 type Web struct {
@@ -42,12 +50,9 @@ type Web struct {
 	HtmlFunc html.FuncMap
 	// For holding session!
 	Session interface{}
+	Errors  *Errors
 	webInterface
-	path       string
-	curpath    string
-	reswrite   io.Writer
-	cut        bool
-	firstWrite bool
+	pri *webPrivate
 }
 
 // HTTP Handler
@@ -61,13 +66,20 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		Param:        Param{},
 		HtmlFunc:     html.FuncMap{},
 		Session:      nil,
-		path:         req.URL.Path,
-		curpath:      "",
-		cut:          false,
-		firstWrite:   true,
+		Errors: &Errors{
+			E403: Error403,
+			E404: Error404,
+			E500: Error500,
+		},
+		pri: &webPrivate{
+			path:       req.URL.Path,
+			curpath:    "",
+			cut:        false,
+			firstWrite: true,
+		},
 	}
 
-	w.reswrite = w.webInterface
+	w.pri.reswrite = w.webInterface
 
 	w.initTrueHost()
 	w.initTrueRemoteAddr()
@@ -140,18 +152,18 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 // Content-Type line, Write adds a Content-Type set to the result of passing
 // the initial 512 bytes of written data to DetectContentType.
 func (w *Web) Write(data []byte) (int, error) {
-	w.cut = true
+	w.pri.cut = true
 
-	if w.firstWrite {
+	if w.pri.firstWrite {
 		if w.Header().Get("Content-Type") == "" {
 			w.Header().Set("Content-Type", http.DetectContentType(data))
 		}
 
-		w.firstWrite = false
+		w.pri.firstWrite = false
 		w.WriteHeader(w.Status)
 	}
 
-	return w.reswrite.Write(data)
+	return w.pri.reswrite.Write(data)
 }
 
 // WriteHeader sends an HTTP response header with status code.
@@ -161,10 +173,10 @@ func (w *Web) Write(data []byte) (int, error) {
 // send error codes.
 // Note: Use Status properly to set error code! As this disable compression!
 func (w *Web) WriteHeader(num int) {
-	w.cut = true
+	w.pri.cut = true
 
-	if w.firstWrite {
-		w.firstWrite = false
+	if w.pri.firstWrite {
+		w.pri.firstWrite = false
 	}
 
 	w.webInterface.WriteHeader(num)
@@ -176,7 +188,7 @@ func (w *Web) WriteHeader(num int) {
 // It becomes the caller's responsibility to manage
 // and close the connection.
 func (w *Web) Hijack() (net.Conn, *bufio.ReadWriter, error) {
-	w.cut = true
+	w.pri.cut = true
 	return w.webInterface.Hijack()
 }
 
@@ -202,7 +214,7 @@ func (w *Web) Println(a ...interface{}) (int, error) {
 
 // true if output was sent to client, otherwise false!
 func (w *Web) CutOut() bool {
-	return w.cut
+	return w.pri.cut
 }
 
 func (w *Web) debuginfo(a string) {

@@ -21,11 +21,11 @@ func (w *Web) InitCompression() {
 
 		switch encoding {
 		case "gzip":
-			w.reswrite = gzip.NewWriter(w.webInterface)
+			w.pri.reswrite = gzip.NewWriter(w.webInterface)
 			w.Header().Set("Content-Encoding", encoding)
 			return
 		case "deflate":
-			w.reswrite, _ = flate.NewWriter(w.webInterface, flate.DefaultCompression)
+			w.pri.reswrite, _ = flate.NewWriter(w.webInterface, flate.DefaultCompression)
 			w.Header().Set("Content-Encoding", encoding)
 			return
 		}
@@ -34,7 +34,7 @@ func (w *Web) InitCompression() {
 }
 
 func (w *Web) closeCompression() {
-	switch t := w.reswrite.(type) {
+	switch t := w.pri.reswrite.(type) {
 	case *gzip.Writer:
 		t.Close()
 	case *flate.Writer:

@@ -172,19 +172,19 @@ func NewRouterHandlerMap(routeHandlerMap RouteHandlerMap) *Router {
 
 func (ro *Router) load(w *Web, reset bool) bool {
 	if reset {
-		w.path = w.Req.URL.Path
-		w.curpath = ""
+		w.pri.path = w.Req.URL.Path
+		w.pri.curpath = ""
 	}
 
 	for _, route := range ro.getRoutes() {
-		if !route.RegExpComplied.MatchString(w.path) {
+		if !route.RegExpComplied.MatchString(w.pri.path) {
 			continue
 		}
 
 		names := route.RegExpComplied.SubexpNames()
-		matches := route.RegExpComplied.FindStringSubmatch(w.path)
+		matches := route.RegExpComplied.FindStringSubmatch(w.pri.path)
 
-		w.curpath += matches[0]
+		w.pri.curpath += matches[0]
 
 		for key, name := range names {
 			if name != "" {
@@ -192,7 +192,7 @@ func (ro *Router) load(w *Web, reset bool) bool {
 			}
 		}
 
-		w.path = w.path[route.RegExpComplied.FindStringIndex(w.path)[1]:]
+		w.pri.path = w.pri.path[route.RegExpComplied.FindStringIndex(w.pri.path)[1]:]
 
 		route.Route.View(w)
 		return true
@@ -203,7 +203,7 @@ func (ro *Router) load(w *Web, reset bool) bool {
 func (ro *Router) debug(w *Web) {
 	w.Status = 404
 	w.Print("404 Not Found\r\n\r\n")
-	w.Print(w.Req.Host+w.curpath, "\r\n\r\n")
+	w.Print(w.Req.Host+w.pri.curpath, "\r\n\r\n")
 	w.Print("Rule(s):\r\n")
 	for _, route := range ro.getRoutes() {
 		w.Print(route.RegExp, "\r\n")

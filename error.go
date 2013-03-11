@@ -65,3 +65,45 @@ func (p PanicFile) Panic(w *Web, r interface{}, stack []byte) {
 }
 
 var DefaultPanicHandler PanicHandler = PanicConsole{}
+
+type Errors struct {
+	E403 func(w *Web)
+	E404 func(w *Web)
+	E500 func(w *Web)
+}
+
+// Overridable Error403 Function
+//
+// Note:  Overriding is useful for custom 403 page
+var Error403 = func(w *Web) {
+	w.Print("<h1>403 Forbidden</h1>")
+}
+
+func (w *Web) Error403() {
+	w.Status = 403
+	w.Errors.E403(w)
+}
+
+// Overridable Error404 Function
+//
+// Note:  Overriding is useful for custom 404 page
+var Error404 = func(w *Web) {
+	w.Print("<h1>404 Not Found</h1>")
+}
+
+func (w *Web) Error404() {
+	w.Status = 404
+	w.Errors.E404(w)
+}
+
+// Overridable Error500 Function
+//
+// Note:  Overriding is useful for custom 500 page
+var Error500 = func(w *Web) {
+	w.Print("<h1>500 Internal Server Error</h1>")
+}
+
+func (w *Web) Error500() {
+	w.Status = 500
+	w.Errors.E500(w)
+}
