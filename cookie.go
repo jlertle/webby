@@ -66,11 +66,7 @@ func (w *Web) GetCookie(name string) (*http.Cookie, error) {
 
 // Delete Cookie
 func (w *Web) DeleteCookie(name string) {
-	w.SetCookie(&http.Cookie{
-		Name:   name,
-		Value:  "Delete-Me",
-		MaxAge: -1,
-	})
+	w.NewCookie(name).Value("Delete-Me").MaxAge(-1).SaveRes()
 }
 
 // Chainable version of 'net/http.Cookie'
