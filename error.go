@@ -25,6 +25,9 @@ type PanicHandler interface {
 type PanicConsole struct{}
 
 func (_ PanicConsole) Panic(w *Web, r interface{}, stack []byte) {
+	if CGI {
+		return
+	}
 	fmt.Print(r, "\r\n", string(stack))
 }
 

@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 // Convert String to int64
@@ -49,6 +50,22 @@ func (w *Web) initTrueRemoteAddr() {
 	case w.Env.Get("X-Forwarded-For") != "":
 		w.Req.RemoteAddr = w.Env.Get("X-Forwarded-For") + ":1234"
 		return
+	}
+}
+
+func (w *Web) initTruePath() {
+	switch {
+	case w.Env.Get("X-Original-Url") != "":
+		// For compatibility with IIS
+		urls := strings.Split(w.Env.Get("X-Original-Url"), "?")
+		w.Req.URL.Path = urls[0]
+		w.pri.path = w.Req.URL.Path
+
+		if len(urls) < 2 {
+			return
+		}
+
+		w.Req.URL.RawQuery = strings.Join(urls[1:], "?")
 	}
 }
 

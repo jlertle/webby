@@ -103,7 +103,7 @@ getfile_and_cache:
 		return err.Error()
 	}
 	content = string(content_in_byte)
-	if !DEBUG {
+	if !DEBUG && !CGI {
 		htmlFileCache.m[htmlfile] = htmlFileCacheStruct{content, time.Now().Add(HtmlTemplateCacheExpire)}
 	}
 

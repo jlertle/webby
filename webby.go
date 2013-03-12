@@ -17,6 +17,9 @@ import (
 // Debug Mode
 var DEBUG = false
 
+// CGI Mode
+var CGI = false
+
 var RootView RouteHandler = BootRoute{Boot, Route}
 
 type webInterface interface {
@@ -81,6 +84,7 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
 	w.initTrueHost()
 	w.initTrueRemoteAddr()
+	w.initTruePath()
 	w.initSession()
 	w.Header().Set("Content-Encoding", "plain")
 
@@ -230,7 +234,7 @@ func (w *Web) CutOut() bool {
 }
 
 func (w *Web) debuginfo(a string) {
-	if !DEBUG {
+	if !DEBUG || CGI {
 		return
 	}
 	fmt.Printf("--\r\n %s  %s, %s, %s, %s, ?%s IP:%s \r\n--\r\n",
