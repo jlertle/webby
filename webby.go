@@ -17,7 +17,7 @@ import (
 // Debug Mode
 var DEBUG = false
 
-// CGI Mode
+// CGI Mode, that exclude FastCGI and SCGI
 var CGI = false
 
 var RootView RouteHandler = BootRoute{Boot, Route}
