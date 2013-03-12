@@ -107,3 +107,9 @@ func (w *Web) Error500() {
 	w.Status = 500
 	w.Errors.E500(w)
 }
+
+type ErrorStr string
+
+func (e ErrorStr) Error() string {
+	return "Error: " + string(e)
+}

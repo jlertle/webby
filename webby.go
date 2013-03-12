@@ -21,8 +21,6 @@ var RootView RouteHandler = BootRoute{Boot, Route}
 
 type webInterface interface {
 	http.ResponseWriter
-	http.Hijacker
-	http.Flusher
 }
 
 type webPrivate struct {
@@ -189,7 +187,21 @@ func (w *Web) WriteHeader(num int) {
 // and close the connection.
 func (w *Web) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	w.pri.cut = true
-	return w.webInterface.Hijack()
+
+	switch t := w.webInterface.(type) {
+	case http.Hijacker:
+		return t.Hijack()
+	}
+
+	return nil, nil, ErrorStr("Connection is not Hijackable")
+}
+
+// Flush sends any buffered data to the client.
+func (w *Web) Flush() {
+	switch t := w.webInterface.(type) {
+	case http.Flusher:
+		t.Flush()
+	}
 }
 
 // Print formats using the default formats for its operands and writes to client (http web server or browser).
