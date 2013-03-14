@@ -16,8 +16,6 @@ It's built on top of the standard package 'net/http'!
 		"code.google.com/p/go.net/websocket"
 		"github.com/CJ-Jackson/webby"
 		"io"
-		"log"
-		"net/http"
 	)
 
 	func EchoServer(ws *websocket.Conn) {
@@ -50,11 +48,7 @@ It's built on top of the standard package 'net/http'!
 	}
 
 	func main() {
-		err := http.ListenAndServe(":8080", webby.Web{})
-
-		if err != nil {
-			log.Fatal("ListenAndServe: ", err)
-		}
+		webby.Check(webby.StartHttp(":8080"))
 	}
 
 
