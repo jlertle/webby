@@ -10,15 +10,15 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"net/http/cgi"
+	"net/http/fcgi"
+	"os"
 	"runtime/debug"
 	"time"
 )
 
 // Debug Mode
 var DEBUG = false
-
-// CGI Mode, that exclude FastCGI and SCGI
-var CGI = false
 
 var RootView RouteHandler = BootRoute{Boot, Route}
 
@@ -234,7 +234,7 @@ func (w *Web) CutOut() bool {
 }
 
 func (w *Web) debuginfo(a string) {
-	if !DEBUG || CGI {
+	if !DEBUG {
 		return
 	}
 	ErrPrintf("--\r\n %s  %s, %s, %s, %s, ?%s IP:%s \r\n--\r\n",
@@ -249,4 +249,25 @@ func (w *Web) debugStart() {
 
 func (w *Web) debugEnd() {
 	w.debuginfo("END  ")
+}
+
+// Start Http Server
+func StartHttp(addr string) error {
+	return http.ListenAndServe(addr, Web{})
+}
+
+// Start Http Server with TLS
+func StartHttpTLS(addr string, certFile string, keyFile string) error {
+	return http.ListenAndServeTLS(addr, certFile, keyFile, Web{})
+}
+
+// Start FastCGI Server
+func StartFastCGI(l net.Listener) error {
+	return fcgi.Serve(l, Web{})
+}
+
+// Start CGI, disables Stderr completely. (Due to the way how IIS handlers Stderr)
+func StartCGI() error {
+	os.Stderr = nil
+	return cgi.Serve(Web{})
 }

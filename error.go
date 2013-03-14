@@ -25,10 +25,7 @@ type PanicHandler interface {
 type PanicConsole struct{}
 
 func (_ PanicConsole) Panic(w *Web, r interface{}, stack []byte) {
-	if CGI {
-		return
-	}
-	Fprint(r, "\r\n", string(stack))
+	ErrPrint(r, "\r\n", string(stack))
 }
 
 const panicFileExt = ".txt"
