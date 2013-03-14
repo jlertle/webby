@@ -237,7 +237,7 @@ func (w *Web) debuginfo(a string) {
 	if !DEBUG || CGI {
 		return
 	}
-	fmt.Printf("--\r\n %s  %s, %s, %s, %s, ?%s IP:%s \r\n--\r\n",
+	ErrPrintf("--\r\n %s  %s, %s, %s, %s, ?%s IP:%s \r\n--\r\n",
 		a, w.Req.Proto, w.Req.Method,
 		w.Req.Host, w.Req.URL.Path,
 		w.Req.URL.RawQuery, w.Req.RemoteAddr)

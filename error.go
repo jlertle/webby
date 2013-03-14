@@ -28,7 +28,7 @@ func (_ PanicConsole) Panic(w *Web, r interface{}, stack []byte) {
 	if CGI {
 		return
 	}
-	fmt.Print(r, "\r\n", string(stack))
+	Fprint(r, "\r\n", string(stack))
 }
 
 const panicFileExt = ".txt"
@@ -115,4 +115,16 @@ type ErrorStr string
 
 func (e ErrorStr) Error() string {
 	return "Error: " + string(e)
+}
+
+func ErrPrint(a ...interface{}) {
+	fmt.Fprint(os.Stderr, a...)
+}
+
+func ErrPrintf(format string, a ...interface{}) {
+	fmt.Fprintf(os.Stderr, format, a...)
+}
+
+func ErrPrintln(a ...interface{}) {
+	fmt.Fprintln(os.Stderr, a...)
 }
