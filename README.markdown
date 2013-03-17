@@ -36,10 +36,7 @@ It's built on top of the standard package 'net/http'!
 	}
 
 	func init() {
-		index_junc := webby.Junction{
-			WS:  webby.HttpRouteHandler{websocket.Handler(EchoServer)},
-			ALL: index{},
-		}
+		index_junc := webby.NewJunction().Websocket(webby.HttpRouteHandler{websocket.Handler(EchoServer)}).Fallback(index{}).GetJunction()
 
 		webby.Route.RegisterHandlerMap(webby.RouteHandlerMap{
 			"^/$": index_junc,
