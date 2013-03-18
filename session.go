@@ -2,7 +2,6 @@ package webby
 
 import (
 	"encoding/gob"
-	"fmt"
 	"os"
 	"sync"
 	"time"
@@ -50,20 +49,6 @@ var sessionMap = struct {
 	m map[string]sessionInterface
 }{m: map[string]sessionInterface{}}
 
-// Convert Unsigned 64-bit Int to Bytes.
-func uint64ToByte(num uint64) [8]byte {
-	var buf [8]byte
-	buf[0] = byte(num >> 0)
-	buf[1] = byte(num >> 8)
-	buf[2] = byte(num >> 16)
-	buf[3] = byte(num >> 24)
-	buf[4] = byte(num >> 32)
-	buf[5] = byte(num >> 40)
-	buf[6] = byte(num >> 48)
-	buf[7] = byte(num >> 56)
-	return buf
-}
-
 type SessionHandler interface {
 	Set(*Web, interface{})
 	Init(*Web)
@@ -84,8 +69,7 @@ func (_ SessionMemory) Set(w *Web, data interface{}) {
 	sesCookie, err := w.GetCookie(SessionCookieName)
 
 	if err != nil {
-		curtime := time.Now()
-		sesCookie = w.NewCookie(SessionCookieName).Value(fmt.Sprintf("%x%x", uint64ToByte(uint64(curtime.Unix())), uint64ToByte(uint64(curtime.UnixNano())))).Get()
+		sesCookie = w.NewCookie(SessionCookieName).Value(KeyGen()).Get()
 	}
 
 	w.SetCookie(sesCookie)
@@ -144,8 +128,7 @@ func (se SessionFile) Set(w *Web, data interface{}) {
 	sesCookie, err := w.GetCookie(SessionCookieName)
 
 	if err != nil {
-		curtime := time.Now()
-		sesCookie = w.NewCookie(SessionCookieName).Value(fmt.Sprintf("%x%x", uint64ToByte(uint64(curtime.Unix())), uint64ToByte(uint64(curtime.UnixNano())))).Get()
+		sesCookie = w.NewCookie(SessionCookieName).Value(KeyGen()).Get()
 	}
 
 	w.SetCookie(sesCookie)
