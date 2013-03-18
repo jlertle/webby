@@ -66,7 +66,7 @@ func (w *Web) GetCookie(name string) (*http.Cookie, error) {
 
 // Delete Cookie
 func (w *Web) DeleteCookie(name string) {
-	w.NewCookie(name).Value("Delete-Me").MaxAge(-1).SaveRes()
+	w.Cookie(name).Value("Delete-Me").MaxAge(-1).SaveRes()
 }
 
 // Chainable version of 'net/http.Cookie'
@@ -76,11 +76,21 @@ type PipeCookie struct {
 }
 
 // New Cookie
-func (w *Web) NewCookie(name string) PipeCookie {
+func NewCookie(w *Web, name string) PipeCookie {
 	return PipeCookie{
 		w: w,
 		c: &http.Cookie{Name: name},
 	}
+}
+
+// Alias of New Cookie
+func (w *Web) Cookie(name string) PipeCookie {
+	return NewCookie(w, name)
+}
+
+// New Cookie
+func (w *Web) NewCookie(name string) PipeCookie {
+	return NewCookie(w, name)
 }
 
 func (c PipeCookie) Value(value string) PipeCookie {
