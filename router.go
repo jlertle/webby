@@ -95,6 +95,10 @@ type Router struct {
 	routes routes
 }
 
+func NewRouter() *Router {
+	return &Router{}
+}
+
 func (ro *Router) getRoutes() routes {
 	ro.RLock()
 	defer ro.RUnlock()
@@ -123,21 +127,23 @@ func (ro *Router) sortout() {
 }
 
 // Register rule and function to Router
-func (ro *Router) Register(RegExpRule string, Function func(*Web)) {
+func (ro *Router) Register(RegExpRule string, Function func(*Web)) *Router {
 	ro.register(RegExpRule, FuncToRouteHandler{Function})
 	sort.Sort(ro.routes)
+	return ro
 }
 
 // Register Map to Router
-func (ro *Router) RegisterMap(routeMap RouteMap) {
+func (ro *Router) RegisterMap(routeMap RouteMap) *Router {
 	if routeMap == nil {
-		return
+		return ro
 	}
 
 	for rule, function := range routeMap {
 		ro.register(rule, FuncToRouteHandler{function})
 	}
 	ro.sortout()
+	return ro
 }
 
 func NewRouterMap(routeMap RouteMap) *Router {
@@ -147,21 +153,23 @@ func NewRouterMap(routeMap RouteMap) *Router {
 }
 
 // Register rule and handler to Router
-func (ro *Router) RegisterHandler(RegExpRule string, handler RouteHandler) {
+func (ro *Router) RegisterHandler(RegExpRule string, handler RouteHandler) *Router {
 	ro.register(RegExpRule, handler)
 	ro.sortout()
+	return ro
 }
 
 // Register Handler Map to Router
-func (ro *Router) RegisterHandlerMap(routeHandlerMap RouteHandlerMap) {
+func (ro *Router) RegisterHandlerMap(routeHandlerMap RouteHandlerMap) *Router {
 	if routeHandlerMap == nil {
-		return
+		return ro
 	}
 
 	for rule, handler := range routeHandlerMap {
 		ro.register(rule, handler)
 	}
 	ro.sortout()
+	return ro
 }
 
 func NewRouterHandlerMap(routeHandlerMap RouteHandlerMap) *Router {
@@ -246,7 +254,7 @@ func (ro *Router) LoadReset(w *Web) {
 	w.Error404()
 }
 
-var Route = &Router{}
+var Route = NewRouter()
 
 // Router View
 func (ro *Router) View(w *Web) {

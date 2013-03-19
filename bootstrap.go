@@ -31,12 +31,17 @@ func (boot *Bootstrap) getBoots() []BootstrapHandler {
 }
 
 // Register Functions to Bootstrap.
-func (boot *Bootstrap) Register(functions ...func(*Web)) {
+func (boot *Bootstrap) Register(functions ...func(*Web)) *Bootstrap {
 	boot.Lock()
 	defer boot.Unlock()
 	for _, function := range functions {
 		boot.boots = append(boot.boots, FuncToBootstrapHandler{function})
 	}
+	return boot
+}
+
+func NewBootstrap() *Bootstrap {
+	return &Bootstrap{}
 }
 
 func NewBootstrapReg(functions ...func(*Web)) *Bootstrap {
@@ -46,10 +51,11 @@ func NewBootstrapReg(functions ...func(*Web)) *Bootstrap {
 }
 
 // Register Handler to Bootstrap.
-func (boot *Bootstrap) RegisterHandler(handlers ...BootstrapHandler) {
+func (boot *Bootstrap) RegisterHandler(handlers ...BootstrapHandler) *Bootstrap {
 	boot.Lock()
 	defer boot.Unlock()
 	boot.boots = append(boot.boots, handlers...)
+	return boot
 }
 
 func NewBootstrapRegHandler(handlers ...BootstrapHandler) *Bootstrap {
@@ -73,13 +79,13 @@ func (boot *Bootstrap) Boot(w *Web) {
 }
 
 // For Allowing Libraries to Automatically Plugin into this Framework. 
-var MainBoot = &Bootstrap{}
+var MainBoot = NewBootstrap()
 
 // For Allowing Web Application to Add Function the Framework.
-var Boot = &Bootstrap{}
+var Boot = NewBootstrap()
 
 // For Allowing Libraries to Add Function to the Html Template Engine!
-var HtmlFuncBoot = &Bootstrap{}
+var HtmlFuncBoot = NewBootstrap()
 
 // Implement RouteHandler interface.
 type BootRoute struct {
@@ -103,4 +109,28 @@ func (bo BootRoute) View(w *Web) {
 			return
 		}
 	}
+}
+
+type BootRoutePipe struct {
+	br BootRoute
+}
+
+func NewBootRoute() BootRoutePipe {
+	return BootRoutePipe{
+		br: BootRoute{},
+	}
+}
+
+func (bo BootRoutePipe) Boot(boot *Bootstrap) BootRoutePipe {
+	bo.br.BOOT = boot
+	return bo
+}
+
+func (bo BootRoutePipe) Router(router *Router) BootRoutePipe {
+	bo.br.ROUTER = router
+	return bo
+}
+
+func (bo BootRoutePipe) Get() BootRoute {
+	return bo.br
 }

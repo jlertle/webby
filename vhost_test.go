@@ -15,13 +15,13 @@ func TestVhost(t *testing.T) {
 		t.Fail()
 	}}
 
-	pass_router := BootRoute{ROUTER: NewRouterHandlerMap(RouteHandlerMap{
+	pass_router := NewBootRoute().Router(NewRouterHandlerMap(RouteHandlerMap{
 		`^/$`: pass,
-	})}
+	})).Get()
 
-	fail_router := BootRoute{ROUTER: NewRouterHandlerMap(RouteHandlerMap{
+	fail_router := NewBootRoute().Router(NewRouterHandlerMap(RouteHandlerMap{
 		`^/$`: fail,
-	})}
+	})).Get()
 
 	w := &Web{
 		Env: http.Header{},
@@ -75,17 +75,17 @@ func TestVhostRegExp(t *testing.T) {
 		t.Fail()
 	}}
 
-	possible_pass_router := BootRoute{ROUTER: NewRouterHandlerMap(RouteHandlerMap{
+	possible_pass_router := NewBootRoute().Router(NewRouterHandlerMap(RouteHandlerMap{
 		`^/$`: possible_pass,
-	})}
+	})).Get()
 
-	pass_router := BootRoute{ROUTER: NewRouterHandlerMap(RouteHandlerMap{
+	pass_router := NewBootRoute().Router(NewRouterHandlerMap(RouteHandlerMap{
 		`^/$`: pass,
-	})}
+	})).Get()
 
-	fail_router := BootRoute{ROUTER: NewRouterHandlerMap(RouteHandlerMap{
+	fail_router := NewBootRoute().Router(NewRouterHandlerMap(RouteHandlerMap{
 		`^/$`: fail,
-	})}
+	})).Get()
 
 	w := &Web{
 		Env: http.Header{},

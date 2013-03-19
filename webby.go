@@ -20,7 +20,7 @@ import (
 // Debug Mode
 var DEBUG = false
 
-var RootView RouteHandler = BootRoute{Boot, Route}
+var RootView RouteHandler = NewBootRoute().Boot(Boot).Router(Route).Get()
 
 type webInterface interface {
 	http.ResponseWriter
