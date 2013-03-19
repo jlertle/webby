@@ -111,26 +111,26 @@ func (bo BootRoute) View(w *Web) {
 	}
 }
 
-type BootRoutePipe struct {
+type PipeBootRoute struct {
 	br BootRoute
 }
 
-func NewBootRoute() BootRoutePipe {
-	return BootRoutePipe{
+func NewBootRoute() PipeBootRoute {
+	return PipeBootRoute{
 		br: BootRoute{},
 	}
 }
 
-func (bo BootRoutePipe) Boot(boot *Bootstrap) BootRoutePipe {
+func (bo PipeBootRoute) Boot(boot *Bootstrap) PipeBootRoute {
 	bo.br.BOOT = boot
 	return bo
 }
 
-func (bo BootRoutePipe) Router(router *Router) BootRoutePipe {
+func (bo PipeBootRoute) Router(router *Router) PipeBootRoute {
 	bo.br.ROUTER = router
 	return bo
 }
 
-func (bo BootRoutePipe) Get() BootRoute {
+func (bo PipeBootRoute) Get() BootRoute {
 	return bo.br
 }
