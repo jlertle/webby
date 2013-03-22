@@ -219,3 +219,28 @@ func cacheExpiryCheck() {
 		cache_list.Unlock()
 	}
 }
+
+type PipeCache struct {
+	key    string
+	value  interface{}
+	expire time.Time
+}
+
+func Cache(key string) PipeCache {
+	return PipeCache{key: key, expire: time.Now().Add(1 * time.Hour)}
+}
+
+func (ca PipeCache) Value(value interface{}) PipeCache {
+	ca.value = value
+	return ca
+}
+
+func (ca PipeCache) Expire(expire time.Time) PipeCache {
+	ca.expire = expire
+	return ca
+}
+
+func (ca PipeCache) Save() PipeCache {
+	SetAdv(ca.key, ca.value, ca.expire)
+	return ca
+}
