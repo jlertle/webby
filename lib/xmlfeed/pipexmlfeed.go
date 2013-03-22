@@ -8,48 +8,48 @@ type PipeChannel struct {
 	ch Channel
 }
 
-func NewChannel(title string) PipeChannel {
-	return PipeChannel{
+func NewChannel(title string) *PipeChannel {
+	return &PipeChannel{
 		Channel{Title: title, Ttl: 1800},
 	}
 }
 
-func (ch PipeChannel) Description(description string) PipeChannel {
+func (ch *PipeChannel) Description(description string) *PipeChannel {
 	ch.ch.Description = description
 	return ch
 }
 
-func (ch PipeChannel) Link(link string) PipeChannel {
+func (ch *PipeChannel) Link(link string) *PipeChannel {
 	ch.ch.Link = link
 	return ch
 }
 
-func (ch PipeChannel) LastBuildDate(lastBuildDate time.Time) PipeChannel {
+func (ch *PipeChannel) LastBuildDate(lastBuildDate time.Time) *PipeChannel {
 	ch.ch.LastBuildDate = lastBuildDate
 	return ch
 }
 
-func (ch PipeChannel) PubDate(pubDate time.Time) PipeChannel {
+func (ch *PipeChannel) PubDate(pubDate time.Time) *PipeChannel {
 	ch.ch.PubDate = pubDate
 	return ch
 }
 
-func (ch PipeChannel) Updated(updated time.Time) PipeChannel {
+func (ch *PipeChannel) Updated(updated time.Time) *PipeChannel {
 	ch.ch.Updated = updated
 	return ch
 }
 
-func (ch PipeChannel) Ttl(ttl int64) PipeChannel {
+func (ch *PipeChannel) Ttl(ttl int64) *PipeChannel {
 	ch.ch.Ttl = ttl
 	return ch
 }
 
-func (ch PipeChannel) Item(item ...Item) PipeChannel {
+func (ch *PipeChannel) Item(item ...Item) *PipeChannel {
 	ch.ch.Item = item
 	return ch
 }
 
-func (ch PipeChannel) AddItem(item Item) PipeChannel {
+func (ch *PipeChannel) AddItem(item Item) *PipeChannel {
 	ch.ch.Item = append(ch.ch.Item, item)
 	return ch
 }
