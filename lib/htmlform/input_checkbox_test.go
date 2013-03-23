@@ -12,15 +12,8 @@ func TestFormInputCheckbox(t *testing.T) {
 	fmt.Println("InputCheckbox Test:\r\n")
 
 	form := New(
-		&InputCheckbox{
-			Name:  "checkbox",
-			Value: "car",
-		},
-		&InputCheckbox{
-			Name:      "checkbox",
-			Value:     "motorcycle",
-			Mandatory: true,
-		},
+		NewInputCheckbox("checkbox").Value("car").Get(),
+		NewInputCheckbox("checkbox").Value("motorcycle").Mandatory().Get(),
 	)
 
 	fmt.Println(form.Render())

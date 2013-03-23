@@ -12,20 +12,10 @@ func TestSelect(t *testing.T) {
 	fmt.Println("Select Test:\r\n")
 
 	form := New(
-		&Select{
-			Name:      "select",
-			Mandatory: true,
-			Options: []*Option{
-				&Option{
-					Name:  "Motorcycle",
-					Value: "motorcycle",
-				},
-				&Option{
-					Name:  "Car",
-					Value: "car",
-				},
-			},
-		},
+		NewSelect("select").Mandatory().Options(
+			NewOption("Motorcycle").Value("motorcycle").Get(),
+			NewOption("Car").Value("car").Get(),
+		).Get(),
 	)
 
 	fmt.Println(form.Render())

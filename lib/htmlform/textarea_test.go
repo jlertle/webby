@@ -12,11 +12,7 @@ func TestTextarea(t *testing.T) {
 	fmt.Println("Textarea Test:\r\n")
 
 	form := New(
-		&Textarea{
-			Name:    "text",
-			MinChar: 1,
-			MaxChar: 8,
-		},
+		NewTextarea("text").Mandatory().MaxChar(8).Get(),
 	)
 
 	fmt.Println(form.Render())
