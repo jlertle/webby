@@ -48,7 +48,7 @@ func KeyGen() string {
 	hash.Write(b)
 	b = hash.Sum(nil)
 
-	str := base64.StdEncoding.EncodeToString(b)
+	str := base64.URLEncoding.EncodeToString(b)
 
 	return str[:keyLen]
 }
