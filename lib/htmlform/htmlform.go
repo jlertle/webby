@@ -166,9 +166,11 @@ validation:
 
 	valid := true
 
+	val := &Validation{values, files, false}
+
 	for _, field := range f.fields {
 		field.SetError(nil)
-		err := field.Validate(values, files, false)
+		err := field.Validate(val)
 		if err != nil {
 			field.SetError(err)
 			valid = false
@@ -235,13 +237,16 @@ func (f *Form) ValidateSingle(name, value, mime string) error {
 		name: []*multipart.FileHeader{&multipart.FileHeader{
 			Header: mimeheader}},
 	}
+
+	val := &Validation{values, files, true}
+
 	for _, field := range f.fields {
 		switch t := field.(type) {
 		case Label:
 			continue
 		default:
 			if t.GetName() == name {
-				return t.Validate(values, files, true)
+				return t.Validate(val)
 			}
 		}
 	}
@@ -295,4 +300,14 @@ func init() {
 			return f.RenderSlices()
 		}
 	})
+}
+
+type Validation struct {
+	Val    Values
+	Files  FileHeaders
+	Single bool
+}
+
+func (val *Validation) GetAll() (Values, FileHeaders, bool) {
+	return val.Val, val.Files, val.Single
 }

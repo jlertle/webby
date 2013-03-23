@@ -31,7 +31,8 @@ func (fo *InputFile) Render(buf *bytes.Buffer) {
 	htmlRender(buf, htmlstr, fo)
 }
 
-func (fo *InputFile) Validate(values Values, files FileHeaders, single bool) error {
+func (fo *InputFile) Validate(val *Validation) error {
+	_, files, single := val.GetAll()
 	if !files.Exist(fo.Name) {
 		if fo.Mandatory {
 			return FormError(fo.lang["ErrFileRequired"])

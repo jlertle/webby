@@ -5,8 +5,8 @@ import (
 )
 
 type FormHandler interface {
-	Render(buf *bytes.Buffer)
-	Validate(values Values, files FileHeaders, single bool) error
+	Render(*bytes.Buffer)
+	Validate(*Validation) error
 	GetName() string
 	SetError(err error)
 	GetError() error

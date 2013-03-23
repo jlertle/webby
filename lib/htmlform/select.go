@@ -34,7 +34,8 @@ func (fo *Select) Render(buf *bytes.Buffer) {
 	buf.WriteString(htmlstr_close)
 }
 
-func (fo *Select) Validate(values Values, files FileHeaders, single bool) error {
+func (fo *Select) Validate(val *Validation) error {
+	values, _, _ := val.GetAll()
 	if !values.Exist(fo.Name) {
 		return FormError(fo.lang["ErrSelectValueMissing"])
 	}

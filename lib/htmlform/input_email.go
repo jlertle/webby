@@ -33,7 +33,8 @@ func (fo *InputEmail) Render(buf *bytes.Buffer) {
 	htmlRender(buf, htmlstr, fo)
 }
 
-func (fo InputEmail) Validate(values Values, files FileHeaders, single bool) error {
+func (fo InputEmail) Validate(val *Validation) error {
+	values, _, _ := val.GetAll()
 	if !values.Exist(fo.Name) {
 		return FormError(fo.lang["ErrMandatory"])
 	}

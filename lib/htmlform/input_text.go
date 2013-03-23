@@ -35,7 +35,8 @@ func (fo *InputText) Render(buf *bytes.Buffer) {
 	htmlRender(buf, htmlstr, fo)
 }
 
-func (fo *InputText) Validate(values Values, files FileHeaders, single bool) error {
+func (fo *InputText) Validate(val *Validation) error {
+	values, _, _ := val.GetAll()
 	if !values.Exist(fo.Name) {
 		if fo.MinChar >= 1 {
 			return FormError(fo.lang["ErrMandatory"])

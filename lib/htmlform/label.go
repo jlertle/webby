@@ -21,7 +21,7 @@ func (fo Label) Render(buf *bytes.Buffer) {
 	htmlRender(buf, htmlstr, fo)
 }
 
-func (fo Label) Validate(values Values, files FileHeaders, single bool) error {
+func (fo Label) Validate(val *Validation) error {
 	return nil
 }
 

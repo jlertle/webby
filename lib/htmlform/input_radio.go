@@ -22,7 +22,8 @@ func (fo *InputRadio) Render(buf *bytes.Buffer) {
 	htmlRender(buf, htmlstr, fo)
 }
 
-func (fo *InputRadio) Validate(values Values, file FileHeaders, single bool) error {
+func (fo *InputRadio) Validate(val *Validation) error {
+	values, _, _ := val.GetAll()
 	if !values.Exist(fo.Name) {
 		return nil
 	}
