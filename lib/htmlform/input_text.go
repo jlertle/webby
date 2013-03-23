@@ -19,6 +19,7 @@ type InputText struct {
 	RegExpErr    string
 	MustMatch    string
 	MustMatchErr string
+	extra        func(*Validation) error
 	error        error
 	lang         Lang
 }
@@ -111,6 +112,17 @@ skipmax:
 	}
 
 skiprule:
+
+	if fo.extra == nil {
+		goto skipextra
+	}
+
+	err = fo.extra(val)
+	if err != nil {
+		return err
+	}
+
+skipextra:
 
 	return nil
 }

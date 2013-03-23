@@ -16,6 +16,7 @@ type Textarea struct {
 	MaxChar int
 	Rows    int
 	Cols    int
+	extra   func(*Validation) error
 	error   error
 	lang    Lang
 }
@@ -76,6 +77,18 @@ skipmin:
 	}
 
 skipmax:
+
+	var err error
+	if fo.extra == nil {
+		goto skipextra
+	}
+
+	err = fo.extra(val)
+	if err != nil {
+		return err
+	}
+
+skipextra:
 
 	return nil
 }

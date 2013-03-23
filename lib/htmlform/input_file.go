@@ -15,6 +15,7 @@ type InputFile struct {
 	// In Byte
 	Size    int64
 	SizeErr string
+	extra   func(*Validation) error
 	error   error
 	lang    Lang
 }
@@ -53,16 +54,32 @@ func (fo *InputFile) Validate(val *Validation) error {
 
 mime_check:
 
+	possible_nil := func() error {
+		var err error
+		if fo.extra == nil {
+			goto skipextra
+		}
+
+		err = fo.extra(val)
+		if err != nil {
+			return err
+		}
+
+	skipextra:
+
+		return nil
+	}
+
 	if len(fo.Mime) <= 0 {
 		if fo.Mandatory {
 			return FormError(fo.lang["ErrFileRequired"])
 		}
-		return nil
+		return possible_nil()
 	}
 
 	for _, value := range fo.Mime {
 		if value == files.GetContentType(fo.Name) {
-			return nil
+			return possible_nil()
 		}
 	}
 

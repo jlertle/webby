@@ -32,3 +32,8 @@ func (em PipeInputEmail) MustMatch(match, errMsg string) PipeInputEmail {
 	em.em.MustMatchErr = errMsg
 	return em
 }
+
+func (em PipeInputEmail) Extra(extra func(*Validation) error) PipeInputEmail {
+	em.em.extra = extra
+	return em
+}

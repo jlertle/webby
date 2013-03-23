@@ -36,3 +36,8 @@ func (ch PipeInputCheckbox) Mandatory() PipeInputCheckbox {
 	ch.ch.Mandatory = true
 	return ch
 }
+
+func (ch PipeInputCheckbox) Extra(extra func(*Validation) error) PipeInputCheckbox {
+	ch.ch.extra = extra
+	return ch
+}

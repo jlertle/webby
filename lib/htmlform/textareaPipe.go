@@ -52,3 +52,8 @@ func (te PipeTextarea) Cols(cols int) PipeTextarea {
 	te.te.Cols = cols
 	return te
 }
+
+func (te PipeTextarea) Extra(extra func(*Validation) error) PipeTextarea {
+	te.te.extra = extra
+	return te
+}

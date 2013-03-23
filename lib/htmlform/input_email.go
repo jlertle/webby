@@ -17,6 +17,7 @@ type InputEmail struct {
 	Class        string
 	MustMatch    string
 	MustMatchErr string
+	extra        func(*Validation) error
 	error        error
 	lang         Lang
 }
@@ -63,6 +64,18 @@ skipmatch:
 	if !email_rule.MatchString(fo.Value) {
 		return FormError(fo.lang["ErrInvalidEmailAddress"])
 	}
+
+	var err error
+	if fo.extra == nil {
+		goto skipextra
+	}
+
+	err = fo.extra(val)
+	if err != nil {
+		return err
+	}
+
+skipextra:
 
 	return nil
 }

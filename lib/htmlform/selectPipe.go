@@ -33,3 +33,8 @@ func (se PipeSelect) Mandatory() PipeSelect {
 	se.se.Mandatory = true
 	return se
 }
+
+func (se PipeSelect) Extra(extra func(*Validation) error) PipeSelect {
+	se.se.extra = extra
+	return se
+}

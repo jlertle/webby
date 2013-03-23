@@ -12,6 +12,7 @@ type InputCheckbox struct {
 	Class     string
 	Selected  bool
 	Mandatory bool
+	extra     func(*Validation) error
 	error     error
 	lang      Lang
 }
@@ -53,6 +54,18 @@ func (fo *InputCheckbox) Validate(val *Validation) error {
 	if !fo.Selected {
 		return FormError(fo.lang["ErrMandatoryCheckbox"])
 	}
+
+	var err error
+	if fo.extra == nil {
+		goto skipextra
+	}
+
+	err = fo.extra(val)
+	if err != nil {
+		return err
+	}
+
+skipextra:
 
 	return nil
 }
