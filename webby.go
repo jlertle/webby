@@ -263,6 +263,9 @@ func StartHttpTLS(addr string, certFile string, keyFile string) error {
 
 // Start FastCGI Server
 func StartFastCGI(l net.Listener) error {
+	if l == nil {
+		os.Stderr = nil
+	}
 	return fcgi.Serve(l, Web{})
 }
 
