@@ -2,7 +2,7 @@ package webby
 
 // Demuxer for Request Method. Implement RouteHandler interface!
 type Junction struct {
-	ALL, GET, POST, HEAD, DELETE, PUT, PATCH, OPTIONS, AJAX, WS RouteHandler
+	ALL, GET, POST, DELETE, PUT, PATCH, OPTIONS, AJAX, WS RouteHandler
 }
 
 func (jn Junction) View(w *Web) {
@@ -14,7 +14,7 @@ func (jn Junction) View(w *Web) {
 	}
 
 	switch w.Req.Method {
-	case "GET":
+	case "GET", "HEAD":
 		if w.IsAjaxRequest() {
 			if jn.AJAX != nil {
 				jn.AJAX.View(w)
@@ -34,11 +34,6 @@ func (jn Junction) View(w *Web) {
 		}
 		if jn.POST != nil {
 			jn.POST.View(w)
-			return
-		}
-	case "HEAD":
-		if jn.HEAD != nil {
-			jn.HEAD.View(w)
 			return
 		}
 	case "DELETE":
@@ -92,11 +87,6 @@ func (pi PipeJunction) Get(get RouteHandler) PipeJunction {
 
 func (pi PipeJunction) Post(post RouteHandler) PipeJunction {
 	pi.jn.POST = post
-	return pi
-}
-
-func (pi PipeJunction) Head(head RouteHandler) PipeJunction {
-	pi.jn.HEAD = head
 	return pi
 }
 

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	html "html/template"
 	"io"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"net/http/cgi"
@@ -80,13 +81,17 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		},
 	}
 
-	w.pri.reswrite = w.webInterface
+	if w.Req.Method == "HEAD" {
+		w.pri.reswrite = ioutil.Discard
+	} else {
+		w.pri.reswrite = w.webInterface
+		w.Header().Set("Content-Encoding", "plain")
+	}
 
 	w.initTrueHost()
 	w.initTrueRemoteAddr()
 	w.initTruePath()
 	w.initSession()
-	w.Header().Set("Content-Encoding", "plain")
 
 	defer func() {
 		if r := recover(); r != nil {

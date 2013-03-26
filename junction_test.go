@@ -27,7 +27,7 @@ func TestJuntion(t *testing.T) {
 	}
 
 	jn := NewJunction().Ajax(fail).Websocket(fail).Get(pass).Post(
-		fail).Delete(fail).Head(fail).Put(fail).Patch(fail).Options(fail).Fallback(fail).GetJunction()
+		fail).Delete(fail).Put(fail).Patch(fail).Options(fail).Fallback(fail).GetJunction()
 
 	jn.View(w)
 
@@ -44,16 +44,9 @@ func TestJuntion(t *testing.T) {
 
 	jn.View(w)
 
-	w.Req.Method = "HEAD"
-
-	jn.POST = fail
-	jn.HEAD = pass
-
-	jn.View(w)
-
 	w.Req.Method = "DELETE"
 
-	jn.HEAD = fail
+	jn.POST = fail
 	jn.DELETE = pass
 
 	jn.View(w)

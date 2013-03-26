@@ -8,17 +8,16 @@ import (
 
 // Init Compression Buffer (Call Before Writing to Client)
 func (w *Web) InitCompression() {
-	if w.Env.Get("Connection") == "Upgrade" {
+	if w.Req.Method == "HEAD" {
 		return
 	}
 
-	if w.Env.Get("Accept-Encoding") == "" {
+	if w.Env.Get("Connection") == "Upgrade" {
 		return
 	}
 
 	for _, encoding := range strings.Split(w.Env.Get("Accept-Encoding"), ",") {
 		encoding = strings.TrimSpace(strings.ToLower(encoding))
-
 		switch encoding {
 		case "gzip":
 			w.pri.reswrite = gzip.NewWriter(w.webInterface)
@@ -29,7 +28,6 @@ func (w *Web) InitCompression() {
 			w.Header().Set("Content-Encoding", encoding)
 			return
 		}
-
 	}
 }
 
