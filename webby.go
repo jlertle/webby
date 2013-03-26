@@ -8,14 +8,11 @@ import (
 	"fmt"
 	html "html/template"
 	"io"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"net/http/cgi"
 	"net/http/fcgi"
 	"os"
-	"runtime/debug"
-	"time"
 )
 
 // Debug Mode
@@ -81,53 +78,13 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		},
 	}
 
-	if w.Req.Method == "HEAD" {
-		w.pri.reswrite = ioutil.Discard
-		w.Header().Set("Connection", "close")
-	} else {
-		w.pri.reswrite = w.webInterface
-		w.Header().Set("Content-Encoding", "plain")
-	}
-
+	w.initWriter()
 	w.initTrueHost()
 	w.initTrueRemoteAddr()
 	w.initTruePath()
 	w.initSession()
 
-	defer func() {
-		if r := recover(); r != nil {
-			DefaultPanicHandler.Panic(w, r, debug.Stack())
-			if DEBUG {
-				w.Status = 500
-				w.Println("500 Internal Server Error")
-
-				w.Printf("\r\n%s, %s, %s, %s, ?%s IP:%s\r\n",
-					w.Req.Proto, w.Req.Method,
-					w.Req.Host, w.Req.URL.Path,
-					w.Req.URL.RawQuery, w.Req.RemoteAddr)
-
-				w.Printf("\r\n%s\r\n\r\n%s", r, debug.Stack())
-
-				w.Println("\r\nRequest Header:")
-				w.Println(w.Req.Header)
-
-				w.ParseForm()
-
-				w.Println("\r\nForm Values:")
-				w.Println(w.Req.Form)
-
-				w.Println("\r\nForm Values (Multipart):")
-				w.Println(w.Req.MultipartForm)
-
-				w.Println("\r\nTime:")
-				w.Println(time.Now())
-
-				return
-			}
-			w.Error500()
-		}
-	}()
-
+	defer w.recover()
 	defer w.closeCompression()
 
 	w.debugStart()

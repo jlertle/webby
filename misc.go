@@ -3,6 +3,7 @@ package webby
 import (
 	"encoding/json"
 	"encoding/xml"
+	"io/ioutil"
 	"regexp"
 	"strconv"
 	"strings"
@@ -23,22 +24,25 @@ func toFloat(number string) (float64, error) {
 	return strconv.ParseFloat(number, 64)
 }
 
+func (w *Web) initWriter() {
+	if w.Req.Method == "HEAD" {
+		w.pri.reswrite = ioutil.Discard
+		w.Header().Set("Connection", "close")
+		return
+	}
+	w.pri.reswrite = w.webInterface
+	w.Header().Set("Content-Encoding", "plain")
+}
+
 func (w *Web) initTrueHost() {
 	switch {
 	case w.Env.Get("Host") != "":
 		w.Req.Host = w.Env.Get("Host")
-		w.Req.URL.Host = w.Env.Get("Host")
-		return
 	case w.Env.Get("X-Forwarded-Host") != "":
 		w.Req.Host = w.Env.Get("X-Forwarded-Host")
-		w.Req.URL.Host = w.Env.Get("X-Forwarded-Host")
-		return
 	case w.Env.Get("X-Forwarded-Server") != "":
 		w.Req.Host = w.Env.Get("X-Forwarded-Server")
-		w.Req.URL.Host = w.Env.Get("X-Forwarded-Server")
-		return
 	}
-
 	w.Req.URL.Host = w.Req.Host
 }
 
