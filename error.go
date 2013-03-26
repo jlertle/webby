@@ -2,10 +2,34 @@ package webby
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"runtime/debug"
 	"time"
 )
+
+func printPanic(buf io.Writer, w *Web, r interface{}, stack []byte) {
+	fmt.Fprintf(buf, "\r\n%s, %s, %s, %s, ?%s IP:%s\r\n",
+		w.Req.Proto, w.Req.Method,
+		w.Req.Host, w.Req.URL.Path,
+		w.Req.URL.RawQuery, w.Req.RemoteAddr)
+
+	fmt.Fprintf(buf, "\r\n%s\r\n\r\n%s", r, stack)
+
+	fmt.Fprintln(buf, "\r\nRequest Header:")
+	fmt.Fprintln(buf, w.Req.Header)
+
+	w.ParseForm()
+
+	fmt.Fprintln(buf, "\r\nForm Values:")
+	fmt.Fprintln(buf, w.Req.Form)
+
+	fmt.Fprintln(buf, "\r\nForm Values (Multipart):")
+	fmt.Fprintln(buf, w.Req.MultipartForm)
+
+	fmt.Fprintln(buf, "\r\nTime:")
+	fmt.Fprintln(buf, time.Now())
+}
 
 // Check for Error
 func (w *Web) Check(err error) {
@@ -42,27 +66,7 @@ func (p PanicFile) Panic(w *Web, r interface{}, stack []byte) {
 		return
 	}
 	defer file.Close()
-
-	fmt.Fprintf(file, "\r\n%s, %s, %s, %s, ?%s IP:%s\r\n",
-		w.Req.Proto, w.Req.Method,
-		w.Req.Host, w.Req.URL.Path,
-		w.Req.URL.RawQuery, w.Req.RemoteAddr)
-
-	fmt.Fprintf(file, "\r\n%s\r\n\r\n%s", r, stack)
-
-	fmt.Fprintln(file, "\r\nRequest Header:")
-	fmt.Fprintln(file, w.Req.Header)
-
-	w.ParseForm()
-
-	fmt.Fprintln(file, "\r\nForm Values:")
-	fmt.Fprintln(file, w.Req.Form)
-
-	fmt.Fprintln(file, "\r\nForm Values (Multipart):")
-	fmt.Fprintln(file, w.Req.MultipartForm)
-
-	fmt.Fprintln(file, "\r\nTime:")
-	fmt.Fprintln(file, time.Now())
+	printPanic(file, w, r, stack)
 }
 
 var DefaultPanicHandler PanicHandler = PanicConsole{}
@@ -129,32 +133,12 @@ func ErrPrintln(a ...interface{}) {
 
 func (w *Web) recover() {
 	if r := recover(); r != nil {
-		DefaultPanicHandler.Panic(w, r, debug.Stack())
+		stack := debug.Stack()
+		DefaultPanicHandler.Panic(w, r, stack)
 		if DEBUG {
 			w.Status = 500
 			w.Println("500 Internal Server Error")
-
-			w.Printf("\r\n%s, %s, %s, %s, ?%s IP:%s\r\n",
-				w.Req.Proto, w.Req.Method,
-				w.Req.Host, w.Req.URL.Path,
-				w.Req.URL.RawQuery, w.Req.RemoteAddr)
-
-			w.Printf("\r\n%s\r\n\r\n%s", r, debug.Stack())
-
-			w.Println("\r\nRequest Header:")
-			w.Println(w.Req.Header)
-
-			w.ParseForm()
-
-			w.Println("\r\nForm Values:")
-			w.Println(w.Req.Form)
-
-			w.Println("\r\nForm Values (Multipart):")
-			w.Println(w.Req.MultipartForm)
-
-			w.Println("\r\nTime:")
-			w.Println(time.Now())
-
+			printPanic(w, w, r, stack)
 			return
 		}
 		w.Error500()
