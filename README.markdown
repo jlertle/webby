@@ -1,6 +1,6 @@
 # Webby
 
-A Very Nice Web Framework that can be used as a standalone or a embeddable solution for existing Go project that require a Web Interface!
+A Very Nice Micro Web Framework that can be used as a standalone or a embeddable solution for existing Go project that require a Web Interface!
 
 It's built on top of the standard package 'net/http'!
 
@@ -56,7 +56,3 @@ Note: This example require websocket library installed; The framework itself can
 Documentation are avaliable at
 
 http://go.pkgdoc.org/github.com/CJ-Jackson/webby
-
-## Note ##
-
-Note this framework does not have an ORM but can co-exist with an ORM Framework, a Google App Engine user probably won't need an ORM Framework!
