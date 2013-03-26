@@ -83,6 +83,7 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
 	if w.Req.Method == "HEAD" {
 		w.pri.reswrite = ioutil.Discard
+		w.Header().Set("Connection", "close")
 	} else {
 		w.pri.reswrite = w.webInterface
 		w.Header().Set("Content-Encoding", "plain")
