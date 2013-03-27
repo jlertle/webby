@@ -181,48 +181,25 @@ validation:
 }
 
 func (f *Form) IsValid(w *webby.Web) bool {
-	var values Values
 	var files FileHeaders
-	w.ParseForm()
-
-	if w.Req.MultipartForm != nil {
-		values = Values(w.Req.MultipartForm.Value)
-		files = FileHeaders(w.Req.MultipartForm.File)
-	} else {
-		values = Values(w.Req.Form)
-		files = nil
+	form := w.Form()
+	values := Values(form.Value)
+	files = nil
+	if form.File != nil {
+		files = FileHeaders(form.File)
 	}
-
 	return f.isValid(w, values, files)
 }
 
 // For the more complexed form!
 func (f *Form) IsValidSlot(w *webby.Web, slot int) bool {
-	values := Values{}
-	files := FileHeaders{}
-
-	if w.Req.MultipartForm != nil {
-		for key, value := range w.Req.MultipartForm.Value {
-			if len(value) > slot {
-				values[key] = append(values[key], value[slot])
-			}
-		}
-
-		for key, value := range w.Req.MultipartForm.File {
-			if len(value) > slot {
-				files[key] = append(files[key], value[slot])
-			}
-		}
-	} else {
-		for key, value := range w.Req.Form {
-			if len(value) > slot {
-				values[key] = append(values[key], value[slot])
-			}
-		}
-
-		files = nil
+	var files FileHeaders
+	form := w.FormSlot(slot)
+	values := Values(form.Value)
+	files = nil
+	if form.File != nil {
+		files = FileHeaders(form.File)
 	}
-
 	return f.isValid(w, values, files)
 }
 
