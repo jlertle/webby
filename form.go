@@ -10,6 +10,7 @@ type Form struct {
 	File  map[string][]*multipart.FileHeader
 }
 
+// Generate a new form with the key prefix trimed out, if the key does not have the prefix, it will get ignore.
 func (f *Form) TrimPrefix(prefix string) *Form {
 	form := &Form{Value: url.Values{}}
 	prefixLen := len(prefix)
@@ -38,6 +39,7 @@ func (f *Form) TrimPrefix(prefix string) *Form {
 	return form
 }
 
+// Generate a new form, retaining the chosen slot number!
 func (f *Form) Slot(slot int) *Form {
 	form := &Form{Value: url.Values{}}
 	for key, value := range f.Value {
@@ -57,6 +59,7 @@ func (f *Form) Slot(slot int) *Form {
 	return form
 }
 
+// Generate a new form.
 func (w *Web) Form() *Form {
 	w.ParseForm()
 	form := &Form{}
@@ -70,10 +73,12 @@ func (w *Web) Form() *Form {
 	return form
 }
 
+// Generate a new form with the key prefix trimed out, if the key does not have the prefix, it will get ignore.
 func (w *Web) FormTrimPrefix(prefix string) *Form {
 	return w.Form().TrimPrefix(prefix)
 }
 
+// Generate a new form, retaining the chosen slot number!
 func (w *Web) FormSlot(slot int) *Form {
 	return w.Form().Slot(slot)
 }
