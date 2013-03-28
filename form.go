@@ -59,6 +59,60 @@ func (f *Form) Slot(slot int) *Form {
 	return form
 }
 
+func inSlice(needle string, haystack []string) bool {
+	if haystack == nil {
+		return false
+	}
+	for _, value := range haystack {
+		if needle == value {
+			return true
+		}
+	}
+	return false
+}
+
+// Generate a new form.  With only the allowed fields.
+func (f *Form) Allow(fields ...string) *Form {
+	form := &Form{Value: url.Values{}}
+	for key, value := range f.Value {
+		if inSlice(key, fields) {
+			form.Value[key] = value
+		}
+	}
+	if f.File == nil {
+		return form
+	}
+	form.File = map[string][]*multipart.FileHeader{}
+	for key, value := range f.File {
+		if inSlice(key, fields) {
+			form.File[key] = value
+		}
+	}
+	return form
+}
+
+// Generate a new form, while filtering out the denied fields.
+func (f *Form) Deny(fields ...string) *Form {
+	form := &Form{Value: url.Values{}}
+	for key, value := range f.Value {
+		if inSlice(key, fields) {
+			continue
+		}
+		form.Value[key] = value
+	}
+	if f.File == nil {
+		return form
+	}
+	form.File = map[string][]*multipart.FileHeader{}
+	for key, value := range f.File {
+		if inSlice(key, fields) {
+			continue
+		}
+		form.File[key] = value
+	}
+	return form
+}
+
 // Generate a new form.
 func (w *Web) Form() *Form {
 	w.ParseForm()
@@ -81,4 +135,14 @@ func (w *Web) FormTrimPrefix(prefix string) *Form {
 // Generate a new form, retaining the chosen slot number!
 func (w *Web) FormSlot(slot int) *Form {
 	return w.Form().Slot(slot)
+}
+
+// Generate a new form.  With only the allowed fields.
+func (w *Web) FormAllow(fields ...string) *Form {
+	return w.Form().Allow(fields...)
+}
+
+// Generate a new form, while filtering out the denied fields.
+func (w *Web) FormDeny(fields ...string) *Form {
+	return w.Form().Deny(fields...)
 }
