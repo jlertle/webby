@@ -11,7 +11,8 @@ import (
 const cookieName = "csrf_token"
 
 var (
-	// Just to avoid ugly url patterns!
+	// Just to avoid ugly url patterns!  The also include HEAD request!
+	// Also GET and HEAD are both considered safe according to rfc2616, section 9.1.1 (http://tools.ietf.org/html/rfc2616.html#section-9.1.1)
 	IncludeGetRequest = false
 	// Modulisation is pretty useful for large site! Or when you want to specify the correct placement for csrf checking!
 	Modulised = false
@@ -68,7 +69,8 @@ func (_ Check) Boot(w *webby.Web) {
 		goto parse_form
 	}
 
-	if w.Req.Method == "GET" {
+	switch w.Req.Method {
+	case "GET", "HEAD":
 		return
 	}
 
