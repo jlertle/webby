@@ -1,6 +1,7 @@
 # Webby
 
-A Very Nice Micro Web Framework that can be used as a standalone or a embeddable solution for existing Go project that require a Web Interface!
+A Very Nice Micro Web Framework that can be used as a standalone or a embeddable solution
+for existing Go project that require a Web Interface!
 
 It's built on top of the standard package 'net/http'!
 
@@ -37,7 +38,12 @@ It's built on top of the standard package 'net/http'!
 
 	func init() {
 		webby.Route.RegisterHandlerMap(webby.RouteHandlerMap{
-			"^/$": webby.NewJunction().Websocket(webby.HttpRouteHandler{websocket.Handler(EchoServer)}).Fallback(index{}).GetJunction(),
+			// Main Route
+			"^/$": webby.NewJunction().Websocket(
+				webby.HttpRouteHandler{websocket.Handler(EchoServer)},
+			).Fallback(index{}).GetJunction(),
+
+			// Index Page Route
 			"^/(?P<page>\\d+)/?$": index{},
 		})
 	}
