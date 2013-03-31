@@ -30,6 +30,7 @@ type webPrivate struct {
 	reswrite   io.Writer
 	cut        bool
 	firstWrite bool
+	cmd        map[string]func(interface{}) interface{}
 }
 
 // The Framework Structure, it's implement the interfaces of 'net/http.ResponseWriter',
@@ -75,6 +76,7 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 			curpath:    "",
 			cut:        false,
 			firstWrite: true,
+			cmd:        map[string]func(interface{}) interface{}{},
 		},
 	}
 
@@ -212,6 +214,19 @@ func (w *Web) debugStart() {
 
 func (w *Web) debugEnd() {
 	w.debuginfo("END  ")
+}
+
+// Set Custom Command
+func (w *Web) SetCmd(name string, cmd func(interface{}) interface{}) {
+	w.pri.cmd[name] = cmd
+}
+
+// Execute Custom Command
+func (w *Web) ExecCmd(name string, v interface{}) interface{} {
+	if w.pri.cmd[name] == nil {
+		panic(ErrorStr("CMD: '" + name + "' does not exist!"))
+	}
+	return w.pri.cmd[name](v)
 }
 
 // Start Http Server
