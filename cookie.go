@@ -64,6 +64,19 @@ func (w *Web) GetCookie(name string) (*http.Cookie, error) {
 	return w.Req.Cookie(name)
 }
 
+func init() {
+	HtmlFuncBoot.Register(func(w *Web) {
+		// Get Cookie Value
+		w.HtmlFunc["cookie"] = func(name string) string {
+			cookie, err := w.GetCookie(name)
+			if err != nil {
+				return ""
+			}
+			return cookie.Value
+		}
+	})
+}
+
 // Delete Cookie
 func (w *Web) DeleteCookie(name string) {
 	w.Cookie(name).Value("Delete-Me").MaxAge(-1).SaveRes()
