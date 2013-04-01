@@ -13,6 +13,7 @@ import (
 	"net/http/cgi"
 	"net/http/fcgi"
 	"os"
+	"time"
 )
 
 // Debug Mode
@@ -50,7 +51,12 @@ type Web struct {
 	HtmlFunc html.FuncMap
 	// For holding session!
 	Session interface{}
-	Errors  *Errors
+	// Errors
+	Errors *Errors
+	// Time Location
+	TimeLoc *time.Location
+	// Time Format
+	TimeFormat string
 	webInterface
 	pri *webPrivate
 }
@@ -66,6 +72,8 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		Param:        Param{},
 		HtmlFunc:     html.FuncMap{},
 		Session:      nil,
+		TimeLoc:      DefaultTimeLoc,
+		TimeFormat:   DefaultTimeFormat,
 		Errors: &Errors{
 			E403: Error403,
 			E404: Error404,
