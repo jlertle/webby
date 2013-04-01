@@ -8,8 +8,8 @@ import (
 )
 
 type vHost struct {
-	name string
-	boot BootRoute
+	name  string
+	route RouteHandler
 }
 
 // Implement RouteHandler interface.
@@ -19,13 +19,13 @@ type VHost struct {
 }
 
 // Use host name as string (e.g example.com)
-type VHostMap map[string]BootRoute
+type VHostMap map[string]RouteHandler
 
 func NewVHost(hosts VHostMap) *VHost {
 	v := &VHost{}
 
-	for host, bootroute := range hosts {
-		v.hosts = append(v.hosts, &vHost{host, bootroute})
+	for host, routerHandler := range hosts {
+		v.hosts = append(v.hosts, &vHost{host, routerHandler})
 	}
 
 	return v
@@ -45,7 +45,7 @@ func (v *VHost) View(w *Web) {
 			continue
 		}
 		if strings.ToLower(host.name) == strings.ToLower(w.Req.Host[:len(host.name)]) {
-			host.boot.View(w)
+			host.route.View(w)
 			return
 		}
 	}
@@ -54,12 +54,12 @@ func (v *VHost) View(w *Web) {
 }
 
 // Use host name regexp as string (e.g. (?P<subdomain>[a-z0-9-_]+)\.example\.com)
-type VHostRegExpMap map[string]BootRoute
+type VHostRegExpMap map[string]RouteHandler
 
 type vHostRegExpItem struct {
 	RegExp         string
 	RegExpComplied *regexp.Regexp
-	BootRoute      BootRoute
+	Route          RouteHandler
 }
 
 type vHostRegs []*vHostRegExpItem
@@ -96,15 +96,15 @@ func (vh *VHostRegExp) getHosts() vHostRegs {
 	return hosts
 }
 
-func (vh *VHostRegExp) register(RegExpRule string, bootroute BootRoute) {
+func (vh *VHostRegExp) register(RegExpRule string, routeHandler RouteHandler) {
 	for _, host := range vh.vhost {
 		if host.RegExp == RegExpRule {
-			host.BootRoute = bootroute
+			host.Route = routeHandler
 			return
 		}
 	}
 
-	vh.vhost = append(vh.vhost, &vHostRegExpItem{RegExpRule, regexp.MustCompile(RegExpRule), bootroute})
+	vh.vhost = append(vh.vhost, &vHostRegExpItem{RegExpRule, regexp.MustCompile(RegExpRule), routeHandler})
 }
 
 func (vh *VHostRegExp) registerMap(hostmap VHostRegExpMap) {
@@ -115,8 +115,8 @@ func (vh *VHostRegExp) registerMap(hostmap VHostRegExpMap) {
 		vh.vhost = vHostRegs{}
 	}
 
-	for rule, bootroute := range hostmap {
-		vh.register(rule, bootroute)
+	for rule, route := range hostmap {
+		vh.register(rule, route)
 	}
 
 	sort.Sort(vh.vhost)
@@ -141,7 +141,7 @@ func (vh *VHostRegExp) View(w *Web) {
 			}
 		}
 
-		host.BootRoute.View(w)
+		host.Route.View(w)
 
 		return
 	}
