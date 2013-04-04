@@ -148,6 +148,12 @@ func (c PipeCookie) Get() *http.Cookie {
 	return c.c
 }
 
+// Delete Cookie
+func (c PipeCookie) Delete() PipeCookie {
+	c.MaxAge(-1).SaveRes()
+	return c
+}
+
 // Save (Set) Cookie to Response
 func (c PipeCookie) SaveRes() PipeCookie {
 	c.w.SetCookie(c.c)
