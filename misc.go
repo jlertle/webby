@@ -30,7 +30,7 @@ func (w *Web) initWriter() {
 		w.Header().Set("Connection", "close")
 		return
 	}
-	w.pri.reswrite = w.webInterface
+	w.pri.reswrite = w.web
 	w.Header().Set("Content-Encoding", "plain")
 }
 

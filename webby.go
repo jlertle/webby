@@ -21,7 +21,7 @@ var DEBUG = false
 
 var RootView RouteHandler = NewBootRoute().Boot(Boot).Router(Route).Get()
 
-type webInterface interface {
+type web interface {
 	http.ResponseWriter
 }
 
@@ -57,23 +57,23 @@ type Web struct {
 	TimeLoc *time.Location
 	// Time Format
 	TimeFormat string
-	webInterface
+	web
 	pri *webPrivate
 }
 
 // HTTP Handler
 func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	w := &Web{
-		webInterface: res.(webInterface),
-		Status:       http.StatusOK,
-		Env:          req.Header,
-		Req:          req,
-		Meta:         map[string]interface{}{},
-		Param:        Param{},
-		HtmlFunc:     html.FuncMap{},
-		Session:      nil,
-		TimeLoc:      DefaultTimeLoc,
-		TimeFormat:   DefaultTimeFormat,
+		web:        res.(web),
+		Status:     http.StatusOK,
+		Env:        req.Header,
+		Req:        req,
+		Meta:       map[string]interface{}{},
+		Param:      Param{},
+		HtmlFunc:   html.FuncMap{},
+		Session:    nil,
+		TimeLoc:    DefaultTimeLoc,
+		TimeFormat: DefaultTimeFormat,
 		Errors: &Errors{
 			E403: Error403,
 			E404: Error404,
@@ -121,6 +121,13 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	Error500(w)
 }
 
+// Header returns the header map that will be sent by WriteHeader.
+// Changing the header after a call to WriteHeader (or Write) has
+// no effect.
+func (w *Web) Header() http.Header {
+	return w.web.Header()
+}
+
 // Write writes the data to the connection as part of an HTTP reply.
 // If WriteHeader has not yet been called, Write calls WriteHeader(http.StatusOK)
 // before writing the data.  If the Header does not contain a
@@ -154,7 +161,7 @@ func (w *Web) WriteHeader(num int) {
 		w.pri.firstWrite = false
 	}
 
-	w.webInterface.WriteHeader(num)
+	w.web.WriteHeader(num)
 }
 
 // Hijack lets the caller take over the connection.
@@ -165,7 +172,7 @@ func (w *Web) WriteHeader(num int) {
 func (w *Web) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	w.pri.cut = true
 
-	switch t := w.webInterface.(type) {
+	switch t := w.web.(type) {
 	case http.Hijacker:
 		return t.Hijack()
 	}
@@ -175,7 +182,7 @@ func (w *Web) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 
 // Flush sends any buffered data to the client.
 func (w *Web) Flush() {
-	switch t := w.webInterface.(type) {
+	switch t := w.web.(type) {
 	case http.Flusher:
 		t.Flush()
 	}
