@@ -9,26 +9,34 @@ import (
 )
 
 func printPanic(buf io.Writer, w *Web, r interface{}, stack []byte) {
-	fmt.Fprintf(buf, "\r\n%s, %s, %s, %s, ?%s IP:%s\r\n",
+	printF := func(format string, a ...interface{}) {
+		fmt.Fprintf(buf, format, a...)
+	}
+
+	printLn := func(a ...interface{}) {
+		fmt.Fprintln(buf, a...)
+	}
+
+	printF("\r\n%s, %s, %s, %s, ?%s IP:%s\r\n",
 		w.Req.Proto, w.Req.Method,
 		w.Req.Host, w.Req.URL.Path,
 		w.Req.URL.RawQuery, w.Req.RemoteAddr)
 
-	fmt.Fprintf(buf, "\r\n%s\r\n\r\n%s", r, stack)
+	printF("\r\n%s\r\n\r\n%s", r, stack)
 
-	fmt.Fprintln(buf, "\r\nRequest Header:")
-	fmt.Fprintln(buf, w.Req.Header)
+	printLn("\r\nRequest Header:")
+	printLn(w.Req.Header)
 
 	w.ParseForm()
 
-	fmt.Fprintln(buf, "\r\nForm Values:")
-	fmt.Fprintln(buf, w.Req.Form)
+	printLn("\r\nForm Values:")
+	printLn(w.Req.Form)
 
-	fmt.Fprintln(buf, "\r\nForm Values (Multipart):")
-	fmt.Fprintln(buf, w.Req.MultipartForm)
+	printLn("\r\nForm Values (Multipart):")
+	printLn(w.Req.MultipartForm)
 
-	fmt.Fprintln(buf, "\r\nTime:")
-	fmt.Fprintln(buf, time.Now())
+	printLn("\r\nTime:")
+	printLn(time.Now())
 }
 
 // Check for Error
