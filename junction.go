@@ -72,63 +72,76 @@ type PipeJunction struct {
 	jn Junction
 }
 
+// New Junction constructor
 func NewJunction() PipeJunction {
 	return PipeJunction{Junction{}}
 }
 
+// Get Junction
 func (pi PipeJunction) GetJunction() Junction {
 	return pi.jn
 }
 
+// Set Get
 func (pi PipeJunction) Get(get RouteHandler) PipeJunction {
 	pi.jn.GET = get
 	return pi
 }
 
+// Set Post
 func (pi PipeJunction) Post(post RouteHandler) PipeJunction {
 	pi.jn.POST = post
 	return pi
 }
 
+// Set Delete
 func (pi PipeJunction) Delete(del RouteHandler) PipeJunction {
 	pi.jn.DELETE = del
 	return pi
 }
 
+// Set Put
 func (pi PipeJunction) Put(put RouteHandler) PipeJunction {
 	pi.jn.PUT = put
 	return pi
 }
 
+// Set Patch
 func (pi PipeJunction) Patch(patch RouteHandler) PipeJunction {
 	pi.jn.PATCH = patch
 	return pi
 }
 
+// Set Options
 func (pi PipeJunction) Options(options RouteHandler) PipeJunction {
 	pi.jn.OPTIONS = options
 	return pi
 }
 
+// Set Ajax
 func (pi PipeJunction) Ajax(ajax RouteHandler) PipeJunction {
 	pi.jn.AJAX = ajax
 	return pi
 }
 
+// Set Websocket
 func (pi PipeJunction) Websocket(ws RouteHandler) PipeJunction {
 	pi.jn.WS = ws
 	return pi
 }
 
+// Set All
 func (pi PipeJunction) All(all RouteHandler) PipeJunction {
 	pi.jn.ALL = all
 	return pi
 }
 
+// Alais of All
 func (pi PipeJunction) Any(any RouteHandler) PipeJunction {
 	return pi.All(any)
 }
 
+// Alais of All
 func (pi PipeJunction) Fallback(fallback RouteHandler) PipeJunction {
 	return pi.All(fallback)
 }
