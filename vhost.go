@@ -12,7 +12,7 @@ type vHost struct {
 	route RouteHandler
 }
 
-// Implement RouteHandler interface.
+// VHost Data Type, Implement RouteHandler interface.
 type VHost struct {
 	sync.RWMutex
 	hosts []*vHost
@@ -21,6 +21,7 @@ type VHost struct {
 // Use host name as string (e.g example.com)
 type VHostMap map[string]RouteHandler
 
+// Construct new VHost and Register Map to VHost
 func NewVHost(hosts VHostMap) *VHost {
 	v := &VHost{}
 
@@ -76,12 +77,13 @@ func (vh vHostRegs) Swap(i, j int) {
 	vh[i], vh[j] = vh[j], vh[i]
 }
 
-// Implement RouteHandler interface.
+// VHostRegExp Data type, Implement RouteHandler interface.
 type VHostRegExp struct {
 	sync.RWMutex
 	vhost vHostRegs
 }
 
+// Construct VHostRegExp and Register map to VHostRegExp
 func NewVHostRegExp(hostmap VHostRegExpMap) *VHostRegExp {
 	vh := &VHostRegExp{}
 	vh.registerMap(hostmap)
