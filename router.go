@@ -8,7 +8,7 @@ import (
 
 type Param map[string]string
 
-func (pa Param) Add(name, value string) {
+func (pa Param) Set(name, value string) {
 	pa[name] = value
 }
 
@@ -196,7 +196,7 @@ func (ro *Router) load(w *Web, reset bool) bool {
 
 		for key, name := range names {
 			if name != "" {
-				w.Param.Add(name, matches[key])
+				w.Param.Set(name, matches[key])
 			}
 		}
 

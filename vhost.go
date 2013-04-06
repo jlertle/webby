@@ -137,7 +137,7 @@ func (vh *VHostRegExp) View(w *Web) {
 
 		for key, name := range names {
 			if name != "" {
-				w.Param.Add(name, matches[key])
+				w.Param.Set(name, matches[key])
 			}
 		}
 
