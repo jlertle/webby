@@ -55,6 +55,7 @@ type PanicHandler interface {
 	Panic(*Web, interface{}, []byte)
 }
 
+// Write error to Stderr.
 type PanicConsole struct{}
 
 func (_ PanicConsole) Panic(w *Web, r interface{}, stack []byte) {
@@ -63,6 +64,7 @@ func (_ PanicConsole) Panic(w *Web, r interface{}, stack []byte) {
 
 const panicFileExt = ".txt"
 
+// Write error to new file.
 type PanicFile struct {
 	Path string
 }
@@ -92,6 +94,7 @@ var Error403 = func(w *Web) {
 	w.Print("<h1>403 Forbidden</h1>")
 }
 
+// Execute Error 403 (Forbidden)
 func (w *Web) Error403() {
 	w.Status = 403
 	w.Errors.E403(w)
@@ -104,6 +107,7 @@ var Error404 = func(w *Web) {
 	w.Print("<h1>404 Not Found</h1>")
 }
 
+// Execute Error 404 (Not Found)
 func (w *Web) Error404() {
 	w.Status = 404
 	w.Errors.E404(w)
@@ -116,25 +120,35 @@ var Error500 = func(w *Web) {
 	w.Print("<h1>500 Internal Server Error</h1>")
 }
 
+// Execute Error 500 (Internal Server Error)
 func (w *Web) Error500() {
 	w.Status = 500
 	w.Errors.E500(w)
 }
 
+// Custom String Data Type, Implement error interface.
 type ErrorStr string
 
 func (e ErrorStr) Error() string {
 	return "Error: " + string(e)
 }
 
+// Print formats using the default formats for its operands and writes to standard error output.
+// Spaces are added between operands when neither is a string.
+// It returns the number of bytes written and any write error encountered.
 func ErrPrint(a ...interface{}) {
 	fmt.Fprint(os.Stderr, a...)
 }
 
+// Printf formats according to a format specifier and writes to standard error output.
+// It returns the number of bytes written and any write error encountered.
 func ErrPrintf(format string, a ...interface{}) {
 	fmt.Fprintf(os.Stderr, format, a...)
 }
 
+// Println formats using the default formats for its operands and writes to standard error output.
+// Spaces are always added between operands and a newline is appended.
+// It returns the number of bytes written and any write error encountered.
 func ErrPrintln(a ...interface{}) {
 	fmt.Fprintln(os.Stderr, a...)
 }
