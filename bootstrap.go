@@ -40,10 +40,12 @@ func (boot *Bootstrap) Register(functions ...func(*Web)) *Bootstrap {
 	return boot
 }
 
+// Construct New Bootstrap.
 func NewBootstrap() *Bootstrap {
 	return &Bootstrap{}
 }
 
+// Construct New Bootstrap and Register Functions.
 func NewBootstrapReg(functions ...func(*Web)) *Bootstrap {
 	bo := &Bootstrap{}
 	bo.Register(functions...)
@@ -58,6 +60,7 @@ func (boot *Bootstrap) RegisterHandler(handlers ...BootstrapHandler) *Bootstrap 
 	return boot
 }
 
+// Construct New Bootstrap and Register Handlers.
 func NewBootstrapRegHandler(handlers ...BootstrapHandler) *Bootstrap {
 	bo := &Bootstrap{}
 	bo.RegisterHandler(handlers...)
@@ -87,7 +90,7 @@ var Boot = NewBootstrap()
 // For Allowing Libraries to Add Function to the Html Template Engine!
 var HtmlFuncBoot = NewBootstrap()
 
-// Implement RouteHandler interface.
+// Bootstrap and Router wrapper. Implement RouteHandler interface.
 type BootRoute struct {
 	BOOT   *Bootstrap
 	ROUTER *Router
@@ -111,26 +114,31 @@ func (bo BootRoute) View(w *Web) {
 	}
 }
 
+// Chainable version of BootRoute
 type PipeBootRoute struct {
 	br BootRoute
 }
 
+// PipeBootRoute constructor
 func NewBootRoute() PipeBootRoute {
 	return PipeBootRoute{
 		br: BootRoute{},
 	}
 }
 
+// Set boot
 func (bo PipeBootRoute) Boot(boot *Bootstrap) PipeBootRoute {
 	bo.br.BOOT = boot
 	return bo
 }
 
+// Set Router
 func (bo PipeBootRoute) Router(router *Router) PipeBootRoute {
 	bo.br.ROUTER = router
 	return bo
 }
 
+// Get BootRoute
 func (bo PipeBootRoute) Get() BootRoute {
 	return bo.br
 }
