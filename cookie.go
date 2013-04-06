@@ -79,7 +79,7 @@ func init() {
 
 // Delete Cookie
 func (w *Web) DeleteCookie(name string) {
-	w.Cookie(name).Value("Delete-Me").MaxAge(-1).SaveRes()
+	w.Cookie(name).Delete()
 }
 
 // Chainable version of 'net/http.Cookie'
@@ -106,21 +106,25 @@ func (w *Web) NewCookie(name string) PipeCookie {
 	return NewCookie(w, name)
 }
 
+// Set Value
 func (c PipeCookie) Value(value string) PipeCookie {
 	c.c.Value = value
 	return c
 }
 
+// Set Path
 func (c PipeCookie) Path(path string) PipeCookie {
 	c.c.Path = path
 	return c
 }
 
+// Set Domain
 func (c PipeCookie) Domain(domain string) PipeCookie {
 	c.c.Domain = domain
 	return c
 }
 
+// Set Expiry Time of Cookie.
 func (c PipeCookie) Expires(expires time.Time) PipeCookie {
 	c.c.Expires = expires
 	return c
@@ -134,24 +138,26 @@ func (c PipeCookie) MaxAge(maxage int) PipeCookie {
 	return c
 }
 
+// Make Cookie Secure
 func (c PipeCookie) Secure() PipeCookie {
 	c.c.Secure = true
 	return c
 }
 
+// Make Cookie Http Only
 func (c PipeCookie) HttpOnly() PipeCookie {
 	c.c.HttpOnly = true
 	return c
 }
 
+// Get *http.Cookie
 func (c PipeCookie) Get() *http.Cookie {
 	return c.c
 }
 
 // Delete Cookie
 func (c PipeCookie) Delete() PipeCookie {
-	c.MaxAge(-1).SaveRes()
-	return c
+	return c.Value("Delete-Me").MaxAge(-1).SaveRes()
 }
 
 // Save (Set) Cookie to Response
