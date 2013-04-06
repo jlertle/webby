@@ -146,6 +146,7 @@ func (ro *Router) RegisterMap(routeMap RouteMap) *Router {
 	return ro
 }
 
+// Construct new Router and Register Map to Router
 func NewRouterMap(routeMap RouteMap) *Router {
 	ro := &Router{}
 	ro.RegisterMap(routeMap)
@@ -172,6 +173,7 @@ func (ro *Router) RegisterHandlerMap(routeHandlerMap RouteHandlerMap) *Router {
 	return ro
 }
 
+// Construct new Router and Register Handler Map ro Router
 func NewRouterHandlerMap(routeHandlerMap RouteHandlerMap) *Router {
 	ro := &Router{}
 	ro.RegisterHandlerMap(routeHandlerMap)
@@ -270,6 +272,7 @@ func (fn FuncToRouteHandler) View(w *Web) {
 	fn.Function(w)
 }
 
+// Convert Router Handler to Function
 func RouteHandlerToFunc(ro RouteHandler) func(w *Web) {
 	aro := ro
 	return func(w *Web) {

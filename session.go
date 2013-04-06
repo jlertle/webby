@@ -55,6 +55,7 @@ type SessionHandler interface {
 	Destroy(*Web)
 }
 
+// Store Session to Memory
 type SessionMemory struct{}
 
 func (_ SessionMemory) Set(w *Web, data interface{}) {
@@ -120,6 +121,7 @@ func (_ SessionMemory) Destroy(w *Web) {
 
 const sessionFileExt = ".wbs"
 
+// Store Session to File.
 type SessionFile struct {
 	Path string
 }
