@@ -5,8 +5,10 @@ import (
 	"sync"
 )
 
+// URL Reverse Map
 type URLReverseMap map[string]string
 
+// URL Reverse Data Type
 type URLReverse struct {
 	sync.RWMutex
 	urls URLReverseMap
@@ -55,6 +57,7 @@ func (u *URLReverse) Print(name string, a ...interface{}) string {
 	return fmt.Sprintf(u.urls[name], a...)
 }
 
+// Default URL Reverse!
 var URLRev = &URLReverse{}
 
 func (w *Web) URLReverse(name string, a ...interface{}) string {
