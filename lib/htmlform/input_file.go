@@ -27,7 +27,7 @@ func init() {
 func (fo *InputFile) Render(buf *bytes.Buffer) {
 	const htmlstr = `<input type="file" name="{{.Name}}" {{if .IsId}}id="{{.Id}}" {{end}}{{if .IsClass}}class="{{.Class}}" {{end}}{{if .IsMime}}accept="{{.Accepted}}" {{end}}/>`
 	if fo.error != nil {
-		htmlRender(buf, fo.lang["ErrorTemplate"], fo.error.Error())
+		htmlRender(buf, ErrorTemplate, fo.error.Error())
 	}
 	htmlRender(buf, htmlstr, fo)
 }

@@ -26,6 +26,8 @@ func DefaultLang(str string) {
 	defaultLang = str
 }
 
+var ErrorTemplate = `<p>{{.}}</p>`
+
 type Values url.Values
 
 func (va Values) Get(name string) string {

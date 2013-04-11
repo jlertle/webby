@@ -31,7 +31,7 @@ func init() {
 func (fo *InputPassword) Render(buf *bytes.Buffer) {
 	const htmlstr = `<input type="password" name="{{.Name}}" {{if .IsId}}id="{{.Id}}" {{end}}{{if .IsClass}}class="{{.Class}}" {{end}}{{if .IsValue}}value="{{.Value}}" {{end}}{{if .IsMaxChar}}maxlength="{{.MaxChar}}" {{end}}{{if .IsRegExp}}pattern="{{.RegExpRule}}" {{end}}/>`
 	if fo.error != nil {
-		htmlRender(buf, fo.lang["ErrorTemplate"], fo.error.Error())
+		htmlRender(buf, ErrorTemplate, fo.error.Error())
 	}
 	htmlRender(buf, htmlstr, fo)
 }

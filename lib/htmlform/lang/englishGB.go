@@ -2,7 +2,6 @@ package lang
 
 func init() {
 	Langs.Add("EnglishGB", Lang{
-		"ErrorTemplate":             "<p>{{.}}</p>",
 		"ErrMandatory":              "This field is mandatory! (Also first character must not be space or newline)",
 		"ErrMinChar":                "Characters must be more than and equal to %d!",
 		"ErrMaxChar":                "Characters must be less than and equal to %d!",

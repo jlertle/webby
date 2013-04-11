@@ -26,7 +26,7 @@ func (fo *Select) Render(buf *bytes.Buffer) {
 		htmlstr_close = "</select>"
 	)
 	if fo.error != nil {
-		htmlRender(buf, fo.lang["ErrorTemplate"], fo.error.Error())
+		htmlRender(buf, ErrorTemplate, fo.error.Error())
 	}
 	htmlRender(buf, htmlstr, fo)
 	for _, option := range fo.Options {

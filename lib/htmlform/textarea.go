@@ -34,7 +34,7 @@ func (fo *Textarea) Render(buf *bytes.Buffer) {
 		fo.Cols = 25
 	}
 	if fo.error != nil {
-		htmlRender(buf, fo.lang["ErrorTemplate"], fo.error.Error())
+		htmlRender(buf, ErrorTemplate, fo.error.Error())
 	}
 	htmlRender(buf, htmlstr, fo)
 }

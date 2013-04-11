@@ -2,7 +2,6 @@ package htmlform
 
 import (
 	"github.com/CJ-Jackson/webby"
-	"strings"
 )
 
 type Put struct {
@@ -46,7 +45,7 @@ func (p Put) Validate(w *webby.Web) {
 	if !p.form.IsValid(w) {
 		w.Status = 202
 		data.Pass = false
-		data.Html = strings.Join(p.form.RenderSlices(), "<br />")
+		data.Html = p.form.Render()
 		if p.failFunc != nil {
 			p.failFunc(w)
 		}

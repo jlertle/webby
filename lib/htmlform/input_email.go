@@ -29,7 +29,7 @@ func init() {
 func (fo *InputEmail) Render(buf *bytes.Buffer) {
 	const htmlstr = `<input type="email" name="{{.Name}}" {{if .IsId}}id="{{.Id}}" {{end}}{{if .IsClass}}class="{{.Class}}" {{end}}{{if .IsValue}}value="{{.Value}}" {{end}}/>`
 	if fo.error != nil {
-		htmlRender(buf, fo.lang["ErrorTemplate"], fo.error.Error())
+		htmlRender(buf, ErrorTemplate, fo.error.Error())
 	}
 	htmlRender(buf, htmlstr, fo)
 }
