@@ -38,12 +38,10 @@ func (p Put) Validate(w *webby.Web) {
 		Url  string `json:"url"`
 		Html string `json:"html"`
 	}
-	w.Status = 201
 	data.Pass = true
 	data.Url = p.url
 
 	if !p.form.IsValid(w) {
-		w.Status = 202
 		data.Pass = false
 		data.Html = p.form.Render()
 		if p.failFunc != nil {
