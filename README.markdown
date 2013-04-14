@@ -7,7 +7,7 @@ It's built on top of the standard package 'net/http'!
 
 ## Installation ##
 
-	go get github.com/CJ-Jackson/webby
+	go get github.com/cj-jackson/webby
 	
 ## Example Web Application ##
 
@@ -15,7 +15,7 @@ It's built on top of the standard package 'net/http'!
 
 	import (
 		"code.google.com/p/go.net/websocket"
-		"github.com/CJ-Jackson/webby"
+		"github.com/cj-jackson/webby"
 		"io"
 	)
 
@@ -41,7 +41,7 @@ It's built on top of the standard package 'net/http'!
 			// Main Route
 			"^/$": webby.NewJunction().Websocket(
 				webby.HttpRouteHandler{websocket.Handler(EchoServer)},
-			).Fallback(index{}).GetJunction(),
+			).Get(index{}).GetJunction(),
 
 			// Index Page Route
 			"^/(?P<page>\\d+)/?$": index{},

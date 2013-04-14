@@ -38,16 +38,14 @@ func init() {
 	})
 }
 
-func (w *Web) bufToWeb(buf *bytes.Buffer) {
-	io.Copy(w, buf)
-	buf.Reset()
-}
-
 func (w *Web) parseHtml(htmlstr string, value_map interface{}, buf io.Writer) {
 	if buf == nil {
 		// To prevent headers from being sent too early.
 		buf = &bytes.Buffer{}
-		defer w.bufToWeb(buf.(*bytes.Buffer))
+		defer func(buf *bytes.Buffer) {
+			io.Copy(w, buf)
+			buf.Reset()
+		}(buf.(*bytes.Buffer))
 	}
 	t, err := html.New("html").Funcs(w.HtmlFunc).Parse(htmlstr)
 	w.Check(err)
