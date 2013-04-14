@@ -17,7 +17,10 @@ func init() {
 }
 
 func (op *Option) Render(buf *bytes.Buffer) {
-	const htmlstr = `<option {{if .IsValue}}value="{{.Value}}" {{end}}{{if .IsLabel}}label="{{.Label}}" {{end}}{{if .Selected}} selected {{end}}{{if .IsName}}>{{.Name}}</option>{{else}}/>{{end}}`
+	const htmlstr = `<option {{if .IsValue}}value="{{.Value}}"
+	{{end}}{{if .IsLabel}}label="{{.Label}}"
+	{{end}}{{if .Selected}}selected
+	{{end}}{{if .IsName}}>{{.Name}}</option>{{else}}/>{{end}}`
 	htmlRender(buf, htmlstr, op)
 }
 

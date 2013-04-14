@@ -19,6 +19,7 @@ type InputText struct {
 	RegExpErr    string
 	MustMatch    string
 	MustMatchErr string
+	Placeholder  string
 	extra        func(*Validation) error
 	error        error
 	lang         Lang
@@ -29,7 +30,14 @@ func init() {
 }
 
 func (fo *InputText) Render(buf *bytes.Buffer) {
-	const htmlstr = `<input type="text" name="{{.Name}}" {{if .IsId}}id="{{.Id}}" {{end}}{{if .IsClass}}class="{{.Class}}" {{end}}{{if .IsValue}}value="{{.Value}}" {{end}}{{if .IsMaxChar}}maxlength="{{.MaxChar}}" {{end}}{{if .IsRegExp}}pattern="{{.RegExpRule}}" {{end}}/>`
+	const htmlstr = `<input type="text" name="{{.Name}}"
+	{{if .IsId}}id="{{.Id}}"
+	{{end}}{{if .IsClass}}class="{{.Class}}"
+	{{end}}{{if .IsValue}}value="{{.Value}}"
+	{{end}}{{if .IsMaxChar}}maxlength="{{.MaxChar}}"
+	{{end}}{{if .IsRegExp}}pattern="{{.RegExpRule}}"
+	{{end}}{{if .IsPlaceholder}}placeholder="{{.Placeholder}}"
+	{{end}}/>`
 	if fo.error != nil {
 		htmlRender(buf, ErrorTemplate, fo.error.Error())
 	}
@@ -145,6 +153,10 @@ func (fo *InputText) IsMaxChar() bool {
 
 func (fo *InputText) IsRegExp() bool {
 	return len(fo.RegExpRule) > 0
+}
+
+func (fo *InputText) IsPlaceholder() bool {
+	return len(fo.Placeholder) > 0
 }
 
 func (fo *InputText) GetName() string {

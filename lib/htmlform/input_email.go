@@ -17,6 +17,7 @@ type InputEmail struct {
 	Class        string
 	MustMatch    string
 	MustMatchErr string
+	Placeholder  string
 	extra        func(*Validation) error
 	error        error
 	lang         Lang
@@ -27,7 +28,12 @@ func init() {
 }
 
 func (fo *InputEmail) Render(buf *bytes.Buffer) {
-	const htmlstr = `<input type="email" name="{{.Name}}" {{if .IsId}}id="{{.Id}}" {{end}}{{if .IsClass}}class="{{.Class}}" {{end}}{{if .IsValue}}value="{{.Value}}" {{end}}/>`
+	const htmlstr = `<input type="email" name="{{.Name}}"
+	{{if .IsId}}id="{{.Id}}"
+	{{end}}{{if .IsClass}}class="{{.Class}}"
+	{{end}}{{if .IsValue}}value="{{.Value}}"
+	{{end}}{{if .IsPlaceholder}}placeholder="{{.Placeholder}}"
+	{{end}}/>`
 	if fo.error != nil {
 		htmlRender(buf, ErrorTemplate, fo.error.Error())
 	}
@@ -90,6 +96,10 @@ func (fo *InputEmail) IsId() bool {
 
 func (fo *InputEmail) IsClass() bool {
 	return len(fo.Class) > 0
+}
+
+func (fo *InputEmail) IsPlaceholder() bool {
+	return len(fo.Placeholder) > 0
 }
 
 func (fo *InputEmail) GetName() string {

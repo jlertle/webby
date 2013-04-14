@@ -55,6 +55,11 @@ func (in PipeInputText) MustMatch(match, errMsg string) PipeInputText {
 	return in
 }
 
+func (in PipeInputText) Placeholder(placeholder string) PipeInputText {
+	in.in.Placeholder = placeholder
+	return in
+}
+
 func (in PipeInputText) Extra(extra func(*Validation) error) PipeInputText {
 	in.in.extra = extra
 	return in

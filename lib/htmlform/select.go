@@ -22,7 +22,10 @@ func init() {
 
 func (fo *Select) Render(buf *bytes.Buffer) {
 	const (
-		htmlstr       = `<select name="{{.Name}}" {{if .IsId}}id="{{.Id}}" {{end}}{{if .IsClass}}class="{{.Class}}" {{end}}>`
+		htmlstr = `<select name="{{.Name}}"
+		{{if .IsId}}id="{{.Id}}"
+		{{end}}{{if .IsClass}}class="{{.Class}}"
+		{{end}}>`
 		htmlstr_close = "</select>"
 	)
 	if fo.error != nil {

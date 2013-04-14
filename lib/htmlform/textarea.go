@@ -8,17 +8,18 @@ import (
 )
 
 type Textarea struct {
-	Name    string
-	Value   string
-	Id      string
-	Class   string
-	MinChar int
-	MaxChar int
-	Rows    int
-	Cols    int
-	extra   func(*Validation) error
-	error   error
-	lang    Lang
+	Name        string
+	Value       string
+	Id          string
+	Class       string
+	MinChar     int
+	MaxChar     int
+	Rows        int
+	Cols        int
+	Placeholder string
+	extra       func(*Validation) error
+	error       error
+	lang        Lang
 }
 
 func init() {
@@ -26,7 +27,12 @@ func init() {
 }
 
 func (fo *Textarea) Render(buf *bytes.Buffer) {
-	const htmlstr = `<textarea name="{{.Name}}" {{if .IsId}}id="{{.Id}}" {{end}}{{if .IsClass}}class="{{.Class}}" {{end}}rows="{{.Rows}}" cols="{{.Cols}}" >{{.Value}}</textarea>`
+	const htmlstr = `<textarea name="{{.Name}}"
+	{{if .IsId}}id="{{.Id}}"
+	{{end}}{{if .IsClass}}class="{{.Class}}"
+	{{end}}{{if .IsPlaceholder}}placeholder="{{.Placeholder}}"
+	{{end}}rows="{{.Rows}}"
+	cols="{{.Cols}}">{{.Value}}</textarea>`
 	if fo.Rows <= 0 {
 		fo.Rows = 4
 	}
@@ -103,6 +109,10 @@ func (fo *Textarea) IsId() bool {
 
 func (fo *Textarea) IsClass() bool {
 	return len(fo.Class) > 0
+}
+
+func (fo *Textarea) IsPlaceholder() bool {
+	return len(fo.Placeholder) > 0
 }
 
 func (fo *Textarea) GetName() string {

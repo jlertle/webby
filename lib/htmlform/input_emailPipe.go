@@ -33,6 +33,11 @@ func (em PipeInputEmail) MustMatch(match, errMsg string) PipeInputEmail {
 	return em
 }
 
+func (em PipeInputEmail) Placeholder(placeholder string) PipeInputEmail {
+	em.em.Placeholder = placeholder
+	return em
+}
+
 func (em PipeInputEmail) Extra(extra func(*Validation) error) PipeInputEmail {
 	em.em.extra = extra
 	return em

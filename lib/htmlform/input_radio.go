@@ -18,7 +18,12 @@ func init() {
 }
 
 func (fo *InputRadio) Render(buf *bytes.Buffer) {
-	const htmlstr = `<input type="radio" name="{{.Name}}" value="{{.Value}}" {{if .IsId}}id="{{.Id}}" {{end}}{{if .IsClass}}class="{{.Class}}" {{end}}{{if .Selected}}checked{{end}} />`
+	const htmlstr = `<input type="radio" name="{{.Name}}"
+	value="{{.Value}}"
+	{{if .IsId}}id="{{.Id}}"
+	{{end}}{{if .IsClass}}class="{{.Class}}"
+	{{end}}{{if .Selected}}checked
+	{{end}}/>`
 	htmlRender(buf, htmlstr, fo)
 }
 

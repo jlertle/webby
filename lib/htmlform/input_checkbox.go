@@ -22,7 +22,12 @@ func init() {
 }
 
 func (fo *InputCheckbox) Render(buf *bytes.Buffer) {
-	const htmlstr = `<input type="checkbox" name="{{.Name}}" value="{{.Value}}" {{if .IsId}}id="{{.Id}}" {{end}}{{if .IsClass}}class="{{.Class}}" {{end}}{{if .Selected}}checked{{end}} />`
+	const htmlstr = `<input type="checkbox" name="{{.Name}}"
+		value="{{.Value}}"
+		{{if .IsId}}id="{{.Id}}"
+		{{end}}{{if .IsClass}}class="{{.Class}}"
+		{{end}}{{if .Selected}}checked
+		{{end}}/>`
 	if fo.error != nil {
 		htmlRender(buf, ErrorTemplate, fo.error.Error())
 	}
