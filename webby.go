@@ -1,6 +1,3 @@
-// A Very Nice Micro Web Framework that can be used as a standalone or a embeddable solution for existing Go project that require a Web Interface!
-//
-// It's built on top of the standard package 'net/http'!
 package webby
 
 import (
