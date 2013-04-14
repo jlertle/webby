@@ -53,6 +53,11 @@ func (te PipeTextarea) Cols(cols int) PipeTextarea {
 	return te
 }
 
+func (te PipeTextarea) Placeholder(placeholder string) PipeTextarea {
+	te.te.Placeholder = placeholder
+	return te
+}
+
 func (te PipeTextarea) Extra(extra func(*Validation) error) PipeTextarea {
 	te.te.extra = extra
 	return te
