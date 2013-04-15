@@ -67,13 +67,12 @@ func (_ SessionMemory) Set(w *Web, data interface{}) {
 		go sessionExpiryCheck()
 	}
 
-	sesCookie, err := w.GetCookie(SessionCookieName)
+	sesCookie, err := w.Cookie(SessionCookieName).Get()
 
 	if err != nil {
-		sesCookie = w.NewCookie(SessionCookieName).Value(KeyGen()).Get()
+		sesCookie, _ = w.Cookie(SessionCookieName).Value(KeyGen()).SaveRes().Get()
 	}
 
-	w.SetCookie(sesCookie)
 	sessionMap.m[sesCookie.Value] = &session{data, time.Now().Add(SessionExpire)}
 }
 
@@ -85,7 +84,7 @@ func (_ SessionMemory) Init(w *Web) {
 	sessionMap.Lock()
 	defer sessionMap.Unlock()
 
-	sesCookie, err := w.GetCookie(SessionCookieName)
+	sesCookie, err := w.Cookie(SessionCookieName).Get()
 	if err != nil {
 		return
 	}
@@ -100,14 +99,14 @@ func (_ SessionMemory) Init(w *Web) {
 	}
 
 	deleteSessionFromMap(sesCookie.Value)
-	w.DeleteCookie(sesCookie.Name)
+	w.Cookie(sesCookie.Name).Delete()
 }
 
 func (_ SessionMemory) Destroy(w *Web) {
 	sessionMap.Lock()
 	defer sessionMap.Unlock()
 
-	sesCookie, err := w.GetCookie(SessionCookieName)
+	sesCookie, err := w.Cookie(SessionCookieName).Get()
 	if err != nil {
 		return
 	}
@@ -116,7 +115,7 @@ func (_ SessionMemory) Destroy(w *Web) {
 	case *session:
 		deleteSessionFromMap(sesCookie.Value)
 	}
-	w.DeleteCookie(sesCookie.Name)
+	w.Cookie(sesCookie.Name).Delete()
 }
 
 const sessionFileExt = ".wbs"
@@ -127,13 +126,12 @@ type SessionFile struct {
 }
 
 func (se SessionFile) Set(w *Web, data interface{}) {
-	sesCookie, err := w.GetCookie(SessionCookieName)
+	sesCookie, err := w.Cookie(SessionCookieName).Get()
 
 	if err != nil {
-		sesCookie = w.NewCookie(SessionCookieName).Value(KeyGen()).Get()
+		sesCookie, _ = w.Cookie(SessionCookieName).Value(KeyGen()).SaveRes().Get()
 	}
 
-	w.SetCookie(sesCookie)
 	file, err := os.Create(se.Path + "/" + sesCookie.Value + sessionFileExt)
 	w.Check(err)
 
@@ -146,7 +144,7 @@ func (se SessionFile) Set(w *Web, data interface{}) {
 }
 
 func (se SessionFile) Init(w *Web) {
-	sesCookie, err := w.GetCookie(SessionCookieName)
+	sesCookie, err := w.Cookie(SessionCookieName).Get()
 	if err != nil {
 		return
 	}
@@ -172,17 +170,17 @@ func (se SessionFile) Init(w *Web) {
 	}
 
 	os.Remove(se.Path + "/" + sesCookie.Value + sessionFileExt)
-	w.DeleteCookie(sesCookie.Name)
+	w.Cookie(sesCookie.Name).Delete()
 }
 
 func (se SessionFile) Destroy(w *Web) {
-	sesCookie, err := w.GetCookie(SessionCookieName)
+	sesCookie, err := w.Cookie(SessionCookieName).Get()
 	if err != nil {
 		return
 	}
 
 	os.Remove(se.Path + "/" + sesCookie.Value + sessionFileExt)
-	w.DeleteCookie(sesCookie.Name)
+	w.Cookie(sesCookie.Name).Delete()
 }
 
 var DefaultSessionHandler SessionHandler = SessionMemory{}

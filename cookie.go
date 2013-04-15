@@ -7,79 +7,17 @@ import (
 	"time"
 )
 
-// Prepare Cookie
-func (w *Web) preCookie(cookie *http.Cookie) *http.Cookie {
-	var num int
-
-	if cookie.Path == "" {
-		cookie.Path = "/"
-	}
-
-	if cookie.Domain != "" {
-		goto release_cookie
-	}
-
-	cookie.Domain = w.Req.Host
-
-	num = strings.LastIndex(cookie.Domain, "]:")
-	if num != -1 {
-		cookie.Domain = cookie.Domain[:num+1]
-		goto skip_port_check
-	}
-
-	if cookie.Domain[len(cookie.Domain)-1] == ']' {
-		goto skip_port_check
-	}
-
-	num = strings.LastIndex(cookie.Domain, ":")
-	if num != -1 {
-		cookie.Domain = cookie.Domain[:num]
-	}
-
-skip_port_check:
-
-	cookie.Domain = strings.Trim(cookie.Domain, "[]")
-
-	if net.ParseIP(cookie.Domain) != nil {
-		cookie.Domain = ""
-		goto release_cookie
-	}
-
-	if strings.Count(cookie.Domain, ".") <= 0 {
-		cookie.Domain = ""
-	}
-
-release_cookie:
-
-	return cookie
-}
-
-// Set Cookie
-func (w *Web) SetCookie(cookie *http.Cookie) {
-	http.SetCookie(w, w.preCookie(cookie))
-}
-
-// Get Cookie
-func (w *Web) GetCookie(name string) (*http.Cookie, error) {
-	return w.Req.Cookie(name)
-}
-
 func init() {
 	HtmlFuncBoot.Register(func(w *Web) {
 		// Get Cookie Value
 		w.HtmlFunc["cookie"] = func(name string) string {
-			cookie, err := w.GetCookie(name)
+			cookie, err := w.Cookie(name).Get()
 			if err != nil {
 				return ""
 			}
 			return cookie.Value
 		}
 	})
-}
-
-// Delete Cookie
-func (w *Web) DeleteCookie(name string) {
-	w.Cookie(name).Delete()
 }
 
 // Chainable version of 'net/http.Cookie'
@@ -96,13 +34,8 @@ func NewCookie(w *Web, name string) PipeCookie {
 	}
 }
 
-// Alias of New Cookie
+// Cookie
 func (w *Web) Cookie(name string) PipeCookie {
-	return NewCookie(w, name)
-}
-
-// New Cookie
-func (w *Web) NewCookie(name string) PipeCookie {
 	return NewCookie(w, name)
 }
 
@@ -150,9 +83,12 @@ func (c PipeCookie) HttpOnly() PipeCookie {
 	return c
 }
 
-// Get *http.Cookie
-func (c PipeCookie) Get() *http.Cookie {
-	return c.c
+// Get *http.Cookie, if Value is not set it will try to get the Cookie from the User Request!
+func (c PipeCookie) Get() (*http.Cookie, error) {
+	if c.c.Value != "" {
+		return c.c, nil
+	}
+	return c.w.Req.Cookie(c.c.Name)
 }
 
 // Delete Cookie
@@ -162,8 +98,56 @@ func (c PipeCookie) Delete() PipeCookie {
 
 // Save (Set) Cookie to Response
 func (c PipeCookie) SaveRes() PipeCookie {
-	c.w.SetCookie(c.c)
+	http.SetCookie(c.w, c.pre(c.c))
 	return c
+}
+
+// Prepare Cookie
+func (c PipeCookie) pre(cookie *http.Cookie) *http.Cookie {
+	var num int
+	w := c.w
+
+	if cookie.Path == "" {
+		cookie.Path = "/"
+	}
+
+	if cookie.Domain != "" {
+		goto release_cookie
+	}
+
+	cookie.Domain = w.Req.Host
+
+	num = strings.LastIndex(cookie.Domain, "]:")
+	if num != -1 {
+		cookie.Domain = cookie.Domain[:num+1]
+		goto skip_port_check
+	}
+
+	if cookie.Domain[len(cookie.Domain)-1] == ']' {
+		goto skip_port_check
+	}
+
+	num = strings.LastIndex(cookie.Domain, ":")
+	if num != -1 {
+		cookie.Domain = cookie.Domain[:num]
+	}
+
+skip_port_check:
+
+	cookie.Domain = strings.Trim(cookie.Domain, "[]")
+
+	if net.ParseIP(cookie.Domain) != nil {
+		cookie.Domain = ""
+		goto release_cookie
+	}
+
+	if strings.Count(cookie.Domain, ".") <= 0 {
+		cookie.Domain = ""
+	}
+
+release_cookie:
+
+	return cookie
 }
 
 // Save (Add) Cookie to Request, It won't send anything out to the client.
@@ -171,4 +155,59 @@ func (c PipeCookie) SaveRes() PipeCookie {
 func (c PipeCookie) SaveReq() PipeCookie {
 	c.w.Req.AddCookie(c.c)
 	return c
+}
+
+// Set to Expire after an hour
+func (c PipeCookie) Hour() PipeCookie {
+	return c.Expires(time.Now().Add(1 * time.Hour))
+}
+
+// Set to Expire after 6 Hours
+func (c PipeCookie) Hour6() PipeCookie {
+	return c.Expires(time.Now().Add(6 * time.Hour))
+}
+
+// Set to Expire after 12 Hours
+func (c PipeCookie) Hour12() PipeCookie {
+	return c.Expires(time.Now().Add(12 * time.Hour))
+}
+
+// Set to Expire after 1 Day
+func (c PipeCookie) Day() PipeCookie {
+	return c.Expires(time.Now().AddDate(0, 0, 1))
+}
+
+// Set to Expire after 1 Week
+func (c PipeCookie) Week() PipeCookie {
+	return c.Expires(time.Now().AddDate(0, 0, 1))
+}
+
+// Set to Expire after 2 Week
+func (c PipeCookie) Week2() PipeCookie {
+	return c.Expires(time.Now().AddDate(0, 0, 2))
+}
+
+// Set to Expire after 1 Month
+func (c PipeCookie) Month() PipeCookie {
+	return c.Expires(time.Now().AddDate(0, 1, 0))
+}
+
+// Set to Expire after 3 Month
+func (c PipeCookie) Month3() PipeCookie {
+	return c.Expires(time.Now().AddDate(0, 3, 0))
+}
+
+// Set to Expire after 6 Month
+func (c PipeCookie) Month6() PipeCookie {
+	return c.Expires(time.Now().AddDate(0, 6, 0))
+}
+
+// Set to Expire after 9 Month
+func (c PipeCookie) Month9() PipeCookie {
+	return c.Expires(time.Now().AddDate(0, 9, 0))
+}
+
+// Set to Expire after 1 Year
+func (c PipeCookie) Year() PipeCookie {
+	return c.Expires(time.Now().AddDate(1, 0, 0))
 }
