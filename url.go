@@ -60,7 +60,35 @@ func (u *URLReverse) Print(name string, a ...interface{}) string {
 // Default URL Reverse!
 var URLRev = &URLReverse{}
 
-func (w *Web) URLReverse(name string, a ...interface{}) string {
+type Url struct {
+	w *Web
+}
+
+func (w *Web) Url() Url {
+	return Url{w}
+}
+
+// Get Absolute URL, you can leave relative_url blank just to get the root url.
+func (u Url) Absolute(relative_url string) string {
+	w := u.w
+	if w.Req.URL.Host != "" {
+		return "http://" + w.Req.URL.Host + relative_url
+	}
+
+	return relative_url
+}
+
+// Get Absolute URL (https), you can leave relative_url blank just to get the root url.
+func (u Url) AbsoluteHttps(relative_url string) string {
+	w := u.w
+	if w.Req.URL.Host != "" {
+		return "https://" + w.Req.URL.Host + relative_url
+	}
+
+	return relative_url
+}
+
+func (u Url) Reverse(name string, a ...interface{}) string {
 	return URLRev.Print(name, a...)
 }
 
