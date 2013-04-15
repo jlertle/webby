@@ -71,24 +71,6 @@ func (w *Web) initTruePath() {
 	}
 }
 
-// Get Absolute URL, you can leave relative_url blank just to get the root url.
-func (w *Web) AbsoluteUrl(relative_url string) string {
-	if w.Req.URL.Host != "" {
-		return "http://" + w.Req.URL.Host + relative_url
-	}
-
-	return relative_url
-}
-
-// Get Absolute URL (https), you can leave relative_url blank just to get the root url.
-func (w *Web) AbsoluteUrlHttps(relative_url string) string {
-	if w.Req.URL.Host != "" {
-		return "https://" + w.Req.URL.Host + relative_url
-	}
-
-	return relative_url
-}
-
 // Is Ajax Request
 func (w *Web) IsAjaxRequest() bool {
 	return w.Env.Get("X-Requested-With") == "XMLHttpRequest"
