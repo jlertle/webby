@@ -17,20 +17,28 @@ func SetTimeZone(zone string) {
 	Check(err)
 }
 
-// Set Timezone on user request level
-func (w *Web) SetTimeZone(zone string) {
-	var err error
-	w.TimeLoc, err = time.LoadLocation(zone)
-	w.Check(err)
-}
-
 // Get Current Time
 func CurTime() time.Time {
 	return time.Now()
 }
 
+type Time struct {
+	w *Web
+}
+
+func (w *Web) Time() Time {
+	return Time{w}
+}
+
+// Set Timezone on user request level
+func (t Time) SetZone(zone string) {
+	var err error
+	t.w.TimeLoc, err = time.LoadLocation(zone)
+	t.w.Check(err)
+}
+
 // Get Current Time
-func (w *Web) CurTime() time.Time {
+func (t Time) Now() time.Time {
 	return CurTime()
 }
 
