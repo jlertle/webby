@@ -5,7 +5,6 @@ import (
 	"github.com/cj-jackson/webby"
 	html "html/template"
 	"net/http"
-	"time"
 )
 
 const cookieName = "csrf_token"
@@ -18,14 +17,10 @@ var (
 	Modulised = false
 )
 
-func genKey() string {
-	return webby.KeyGen()
-}
-
 func getCookie(w *webby.Web) *http.Cookie {
 	cookie, err := w.Cookie(cookieName).Get()
 	if err != nil {
-		cookie, _ = w.Cookie(cookieName).Value(genKey()).Expires(time.Now().AddDate(0, 1, 0)).SaveRes().SaveReq().Get()
+		cookie, _ = w.Cookie(cookieName).Value(webby.KeyGen()).Month().SaveRes().SaveReq().Get()
 	}
 	return cookie
 }
