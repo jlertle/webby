@@ -113,9 +113,13 @@ func (f *Form) Deny(fields ...string) *Form {
 	return form
 }
 
+// Html Form Memory Limit
+var FormMemoryLimit = int64(16 * 1024 * 1024)
+
 // Generate a new form.
 func (w *Web) Form() *Form {
-	w.ParseForm()
+	w.Req.ParseMultipartForm(FormMemoryLimit)
+
 	form := &Form{}
 	if w.Req.MultipartForm != nil {
 		form.Value = url.Values(w.Req.MultipartForm.Value)
@@ -125,24 +129,4 @@ func (w *Web) Form() *Form {
 		form.File = nil
 	}
 	return form
-}
-
-// Generate a new form with the key prefix trimed out, if the key does not have the prefix, it will get ignore.
-func (w *Web) FormTrimPrefix(prefix string) *Form {
-	return w.Form().TrimPrefix(prefix)
-}
-
-// Generate a new form, retaining the chosen slot number!
-func (w *Web) FormSlot(slot int) *Form {
-	return w.Form().Slot(slot)
-}
-
-// Generate a new form.  With only the allowed fields.
-func (w *Web) FormAllow(fields ...string) *Form {
-	return w.Form().Allow(fields...)
-}
-
-// Generate a new form, while filtering out the denied fields.
-func (w *Web) FormDeny(fields ...string) *Form {
-	return w.Form().Deny(fields...)
 }

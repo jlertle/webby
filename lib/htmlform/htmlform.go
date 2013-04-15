@@ -196,7 +196,7 @@ func (f *Form) IsValid(w *webby.Web) bool {
 // For the more complexed form!
 func (f *Form) IsValidSlot(w *webby.Web, slot int) bool {
 	var files FileHeaders
-	form := w.FormSlot(slot)
+	form := w.Form().Slot(slot)
 	values := Values(form.Value)
 	files = nil
 	if form.File != nil {

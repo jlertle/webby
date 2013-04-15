@@ -27,7 +27,7 @@ func printPanic(buf io.Writer, w *Web, r interface{}, stack []byte) {
 	printLn("\r\nRequest Header:")
 	printLn(w.Req.Header)
 
-	w.ParseForm()
+	w.Req.ParseMultipartForm(FormMemoryLimit)
 
 	printLn("\r\nForm Values:")
 	printLn(w.Req.Form)

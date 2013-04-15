@@ -106,14 +106,6 @@ func (w *Web) IsDNT() bool {
 	return w.Env.Get("Dnt") == "1" || w.Env.Get("X-Do-Not-Track") == "1"
 }
 
-// Html Form Memory Limit
-var FormMemoryLimit = int64(16 * 1024 * 1024)
-
-// Parse Form
-func (w *Web) ParseForm() error {
-	return w.Req.ParseMultipartForm(FormMemoryLimit)
-}
-
 var stripPortFromAddr = regexp.MustCompile("^(.*)(:(\\d+))$")
 
 // Get Remote Address (IP Address) without port number!

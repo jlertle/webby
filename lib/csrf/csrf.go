@@ -30,34 +30,19 @@ func getCookie(w *webby.Web) *http.Cookie {
 	return cookie
 }
 
-func fail(w *webby.Web) {
-	w.Error403()
-}
-
-func multipartCheck(w *webby.Web) {
-	if len(w.Req.MultipartForm.Value[cookieName]) <= 0 {
-		fail(w)
-		return
-	}
-
-	if w.Req.MultipartForm.Value[cookieName][0] != getCookie(w).Value {
-		fail(w)
-		return
-	}
-}
-
 func formCheck(w *webby.Web) {
-	if len(w.Req.Form) <= 0 {
+	form := w.Form()
+	if len(form.Value) <= 0 {
 		return
 	}
 
-	if len(w.Req.Form[cookieName]) <= 0 {
-		fail(w)
+	if len(form.Value[cookieName]) <= 0 {
+		w.Error403()
 		return
 	}
 
-	if w.Req.Form[cookieName][0] != getCookie(w).Value {
-		fail(w)
+	if form.Value[cookieName][0] != getCookie(w).Value {
+		w.Error403()
 		return
 	}
 }
@@ -66,7 +51,7 @@ type Check struct{}
 
 func (_ Check) Boot(w *webby.Web) {
 	if IncludeGetRequest {
-		goto parse_form
+		goto form_check
 	}
 
 	switch w.Req.Method {
@@ -74,14 +59,7 @@ func (_ Check) Boot(w *webby.Web) {
 		return
 	}
 
-parse_form:
-
-	w.ParseForm()
-
-	if w.Req.MultipartForm != nil {
-		multipartCheck(w)
-		return
-	}
+form_check:
 
 	formCheck(w)
 }
