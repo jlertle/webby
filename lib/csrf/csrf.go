@@ -64,7 +64,7 @@ func init() {
 		// Get CSRF Token input field
 		w.HtmlFunc["csrf_token"] = func() html.HTML {
 			const htmlstr = `<input type="hidden" name="{{.Name}}" class="{{.Name}}" value="{{.Value}}" />`
-			return html.HTML(w.ParseHtml(htmlstr, getCookie(w)))
+			return html.HTML(w.Html().Parse(htmlstr, getCookie(w)))
 		}
 
 		// Get CSRF Token Key

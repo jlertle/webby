@@ -38,7 +38,16 @@ func init() {
 	})
 }
 
-func (w *Web) parseHtml(htmlstr string, value_map interface{}, buf io.Writer) {
+type Html struct {
+	w *Web
+}
+
+func (w *Web) Html() Html {
+	return Html{w}
+}
+
+func (h Html) parse(htmlstr string, value_map interface{}, buf io.Writer) {
+	w := h.w
 	if buf == nil {
 		// To prevent headers from being sent too early.
 		buf = &bytes.Buffer{}
@@ -56,18 +65,18 @@ func (w *Web) parseHtml(htmlstr string, value_map interface{}, buf io.Writer) {
 // Parse HTML
 //
 // Note: Marksafe functions/filters avaliable are 'html', 'htmlattr', 'js' and 'jsattr'.
-func (w *Web) ParseHtml(htmlstr string, value_map interface{}) string {
+func (h Html) Parse(htmlstr string, value_map interface{}) string {
 	buf := &bytes.Buffer{}
 	defer buf.Reset()
-	w.parseHtml(htmlstr, value_map, buf)
+	h.parse(htmlstr, value_map, buf)
 	return buf.String()
 }
 
 // Parse HTML and Send Response to Client
 //
 // Note: Marksafe functions/filters avaliable are 'html', 'htmlattr', 'js' and 'jsattr'.
-func (w *Web) ParseHtmlSend(htmlstr string, value_map interface{}) {
-	w.parseHtml(htmlstr, value_map, nil)
+func (h Html) ParseSend(htmlstr string, value_map interface{}) {
+	h.parse(htmlstr, value_map, nil)
 }
 
 type htmlFileCacheStruct struct {
@@ -85,7 +94,7 @@ var HtmlTemplateCacheExpire = 24 * time.Hour
 // Get HTML File
 //
 // Note: Can also be used to get other kind of files. DO NOT USE THIS WITH LARGE FILES.
-func (w *Web) GetHtmlFile(htmlfile string) string {
+func (h Html) GetFile(htmlfile string) string {
 	var content string
 	var content_in_byte []byte
 	var err error
@@ -120,14 +129,14 @@ return_content:
 //
 // Note: Marksafe functions/filters avaliable are 'html', 'htmlattr', 'js' and 'jsattr'.
 // DO NOT USE THIS WITH LARGE FILES.
-func (w *Web) ParseHtmlFile(htmlfile string, value_map interface{}) string {
-	return w.ParseHtml(w.GetHtmlFile(htmlfile), value_map)
+func (h Html) ParseFile(htmlfile string, value_map interface{}) string {
+	return h.Parse(h.GetFile(htmlfile), value_map)
 }
 
 // Parse HTML File and Send Response to Client
 //
 // Note: Marksafe functions/filters avaliable are 'html', 'htmlattr', 'js' and 'jsattr'.
 // DO NOT USE THIS WITH LARGE FILES.
-func (w *Web) ParseHtmlFileSend(htmlfile string, value_map interface{}) {
-	w.ParseHtmlSend(w.GetHtmlFile(htmlfile), value_map)
+func (h Html) ParseFileSend(htmlfile string, value_map interface{}) {
+	h.ParseSend(h.GetFile(htmlfile), value_map)
 }
