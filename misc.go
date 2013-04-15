@@ -71,21 +71,6 @@ func (w *Web) initTruePath() {
 	}
 }
 
-// Is Ajax Request
-func (w *Web) IsAjaxRequest() bool {
-	return w.Env.Get("X-Requested-With") == "XMLHttpRequest"
-}
-
-// Is WebSocket Request
-func (w *Web) IsWebSocketRequest() bool {
-	return w.Env.Get("Connection") == "Upgrade" && w.Env.Get("Upgrade") == "websocket"
-}
-
-// Is Do Not Track
-func (w *Web) IsDNT() bool {
-	return w.Env.Get("Dnt") == "1" || w.Env.Get("X-Do-Not-Track") == "1"
-}
-
 var stripPortFromAddr = regexp.MustCompile("^(.*)(:(\\d+))$")
 
 // Get Remote Address (IP Address) without port number!

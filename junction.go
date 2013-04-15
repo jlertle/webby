@@ -6,7 +6,8 @@ type Junction struct {
 }
 
 func (jn Junction) View(w *Web) {
-	if w.IsWebSocketRequest() {
+	is := w.Is()
+	if is.WebSocketRequest() {
 		if jn.WS != nil {
 			jn.WS.View(w)
 			return
@@ -15,7 +16,7 @@ func (jn Junction) View(w *Web) {
 
 	switch w.Req.Method {
 	case "GET", "HEAD":
-		if w.IsAjaxRequest() {
+		if is.AjaxRequest() {
 			if jn.AJAX != nil {
 				jn.AJAX.View(w)
 				return
@@ -26,7 +27,7 @@ func (jn Junction) View(w *Web) {
 			return
 		}
 	case "POST":
-		if w.IsAjaxRequest() {
+		if is.AjaxRequest() {
 			if jn.AJAX != nil {
 				jn.AJAX.View(w)
 				return

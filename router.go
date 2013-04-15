@@ -227,7 +227,7 @@ func (ro *Router) Load(w *Web) {
 		return
 	}
 
-	if w.IsWebSocketRequest() {
+	if w.Is().WebSocketRequest() {
 		return
 	}
 
@@ -245,7 +245,7 @@ func (ro *Router) LoadReset(w *Web) {
 		return
 	}
 
-	if w.IsWebSocketRequest() {
+	if w.Is().WebSocketRequest() {
 		return
 	}
 
