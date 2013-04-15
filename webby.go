@@ -207,19 +207,6 @@ func (w *Web) debugEnd() {
 	w.debuginfo("END  ")
 }
 
-// Set Custom Command
-func (w *Web) SetCmd(name string, cmd func(interface{}) interface{}) {
-	w.pri.cmd[name] = cmd
-}
-
-// Execute Custom Command
-func (w *Web) ExecCmd(name string, v interface{}) interface{} {
-	if w.pri.cmd[name] == nil {
-		panic(ErrorStr("CMD: '" + name + "' does not exist!"))
-	}
-	return w.pri.cmd[name](v)
-}
-
 // Start Http Server
 func StartHttp(addr string) error {
 	return http.ListenAndServe(addr, Web{})
