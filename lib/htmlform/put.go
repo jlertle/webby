@@ -53,5 +53,5 @@ func (p Put) Validate(w *webby.Web) {
 		}
 	}
 
-	w.JsonSend(data)
+	w.Json().Send(data)
 }
