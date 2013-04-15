@@ -9,12 +9,12 @@ func (w *Web) Cmd() Cmd {
 }
 
 // Set Custom Command
-func (c Cmd) SetCmd(name string, cmd func(interface{}) interface{}) {
+func (c Cmd) Set(name string, cmd func(interface{}) interface{}) {
 	c.w.pri.cmd[name] = cmd
 }
 
 // Execute Custom Command
-func (c Cmd) ExecCmd(name string, v interface{}) interface{} {
+func (c Cmd) Exec(name string, v interface{}) interface{} {
 	if c.w.pri.cmd[name] == nil {
 		panic(ErrorStr("CMD: '" + name + "' does not exist!"))
 	}
