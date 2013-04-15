@@ -212,11 +212,12 @@ func (ro *Router) load(w *Web, reset bool) bool {
 
 func (ro *Router) debug(w *Web) {
 	w.Status = 404
-	w.Print("404 Not Found\r\n\r\n")
-	w.Print(w.Req.Host+w.pri.curpath, "\r\n\r\n")
-	w.Print("Rule(s):\r\n")
+	out := w.Fmt()
+	out.Print("404 Not Found\r\n\r\n")
+	out.Print(w.Req.Host+w.pri.curpath, "\r\n\r\n")
+	out.Print("Rule(s):\r\n")
 	for _, route := range ro.getRoutes() {
-		w.Print(route.RegExp, "\r\n")
+		out.Print(route.RegExp, "\r\n")
 	}
 }
 

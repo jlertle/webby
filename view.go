@@ -2,7 +2,7 @@ package webby
 
 // Default Index View
 func index(w *Web) {
-	w.Print("<h1>Hello World!</h1>")
+	w.Fmt().Print("<h1>Hello World!</h1>")
 }
 
 // Push Index View to Router

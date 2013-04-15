@@ -91,7 +91,7 @@ type Errors struct {
 //
 // Note:  Overriding is useful for custom 403 page
 var Error403 = func(w *Web) {
-	w.Print("<h1>403 Forbidden</h1>")
+	w.Fmt().Print("<h1>403 Forbidden</h1>")
 }
 
 // Execute Error 403 (Forbidden)
@@ -104,7 +104,7 @@ func (w *Web) Error403() {
 //
 // Note:  Overriding is useful for custom 404 page
 var Error404 = func(w *Web) {
-	w.Print("<h1>404 Not Found</h1>")
+	w.Fmt().Print("<h1>404 Not Found</h1>")
 }
 
 // Execute Error 404 (Not Found)
@@ -117,7 +117,7 @@ func (w *Web) Error404() {
 //
 // Note:  Overriding is useful for custom 500 page
 var Error500 = func(w *Web) {
-	w.Print("<h1>500 Internal Server Error</h1>")
+	w.Fmt().Print("<h1>500 Internal Server Error</h1>")
 }
 
 // Execute Error 500 (Internal Server Error)
@@ -159,7 +159,7 @@ func (w *Web) recover() {
 		DefaultPanicHandler.Panic(w, r, stack)
 		if DEBUG {
 			w.Status = 500
-			w.Println("500 Internal Server Error")
+			w.Fmt().Println("500 Internal Server Error")
 			printPanic(w, w, r, stack)
 			return
 		}
