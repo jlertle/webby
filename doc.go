@@ -26,8 +26,8 @@ Example:
 			page = 1
 		}
 
-		w.Print("<h1>Hello World!</h1>\r\n")
-		w.Print("Page: ", page, "\r\n")
+		w.Fmt().Print("<h1>Hello World!</h1>\r\n")
+		w.Fmt().Print("Page: ", page, "\r\n")
 	}
 
 	func init() {
