@@ -179,12 +179,12 @@ func (c PipeCookie) Day() PipeCookie {
 
 // Set to Expire after 1 Week
 func (c PipeCookie) Week() PipeCookie {
-	return c.Expires(time.Now().AddDate(0, 0, 1))
+	return c.Expires(time.Now().AddDate(0, 0, 1*7))
 }
 
 // Set to Expire after 2 Week
 func (c PipeCookie) Week2() PipeCookie {
-	return c.Expires(time.Now().AddDate(0, 0, 2))
+	return c.Expires(time.Now().AddDate(0, 0, 2*7))
 }
 
 // Set to Expire after 1 Month
