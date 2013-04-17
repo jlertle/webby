@@ -244,3 +244,58 @@ func (ca PipeCache) Save() PipeCache {
 	SetAdv(ca.key, ca.value, ca.expire)
 	return ca
 }
+
+// Set to Expire after an hour
+func (ca PipeCache) Hour() PipeCache {
+	return ca.Expire(time.Now().Add(1 * time.Hour))
+}
+
+// Set to Expire after 6 Hours
+func (ca PipeCache) Hour6() PipeCache {
+	return ca.Expire(time.Now().Add(6 * time.Hour))
+}
+
+// Set to Expire after 12 Hours
+func (ca PipeCache) Hour12() PipeCache {
+	return ca.Expire(time.Now().Add(12 * time.Hour))
+}
+
+// Set to Expire after 1 Day
+func (ca PipeCache) Day() PipeCache {
+	return ca.Expire(time.Now().AddDate(0, 0, 1))
+}
+
+// Set to Expire after 1 Week
+func (ca PipeCache) Week() PipeCache {
+	return ca.Expire(time.Now().AddDate(0, 0, 1*7))
+}
+
+// Set to Expire after 2 Week
+func (ca PipeCache) Week2() PipeCache {
+	return ca.Expire(time.Now().AddDate(0, 0, 2*7))
+}
+
+// Set to Expire after 1 Month
+func (ca PipeCache) Month() PipeCache {
+	return ca.Expire(time.Now().AddDate(0, 1, 0))
+}
+
+// Set to Expire after 3 Month
+func (ca PipeCache) Month3() PipeCache {
+	return ca.Expire(time.Now().AddDate(0, 3, 0))
+}
+
+// Set to Expire after 6 Month
+func (ca PipeCache) Month6() PipeCache {
+	return ca.Expire(time.Now().AddDate(0, 6, 0))
+}
+
+// Set to Expire after 9 Month
+func (ca PipeCache) Month9() PipeCache {
+	return ca.Expire(time.Now().AddDate(0, 9, 0))
+}
+
+// Set to Expire after 1 Year
+func (ca PipeCache) Year() PipeCache {
+	return ca.Expire(time.Now().AddDate(1, 0, 0))
+}
