@@ -46,7 +46,7 @@ func (w *Web) Html() Html {
 	return Html{w}
 }
 
-func (h Html) parse(htmlstr string, value_map interface{}, buf io.Writer) {
+func (h Html) render(htmlstr string, value_map interface{}, buf io.Writer) {
 	w := h.w
 	if buf == nil {
 		// To prevent headers from being sent too early.
@@ -62,21 +62,21 @@ func (h Html) parse(htmlstr string, value_map interface{}, buf io.Writer) {
 	w.Check(err)
 }
 
-// Parse HTML
+// Render HTML
 //
 // Note: Marksafe functions/filters avaliable are 'html', 'htmlattr', 'js' and 'jsattr'.
-func (h Html) Parse(htmlstr string, value_map interface{}) string {
+func (h Html) Render(htmlstr string, value_map interface{}) string {
 	buf := &bytes.Buffer{}
 	defer buf.Reset()
-	h.parse(htmlstr, value_map, buf)
+	h.render(htmlstr, value_map, buf)
 	return buf.String()
 }
 
-// Parse HTML and Send Response to Client
+// Render HTML and Send Response to Client
 //
 // Note: Marksafe functions/filters avaliable are 'html', 'htmlattr', 'js' and 'jsattr'.
-func (h Html) ParseSend(htmlstr string, value_map interface{}) {
-	h.parse(htmlstr, value_map, nil)
+func (h Html) RenderSend(htmlstr string, value_map interface{}) {
+	h.render(htmlstr, value_map, nil)
 }
 
 type htmlFileCacheStruct struct {
@@ -125,18 +125,18 @@ return_content:
 	return content
 }
 
-// Parse HTML File
+// Render HTML File
 //
 // Note: Marksafe functions/filters avaliable are 'html', 'htmlattr', 'js' and 'jsattr'.
 // DO NOT USE THIS WITH LARGE FILES.
-func (h Html) ParseFile(htmlfile string, value_map interface{}) string {
-	return h.Parse(h.GetFile(htmlfile), value_map)
+func (h Html) RenderFile(htmlfile string, value_map interface{}) string {
+	return h.Render(h.GetFile(htmlfile), value_map)
 }
 
-// Parse HTML File and Send Response to Client
+// Render HTML File and Send Response to Client
 //
 // Note: Marksafe functions/filters avaliable are 'html', 'htmlattr', 'js' and 'jsattr'.
 // DO NOT USE THIS WITH LARGE FILES.
-func (h Html) ParseFileSend(htmlfile string, value_map interface{}) {
-	h.ParseSend(h.GetFile(htmlfile), value_map)
+func (h Html) RenderFileSend(htmlfile string, value_map interface{}) {
+	h.RenderSend(h.GetFile(htmlfile), value_map)
 }
