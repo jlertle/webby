@@ -169,7 +169,9 @@ func (h Html) ParseGlob(pattern string) *html.Template {
 	filenames, err := filepath.Glob(pattern)
 	h.w.Check(err)
 
-	htmlGlobLocker.filenames[pattern] = filenames
+	if !DEBUG {
+		htmlGlobLocker.filenames[pattern] = filenames
+	}
 
 	return h.ParseFiles(filenames...)
 }
