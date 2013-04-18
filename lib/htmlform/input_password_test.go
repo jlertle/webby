@@ -2,7 +2,7 @@ package htmlform
 
 import (
 	"fmt"
-	"github.com/cj-jackson/webby"
+	"github.com/CJ-Jackson/webby"
 	"net/http"
 	"net/url"
 	"testing"

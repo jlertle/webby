@@ -1,7 +1,7 @@
 package htmlform
 
 import (
-	"github.com/cj-jackson/webby"
+	"github.com/CJ-Jackson/webby"
 )
 
 type Put struct {

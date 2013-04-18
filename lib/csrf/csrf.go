@@ -2,7 +2,7 @@
 package csrf
 
 import (
-	"github.com/cj-jackson/webby"
+	"github.com/CJ-Jackson/webby"
 	html "html/template"
 	"net/http"
 )

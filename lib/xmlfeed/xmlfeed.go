@@ -3,7 +3,7 @@ package xmlfeed
 
 import (
 	"encoding/gob"
-	"github.com/cj-jackson/webby"
+	"github.com/CJ-Jackson/webby"
 	"time"
 )
 

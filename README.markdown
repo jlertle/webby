@@ -7,7 +7,7 @@ It's built on top of the standard package 'net/http'!
 
 ## Installation ##
 
-	go get github.com/cj-jackson/webby
+	go get github.com/CJ-Jackson/webby
 	
 ## Example Web Application ##
 
@@ -15,7 +15,7 @@ It's built on top of the standard package 'net/http'!
 
 	import (
 		"code.google.com/p/go.net/websocket"
-		"github.com/cj-jackson/webby"
+		"github.com/CJ-Jackson/webby"
 		"io"
 	)
 

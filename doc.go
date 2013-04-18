@@ -9,7 +9,7 @@ Example:
 
 	import (
 		"code.google.com/p/go.net/websocket"
-		"github.com/cj-jackson/webby"
+		"github.com/CJ-Jackson/webby"
 		"io"
 	)
 
