@@ -151,25 +151,86 @@ func (h Html) ParseFiles(filenames ...string) *html.Template {
 	return t
 }
 
+var htmlGlobLocker = struct {
+	sync.Mutex
+	filenames map[string][]string
+}{
+	filenames: map[string][]string{},
+}
+
 func (h Html) ParseGlob(pattern string) *html.Template {
+	htmlGlobLocker.Lock()
+	defer htmlGlobLocker.Unlock()
+
+	if len(htmlGlobLocker.filenames[pattern]) > 0 {
+		return h.ParseFiles(htmlGlobLocker.filenames[pattern]...)
+	}
+
 	filenames, err := filepath.Glob(pattern)
 	h.w.Check(err)
+
+	htmlGlobLocker.filenames[pattern] = filenames
 
 	return h.ParseFiles(filenames...)
 }
 
+type htmlDefault struct {
+	filenames []string
+	pattern   string
+	template  *html.Template
+}
+
+func (h Html) init() {
+	if h.w.pri.html == nil {
+		h.w.pri.html = &htmlDefault{}
+	}
+}
+
 func (h Html) SetDefaultFiles(filenames ...string) {
-	h.w.pri.template = h.ParseFiles(filenames...)
+	h.init()
+	h.w.pri.html.filenames = filenames
 }
 
 func (h Html) SetDefaultGlob(pattern string) {
-	h.w.pri.template = h.ParseGlob(pattern)
+	h.init()
+	h.w.pri.html.pattern = pattern
 }
 
 func (h Html) Default() *html.Template {
-	if h.w.pri.template == nil {
+	if h.w.pri.html == nil {
 		panic(ErrorStr("HTML: Default Template is not set!"))
 	}
 
-	return h.w.pri.template
+	if h.w.pri.html.template != nil {
+		goto gotoreturn
+	}
+
+	if len(h.w.pri.html.filenames) > 0 {
+		h.w.pri.html.template = h.ParseFiles(h.w.pri.html.filenames...)
+		goto gotoreturn
+	}
+
+	if h.w.pri.html.pattern != "" {
+		h.w.pri.html.template = h.ParseGlob(h.w.pri.html.pattern)
+		goto gotoreturn
+	}
+
+gotoreturn:
+	return h.w.pri.html.template
+}
+
+func (h Html) DefaultRender(name string, data interface{}) string {
+	b := &bytes.Buffer{}
+	defer b.Reset()
+	h.Default().ExecuteTemplate(b, name, data)
+	return b.String()
+}
+
+func (h Html) DefaultRenderSend(name string, data interface{}) {
+	b := &bytes.Buffer{}
+	defer func(buf *bytes.Buffer) {
+		io.Copy(h.w, buf)
+		buf.Reset()
+	}(b)
+	h.Default().ExecuteTemplate(b, name, data)
 }

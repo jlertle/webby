@@ -28,7 +28,7 @@ type webPrivate struct {
 	cut        bool
 	firstWrite bool
 	cmd        map[string]func(interface{}) interface{}
-	template   *html.Template
+	html       *htmlDefault
 }
 
 // The Framework Structure, it's implement the interfaces of 'net/http.ResponseWriter',
