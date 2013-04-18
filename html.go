@@ -5,6 +5,7 @@ import (
 	html "html/template"
 	"io"
 	"io/ioutil"
+	"path/filepath"
 	"sync"
 	"time"
 )
@@ -56,9 +57,8 @@ func (h Html) render(htmlstr string, value_map interface{}, buf io.Writer) {
 			buf.Reset()
 		}(buf.(*bytes.Buffer))
 	}
-	t, err := html.New("html").Funcs(w.HtmlFunc).Parse(htmlstr)
-	w.Check(err)
-	err = t.Execute(buf, value_map)
+	t := html.Must(html.New("html").Funcs(w.HtmlFunc).Parse(htmlstr))
+	err := t.Execute(buf, value_map)
 	w.Check(err)
 }
 
@@ -139,4 +139,37 @@ func (h Html) RenderFile(htmlfile string, value_map interface{}) string {
 // DO NOT USE THIS WITH LARGE FILES.
 func (h Html) RenderFileSend(htmlfile string, value_map interface{}) {
 	h.RenderSend(h.GetFile(htmlfile), value_map)
+}
+
+func (h Html) ParseFiles(filenames ...string) *html.Template {
+	t := html.New("html").Funcs(h.w.HtmlFunc)
+
+	for _, filename := range filenames {
+		html.Must(t.Parse(h.GetFile(filename)))
+	}
+
+	return t
+}
+
+func (h Html) ParseGlob(pattern string) *html.Template {
+	filenames, err := filepath.Glob(pattern)
+	h.w.Check(err)
+
+	return h.ParseFiles(filenames...)
+}
+
+func (h Html) SetDefaultFiles(filenames ...string) {
+	h.w.pri.template = h.ParseFiles(filenames...)
+}
+
+func (h Html) SetDefaultGlob(pattern string) {
+	h.w.pri.template = h.ParseGlob(pattern)
+}
+
+func (h Html) Default() *html.Template {
+	if h.w.pri.template == nil {
+		panic(ErrorStr("HTML: Default Template is not set!"))
+	}
+
+	return h.w.pri.template
 }
