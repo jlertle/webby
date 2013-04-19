@@ -81,14 +81,21 @@ func (boot *Bootstrap) Boot(w *Web) {
 	boot.Load(w)
 }
 
-// For Allowing Libraries to Automatically Plugin into this Framework. 
-var MainBoot = NewBootstrap()
+/*
+Bootstraps.
+MainBoot is framework level, you can use it for something like stripping www from the url.
+Boot is application level.
+HtmlFuncBoot is exclusively used for adding functions to html template engine.
+PostBoot is the last to be executed, do not write output to client at that point, it's for things like logging!
 
-// For Allowing Web Application to Add Function the Framework.
-var Boot = NewBootstrap()
-
-// For Allowing Libraries to Add Function to the Html Template Engine!
-var HtmlFuncBoot = NewBootstrap()
+You can think of them as middle-ware or filters.
+*/
+var (
+	MainBoot     = NewBootstrap()
+	Boot         = NewBootstrap()
+	HtmlFuncBoot = NewBootstrap()
+	PostBoot     = NewBootstrap()
+)
 
 // Bootstrap and Router wrapper. Implement RouteHandler interface.
 type BootRoute struct {

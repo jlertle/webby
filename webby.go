@@ -94,6 +94,11 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	defer w.recover()
 	defer w.closeCompression()
 
+	defer func() {
+		w.pri.cut = false
+		PostBoot.Load(w)
+	}()
+
 	w.debugStart()
 	defer w.debugEnd()
 
