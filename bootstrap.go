@@ -83,9 +83,13 @@ func (boot *Bootstrap) Boot(w *Web) {
 
 /*
 Bootstraps.
+
 MainBoot is framework level, you can use it for something like stripping www from the url.
+
 Boot is application level.
+
 HtmlFuncBoot is exclusively used for adding functions to html template engine.
+
 PostBoot is the last to be executed, do not write output to client at that point, it's for things like logging!
 
 You can think of them as middle-ware or filters.
