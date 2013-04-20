@@ -29,6 +29,25 @@ Example:
 		w.Fmt().Print("Page: ", page, "\r\n")
 	}
 
+	func (ind *Index) Put() {
+		data := struct {
+			Title string `json:"title"`
+			Life  int    `json:"life"`
+		}{}
+
+		// Decode from Request Body
+		ind.W.Json().DecodeReqBody(&data)
+
+		// Send it back to the client
+		ind.W.Json().Send(data)
+
+		// Rather use XML? Just replace 'Json' with 'Xml'!  Nice I know!
+	}
+
+	func (ind *Index) Delete() {
+		// Delete a page, or anything really!
+	}
+
 	func (ind *Index) Ws() {
 		if ind.W.Param.GetInt("page") > 0 {
 			return
