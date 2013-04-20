@@ -46,7 +46,7 @@ func (v *VHost) View(w *Web) {
 			continue
 		}
 		if strings.ToLower(host.name) == strings.ToLower(w.Req.Host[:len(host.name)]) {
-			host.route.View(w)
+			w.RouteDealer(host.route)
 			return
 		}
 	}
@@ -143,8 +143,7 @@ func (vh *VHostRegExp) View(w *Web) {
 			}
 		}
 
-		host.Route.View(w)
-
+		w.RouteDealer(host.Route)
 		return
 	}
 

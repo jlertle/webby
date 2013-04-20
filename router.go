@@ -204,7 +204,7 @@ func (ro *Router) load(w *Web, reset bool) bool {
 
 		w.pri.path = w.pri.path[route.RegExpComplied.FindStringIndex(w.pri.path)[1]:]
 
-		route.Route.View(w)
+		w.RouteDealer(route.Route)
 		return true
 	}
 	return false
@@ -286,4 +286,17 @@ type RouteReset struct{ *Router }
 
 func (ro RouteReset) View(w *Web) {
 	ro.LoadReset(w)
+}
+
+func RouteDealer(w *Web, ro RouteHandler) {
+	switch t := ro.(type) {
+	case methodInterface:
+		execMethodInterface(w, t)
+	default:
+		ro.View(w)
+	}
+}
+
+func (w *Web) RouteDealer(ro RouteHandler) {
+	RouteDealer(w, ro)
 }

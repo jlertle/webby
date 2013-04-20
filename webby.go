@@ -114,7 +114,7 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	RootView.View(w)
+	w.RouteDealer(RootView)
 
 	if w.CutOut() {
 		return
@@ -155,6 +155,7 @@ func (w *Web) Write(data []byte) (int, error) {
 // will trigger an implicit WriteHeader(http.StatusOK).
 // Thus explicit calls to WriteHeader are mainly used to
 // send error codes.
+//
 // Note: Use Status property to set error code! As this disable compression!
 func (w *Web) WriteHeader(num int) {
 	w.pri.cut = true

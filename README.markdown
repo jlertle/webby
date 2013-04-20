@@ -19,13 +19,12 @@ It's built on top of the standard package 'net/http'!
 		"io"
 	)
 
-	func EchoServer(ws *websocket.Conn) {
-		io.Copy(ws, ws)
+	type Index struct {
+		webby.Method
 	}
 
-	type index struct{}
-
-	func (_ index) View(w *webby.Web) {
+	func (ind *Index) Get() {
+		w := ind.W
 		page := w.Param.GetInt("page")
 
 		if page <= 0 {
@@ -36,15 +35,25 @@ It's built on top of the standard package 'net/http'!
 		w.Fmt().Print("Page: ", page, "\r\n")
 	}
 
+	func (ind *Index) Ws() {
+		if ind.W.Param.GetInt("page") > 0 {
+			return
+		}
+
+		ind.W.RouteDealer(webby.HttpRouteHandler{websocket.Handler(
+			func(ws *websocket.Conn) {
+				io.Copy(ws, ws)
+			})},
+		)
+	}
+
 	func init() {
 		webby.Route.RegisterHandlerMap(webby.RouteHandlerMap{
 			// Main Route
-			"^/$": webby.NewJunction().Websocket(
-				webby.HttpRouteHandler{websocket.Handler(EchoServer)},
-			).Get(index{}).GetJunction(),
+			"^/$": &Index{},
 
 			// Index Page Route
-			"^/(?P<page>\\d+)/?$": index{},
+			"^/(?P<page>\\d+)/?$": &Index{},
 		})
 	}
 

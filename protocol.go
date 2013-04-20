@@ -13,18 +13,18 @@ func (pr Protocol) View(w *Web) {
 	switch strings.ToLower(strings.Split(w.Req.Proto, "/")[0]) {
 	case "http":
 		if pr.HTTP != nil {
-			pr.HTTP.View(w)
+			w.RouteDealer(pr.HTTP)
 			return
 		}
 	case "shttp", "https":
 		if pr.HTTPS != nil {
-			pr.HTTPS.View(w)
+			w.RouteDealer(pr.HTTPS)
 			return
 		}
 	}
 
 	if pr.ALL != nil {
-		pr.ALL.View(w)
+		w.RouteDealer(pr.ALL)
 		return
 	}
 
