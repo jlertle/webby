@@ -3,6 +3,10 @@ A Very Nice Micro Web Framework that can be used as a standalone or a embeddable
 
 It's built on top of the standard package 'net/http'!
 
+Installation:
+
+	go get github.com/CJ-Jackson/webby
+
 Example:
 
 	package main
@@ -73,6 +77,10 @@ Example:
 	func main() {
 		webby.Check(webby.StartHttp(":8080"))
 	}
+
+Note: This example require websocket library installed; The framework itself can live without that.
+
+	go get code.google.com/p/go.net/websocket
 
 */
 package webby
