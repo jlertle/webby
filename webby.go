@@ -15,6 +15,18 @@ import (
 // Debug Mode
 var DEBUG = false
 
+func init() {
+	HtmlFuncBoot.Register(func(w *Web) {
+		w.HtmlFunc["Debug"] = func() bool {
+			return DEBUG
+		}
+
+		w.HtmlFunc["NotDebug"] = func() bool {
+			return !DEBUG
+		}
+	})
+}
+
 var RootView RouteHandler = NewBootRoute().Boot(Boot).Router(Route).Get()
 
 type web interface {
