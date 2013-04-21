@@ -292,6 +292,8 @@ func RouteDealer(w *Web, ro RouteHandler) {
 	switch t := ro.(type) {
 	case methodInterface:
 		execMethodInterface(w, t)
+	case protocolInterface:
+		execProtocolInterface(w, t)
 	default:
 		ro.View(w)
 	}

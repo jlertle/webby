@@ -1,76 +1,48 @@
 package webby
 
 import (
+	"reflect"
 	"strings"
 )
 
-// Demuxer for Protocol. Implement RouteHandler interface.
-type Protocol struct {
-	ALL, HTTP, HTTPS RouteHandler
-}
+func execProtocolInterface(w *Web, pr protocolInterface) {
+	vc := reflect.New(reflect.Indirect(reflect.ValueOf(pr)).Type())
 
-func (pr Protocol) View(w *Web) {
+	view := vc.MethodByName("View")
+	in := make([]reflect.Value, 1)
+	in[0] = reflect.ValueOf(w)
+	view.Call(in)
+
+	in = make([]reflect.Value, 0)
+
 	switch strings.ToLower(strings.Split(w.Req.Proto, "/")[0]) {
 	case "http":
-		if pr.HTTP != nil {
-			w.RouteDealer(pr.HTTP)
-			return
-		}
+		method := vc.MethodByName("Http")
+		method.Call(in)
 	case "shttp", "https":
-		if pr.HTTPS != nil {
-			w.RouteDealer(pr.HTTPS)
-			return
-		}
+		method := vc.MethodByName("Https")
+		method.Call(in)
 	}
-
-	if pr.ALL != nil {
-		w.RouteDealer(pr.ALL)
-		return
-	}
-
-	w.Error404()
-	return
 }
 
-// Chainable version of Protocol
-type PipeProtocol struct {
-	pr Protocol
+type protocolInterface interface {
+	View(*Web)
+	Http()
+	Https()
 }
 
-// PipeProtocol constructor
-func NewProtocol() PipeProtocol {
-	return PipeProtocol{Protocol{}}
+type Protocol struct {
+	W *Web
 }
 
-// Get Protocol
-func (pi PipeProtocol) Get() Protocol {
-	return pi.pr
+func (pr *Protocol) View(w *Web) {
+	pr.W = w
 }
 
-// Set Http
-func (pi PipeProtocol) Http(http RouteHandler) PipeProtocol {
-	pi.pr.HTTP = http
-	return pi
+func (pr *Protocol) Http() {
+	pr.W.Error404()
 }
 
-// Set Https
-func (pi PipeProtocol) Https(https RouteHandler) PipeProtocol {
-	pi.pr.HTTPS = https
-	return pi
-}
-
-// Set All
-func (pi PipeProtocol) All(all RouteHandler) PipeProtocol {
-	pi.pr.ALL = all
-	return pi
-}
-
-// Alais of All
-func (pi PipeProtocol) Any(any RouteHandler) PipeProtocol {
-	return pi.All(any)
-}
-
-// Alais of All
-func (pi PipeProtocol) Fallback(fallback RouteHandler) PipeProtocol {
-	return pi.All(fallback)
+func (pr *Protocol) Https() {
+	pr.W.Error404()
 }
