@@ -74,7 +74,7 @@ finish:
 
 func methodNotAllowed(w *Web) {
 	w.Status = 405
-	w.Fmt().Print("405 Method Now Allowed")
+	w.Fmt().Print("405 Method Not Allowed")
 }
 
 type methodInterface interface {
