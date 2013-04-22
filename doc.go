@@ -19,18 +19,18 @@ Example:
 
 	type Index struct {
 		webby.Method
+		Page int
 	}
 
 	func (ind *Index) Get() {
 		w := ind.W
-		page := w.Param.GetInt("page")
 
-		if page <= 0 {
-			page = 1
+		if ind.Page <= 0 {
+			ind.Page = 1
 		}
 
 		w.Fmt().Print("<h1>Hello World!</h1>\r\n")
-		w.Fmt().Print("Page: ", page, "\r\n")
+		w.Fmt().Print("Page: ", ind.Page, "\r\n")
 	}
 
 	func (ind *Index) Put() {
@@ -53,7 +53,7 @@ Example:
 	}
 
 	func (ind *Index) Ws() {
-		if ind.W.Param.GetInt("page") > 0 {
+		if ind.Page > 0 {
 			return
 		}
 
@@ -70,7 +70,7 @@ Example:
 			"^/$": &Index{},
 
 			// Index Page Route
-			"^/(?P<page>\\d+)/?$": &Index{},
+			"^/(?P<Page>\\d+)/?$": &Index{},
 		})
 	}
 

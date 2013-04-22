@@ -30,6 +30,18 @@ func (pa Param) GetInt(name string) int {
 	return int(pa.GetInt64(name))
 }
 
+func (pa Param) GetInt32(name string) int32 {
+	return int32(pa.GetInt64(name))
+}
+
+func (pa Param) GetInt16(name string) int16 {
+	return int16(pa.GetInt64(name))
+}
+
+func (pa Param) GetInt8(name string) int8 {
+	return int8(pa.GetInt64(name))
+}
+
 func (pa Param) GetUint64(name string) uint64 {
 	num := uint64(0)
 	var err error
@@ -42,6 +54,18 @@ func (pa Param) GetUint64(name string) uint64 {
 
 func (pa Param) GetUint(name string) uint {
 	return uint(pa.GetUint64(name))
+}
+
+func (pa Param) GetUint32(name string) uint32 {
+	return uint32(pa.GetUint64(name))
+}
+
+func (pa Param) GetUint16(name string) uint16 {
+	return uint16(pa.GetUint64(name))
+}
+
+func (pa Param) GetUint8(name string) uint8 {
+	return uint8(pa.GetUint64(name))
 }
 
 func (pa Param) GetFloat64(name string) float64 {

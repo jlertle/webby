@@ -5,6 +5,46 @@ import (
 	"strings"
 )
 
+func autoPopulateField(w *Web, vc reflect.Value) {
+	s := vc.Elem()
+	typeOfT := s.Type()
+	for i := 0; i < s.NumField(); i++ {
+		field := s.Field(i)
+		name := typeOfT.Field(i).Name
+		if name == "W" || !field.CanSet() {
+			continue
+		}
+		switch field.Interface().(type) {
+		case string:
+			field.Set(reflect.ValueOf(w.Param.Get(name)))
+		case int:
+			field.Set(reflect.ValueOf(w.Param.GetInt(name)))
+		case int64:
+			field.Set(reflect.ValueOf(w.Param.GetInt64(name)))
+		case int32:
+			field.Set(reflect.ValueOf(w.Param.GetInt32(name)))
+		case int16:
+			field.Set(reflect.ValueOf(w.Param.GetInt16(name)))
+		case int8:
+			field.Set(reflect.ValueOf(w.Param.GetInt8(name)))
+		case uint:
+			field.Set(reflect.ValueOf(w.Param.GetUint(name)))
+		case uint64:
+			field.Set(reflect.ValueOf(w.Param.GetUint64(name)))
+		case uint32:
+			field.Set(reflect.ValueOf(w.Param.GetUint32(name)))
+		case uint16:
+			field.Set(reflect.ValueOf(w.Param.GetUint16(name)))
+		case uint8:
+			field.Set(reflect.ValueOf(w.Param.GetUint8(name)))
+		case float32:
+			field.Set(reflect.ValueOf(w.Param.GetFloat32(name)))
+		case float64:
+			field.Set(reflect.ValueOf(w.Param.GetFloat64(name)))
+		}
+	}
+}
+
 func execMethodInterface(w *Web, me methodInterface) {
 	vc := reflect.New(reflect.Indirect(reflect.ValueOf(me)).Type())
 
@@ -12,6 +52,8 @@ func execMethodInterface(w *Web, me methodInterface) {
 	in := make([]reflect.Value, 1)
 	in[0] = reflect.ValueOf(w)
 	view.Call(in)
+
+	autoPopulateField(w, vc)
 
 	in = make([]reflect.Value, 0)
 	method := vc.MethodByName("Prepare")
