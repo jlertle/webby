@@ -28,6 +28,13 @@ func execMethodInterface(w *Web, me methodInterface) {
 		}
 	}
 
+	switch w.Req.Method {
+	case "GET", "HEAD":
+		// Do nothing
+	default:
+		goto requestDealer
+	}
+
 	if w.Is().AjaxRequest() {
 		method = vc.MethodByName("Ajax")
 		method.Call(in)
@@ -35,6 +42,8 @@ func execMethodInterface(w *Web, me methodInterface) {
 			goto finish
 		}
 	}
+
+requestDealer:
 
 	switch w.Req.Method {
 	case "GET", "HEAD":
