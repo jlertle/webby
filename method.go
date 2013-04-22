@@ -2,6 +2,7 @@ package webby
 
 import (
 	"reflect"
+	"strings"
 )
 
 func execMethodInterface(w *Web, me methodInterface) {
@@ -49,20 +50,8 @@ requestDealer:
 	case "GET", "HEAD":
 		method = vc.MethodByName("Get")
 		method.Call(in)
-	case "POST":
-		method = vc.MethodByName("Post")
-		method.Call(in)
-	case "DELETE":
-		method = vc.MethodByName("Delete")
-		method.Call(in)
-	case "PUT":
-		method = vc.MethodByName("Put")
-		method.Call(in)
-	case "PATCH":
-		method = vc.MethodByName("Patch")
-		method.Call(in)
-	case "OPTIONS":
-		method = vc.MethodByName("Options")
+	case "POST", "DELETE", "PUT", "PATCH", "OPTIONS":
+		method = vc.MethodByName(strings.Title(strings.ToLower(w.Req.Method)))
 		method.Call(in)
 	}
 
