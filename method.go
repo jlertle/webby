@@ -29,7 +29,7 @@ func execMethodInterface(w *Web, me methodInterface) {
 	}
 
 	switch w.Req.Method {
-	case "GET", "HEAD":
+	case "GET", "HEAD", "POST":
 		// Do nothing
 	default:
 		goto requestDealer
