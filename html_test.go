@@ -19,6 +19,7 @@ func ExampleWeb_Html(w *Web) {
 	w.Html().RenderFileSend("./example.html", data)
 
 	// Something more advanced!
+	//
 	// Let say the file content is `{{define "index"}}<h1>{{.A}} {{.B}}</h1>{{end}}`
 
 	// The Bootstrap is the best place to set that!
