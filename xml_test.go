@@ -8,7 +8,7 @@ func ExampleWeb_Xml(w *Web) {
 	}{}
 
 	// Decode from Request Body
-	w.Xml().DecodeReqBody(data)
+	w.Xml().DecodeReqBody(&data)
 
 	// Send it back to the client
 	w.Xml().Send(data)

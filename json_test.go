@@ -8,7 +8,7 @@ func ExampleWeb_Json(w *Web) {
 	}{}
 
 	// Decode from Request Body
-	w.Json().DecodeReqBody(data)
+	w.Json().DecodeReqBody(&data)
 
 	// Send it back to the client
 	w.Json().Send(data)
