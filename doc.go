@@ -3,6 +3,8 @@ A Very Nice Micro Web Framework that can be used as a standalone or a embeddable
 
 It's built on top of the standard package 'net/http'!
 
+Not to be confused with the Ruby Framework that goes by the same name!
+
 Installation:
 
 	go get github.com/CJ-Jackson/webby
