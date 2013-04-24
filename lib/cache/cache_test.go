@@ -20,3 +20,8 @@ func TestCache(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func ExampleCache() {
+	// Set Cache and have it expire after a Month.
+	Cache("example").Value("Hello World").Month().Save()
+}

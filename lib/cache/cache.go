@@ -1,4 +1,3 @@
-// Data Cache
 package cache
 
 import (
@@ -27,6 +26,11 @@ var (
 	cacheExpiryCheckActive = false
 )
 
+/*
+The CacheHandler Interface
+
+That pretty much enables driver swapping.
+*/
 type CacheHandler interface {
 	Set(string, interface{})
 	SetAdv(string, interface{}, time.Time)
@@ -35,6 +39,11 @@ type CacheHandler interface {
 	Purge(string)
 }
 
+/*
+Cache Memory Driver
+
+Implement the CacheHandler Interface
+*/
 type CacheMemory struct{}
 
 func (c CacheMemory) Set(key string, value interface{}) {
@@ -94,6 +103,10 @@ func (c CacheMemory) Purge(beginWith string) {
 
 const CacheFileExt = ".wbc"
 
+// Cache File Driver
+//
+// Implement the CacheHandler Interface
+//
 // Note: Remember the filename limit is 255 (251 while subtracting '.wbc') with the majority of modern file systems!
 // Avoid using reserved characters such as ? % * : | " < >!
 // It can create directories so \ / are allowed!
@@ -173,6 +186,12 @@ func (c CacheFile) Purge(beginWith string) {
 	}
 }
 
+/*
+Default Cache Handler
+
+Cache Memory is the Framework default but can be swap for any other driver
+that also implement the CacheHandler Interface.
+*/
 var DefaultCacheHandler CacheHandler = CacheMemory{}
 
 func Set(key string, value interface{}) {
@@ -191,6 +210,9 @@ func Delete(key string) {
 	DefaultCacheHandler.Delete(key)
 }
 
+/*
+Delete anything that Begin With
+*/
 func Purge(beginWith string) {
 	DefaultCacheHandler.Purge(beginWith)
 }
@@ -220,6 +242,11 @@ func cacheExpiryCheck() {
 	}
 }
 
+/*
+The Chain-able version of Cache
+
+It there for the sake of code readability.
+*/
 type PipeCache struct {
 	key    string
 	value  interface{}
@@ -298,4 +325,19 @@ func (ca PipeCache) Month9() PipeCache {
 // Set to Expire after 1 Year
 func (ca PipeCache) Year() PipeCache {
 	return ca.Expire(time.Now().AddDate(1, 0, 0))
+}
+
+// Get Cache!
+func (ca PipeCache) Get() interface{} {
+	return Get(ca.key)
+}
+
+// Delete Cache!
+func (ca PipeCache) Delete() {
+	Delete(ca.key)
+}
+
+// Purge Cache
+func (ca PipeCache) Purge() {
+	Purge(ca.key)
 }
