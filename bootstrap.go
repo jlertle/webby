@@ -8,15 +8,16 @@ type BootstrapHandler interface {
 	Boot(*Web)
 }
 
-type FuncToBootstrapHandler struct {
-	Function func(*Web)
-}
+/*
+Adapter for Converting Function to BootstrapHandler
+*/
+type FuncToBootstrapHandler func(*Web)
 
 func (fn FuncToBootstrapHandler) Boot(w *Web) {
-	fn.Function(w)
+	fn(w)
 }
 
-// Bootstrap Struct
+// Bootstrap Struct, not to be confused with Twitter Bootstrap.
 type Bootstrap struct {
 	sync.RWMutex
 	boots []BootstrapHandler
@@ -31,11 +32,11 @@ func (boot *Bootstrap) getBoots() []BootstrapHandler {
 }
 
 // Register Functions to Bootstrap.
-func (boot *Bootstrap) Register(functions ...func(*Web)) *Bootstrap {
+func (boot *Bootstrap) Register(functions ...FuncToBootstrapHandler) *Bootstrap {
 	boot.Lock()
 	defer boot.Unlock()
 	for _, function := range functions {
-		boot.boots = append(boot.boots, FuncToBootstrapHandler{function})
+		boot.boots = append(boot.boots, function)
 	}
 	return boot
 }
@@ -46,7 +47,7 @@ func NewBootstrap() *Bootstrap {
 }
 
 // Construct New Bootstrap and Register Functions.
-func NewBootstrapReg(functions ...func(*Web)) *Bootstrap {
+func NewBootstrapReg(functions ...FuncToBootstrapHandler) *Bootstrap {
 	bo := &Bootstrap{}
 	bo.Register(functions...)
 	return bo
@@ -82,7 +83,7 @@ func (boot *Bootstrap) Boot(w *Web) {
 }
 
 /*
-Bootstraps.
+Bootstraps. (Not to be confused with Twitter Bootstrap)
 
 MainBoot is framework level, you can use it for something like stripping www from the url.
 
@@ -100,56 +101,3 @@ var (
 	HtmlFuncBoot = NewBootstrap()
 	PostBoot     = NewBootstrap()
 )
-
-// Bootstrap and Router wrapper. Implement RouteHandler interface.
-type BootRoute struct {
-	BOOT   *Bootstrap
-	ROUTER *Router
-}
-
-func (bo BootRoute) View(w *Web) {
-	if bo.BOOT != nil {
-		bo.BOOT.Load(w)
-
-		if w.CutOut() {
-			return
-		}
-	}
-
-	if bo.ROUTER != nil {
-		bo.ROUTER.LoadReset(w)
-
-		if w.CutOut() {
-			return
-		}
-	}
-}
-
-// Chainable version of BootRoute
-type PipeBootRoute struct {
-	br BootRoute
-}
-
-// PipeBootRoute constructor
-func NewBootRoute() PipeBootRoute {
-	return PipeBootRoute{
-		br: BootRoute{},
-	}
-}
-
-// Set boot
-func (bo PipeBootRoute) Boot(boot *Bootstrap) PipeBootRoute {
-	bo.br.BOOT = boot
-	return bo
-}
-
-// Set Router
-func (bo PipeBootRoute) Router(router *Router) PipeBootRoute {
-	bo.br.ROUTER = router
-	return bo
-}
-
-// Get BootRoute
-func (bo PipeBootRoute) Get() BootRoute {
-	return bo.br
-}

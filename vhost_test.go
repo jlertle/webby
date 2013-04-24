@@ -1,8 +1,8 @@
 package webby
 
 import (
+	"fmt"
 	"net/http"
-	"net/url"
 	"testing"
 )
 
@@ -15,21 +15,10 @@ func TestVhost(t *testing.T) {
 		t.Fail()
 	})
 
-	pass_router := NewBootRoute().Router(NewRouterHandlerMap(RouteHandlerMap{
-		`^/$`: pass,
-	})).Get()
-
-	fail_router := NewBootRoute().Router(NewRouterHandlerMap(RouteHandlerMap{
-		`^/$`: fail,
-	})).Get()
-
 	w := &Web{
 		Env: http.Header{},
 		Req: &http.Request{
 			Host: "example.com:1234",
-			URL: &url.URL{
-				Path: "/",
-			},
 		},
 		Errors: &Errors{
 			E403: fail,
@@ -37,14 +26,12 @@ func TestVhost(t *testing.T) {
 			E500: fail,
 		},
 		pri: &webPrivate{
-			path:    "/",
-			curpath: "",
-			cut:     false,
+			cut: false,
 		},
 	}
 
 	hosts := NewVHost(VHostMap{
-		`example.com`: pass_router,
+		`example.com`: pass,
 	})
 
 	hosts.View(w)
@@ -54,7 +41,7 @@ func TestVhost(t *testing.T) {
 	w.Errors.E404 = pass
 
 	hosts = NewVHost(VHostMap{
-		`example.com`: fail_router,
+		`example.com`: fail,
 	})
 
 	hosts.View(w)
@@ -64,6 +51,7 @@ func TestVhostRegExp(t *testing.T) {
 	possible_pass := FuncToRouteHandler(func(w *Web) {
 		if w.Param.Get("subdomain") != "hello" {
 			t.Fail()
+			fmt.Println(w.Req.Host)
 		}
 	})
 
@@ -73,27 +61,13 @@ func TestVhostRegExp(t *testing.T) {
 
 	fail := FuncToRouteHandler(func(w *Web) {
 		t.Fail()
+		fmt.Println(w.Req.Host)
 	})
-
-	possible_pass_router := NewBootRoute().Router(NewRouterHandlerMap(RouteHandlerMap{
-		`^/$`: possible_pass,
-	})).Get()
-
-	pass_router := NewBootRoute().Router(NewRouterHandlerMap(RouteHandlerMap{
-		`^/$`: pass,
-	})).Get()
-
-	fail_router := NewBootRoute().Router(NewRouterHandlerMap(RouteHandlerMap{
-		`^/$`: fail,
-	})).Get()
 
 	w := &Web{
 		Env: http.Header{},
 		Req: &http.Request{
 			Host: "hello.example.com:1234",
-			URL: &url.URL{
-				Path: "/",
-			},
 		},
 		Errors: &Errors{
 			E403: fail,
@@ -101,9 +75,7 @@ func TestVhostRegExp(t *testing.T) {
 			E500: fail,
 		},
 		pri: &webPrivate{
-			path:    "/",
-			curpath: "",
-			cut:     false,
+			cut: false,
 		},
 		Param: Param{},
 	}
@@ -111,7 +83,7 @@ func TestVhostRegExp(t *testing.T) {
 	const rule = `^(?P<subdomain>[a-z]+)\.example\.com`
 
 	vhost := NewVHostRegExp(VHostRegExpMap{
-		rule: possible_pass_router,
+		rule: possible_pass,
 	})
 
 	vhost.View(w)
@@ -120,7 +92,7 @@ func TestVhostRegExp(t *testing.T) {
 	w.Param = Param{}
 
 	vhost = NewVHostRegExp(VHostRegExpMap{
-		rule: pass_router,
+		rule: pass,
 	})
 
 	vhost.View(w)
@@ -130,7 +102,7 @@ func TestVhostRegExp(t *testing.T) {
 	w.Errors.E404 = pass
 
 	vhost = NewVHostRegExp(VHostRegExpMap{
-		rule: fail_router,
+		rule: fail,
 	})
 
 	vhost.View(w)

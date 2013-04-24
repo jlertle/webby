@@ -27,7 +27,14 @@ func init() {
 	})
 }
 
-var RootView RouteHandler = NewBootRoute().Boot(Boot).Router(Route).Get()
+var RootView RouteHandler = FuncToRouteHandler(func(w *Web) {
+	Boot.Load(w)
+	if w.CutOut() {
+		return
+	}
+
+	Route.Load(w)
+})
 
 type web interface {
 	http.ResponseWriter
@@ -54,6 +61,8 @@ type Web struct {
 	Req *http.Request
 	// Meta, useful for storing login credentail
 	Meta map[string]interface{}
+	// Well same as meta, but for string data type only! Useful for storing user country code!
+	Str map[string]string
 	// Used by router for storing data of named group in RegExpRule
 	Param Param
 	// Function to load in html template system.
@@ -78,6 +87,7 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		Env:        req.Header,
 		Req:        req,
 		Meta:       map[string]interface{}{},
+		Str:        map[string]string{},
 		Param:      Param{},
 		HtmlFunc:   html.FuncMap{},
 		Session:    nil,
@@ -132,7 +142,7 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	Error500(w)
+	w.Error500()
 }
 
 // Header returns the header map that will be sent by WriteHeader.
