@@ -2,6 +2,7 @@ package webby
 
 import (
 	"bufio"
+	"bytes"
 	"io"
 	"net/http"
 	"net/url"
@@ -48,6 +49,18 @@ func (h Http) ExecFunc(handler http.HandlerFunc) {
 // Get is a wrapper around http.DefaultClient.Get.
 func (h Http) Get(url string) (*http.Response, error) {
 	return http.Get(url)
+}
+
+// Get Body from Url as Bytes
+func (h Http) GetBytes(url string) ([]byte, error) {
+	resp, err := h.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	b := &bytes.Buffer{}
+	defer b.Reset()
+	io.Copy(b, resp.Body)
+	return b.Bytes(), nil
 }
 
 // Head issues a HEAD to the specified URL.  If the response is one of the
