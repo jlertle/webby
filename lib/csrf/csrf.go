@@ -1,4 +1,3 @@
-// provide Protection Against CSRF
 package csrf
 
 import (
@@ -9,13 +8,14 @@ import (
 
 const cookieName = "csrf_token"
 
-var (
-	// Just to avoid ugly url patterns!  The also include HEAD request!
-	// Also GET and HEAD are both considered safe according to rfc2616, section 9.1.1 (http://tools.ietf.org/html/rfc2616.html#section-9.1.1)
-	IncludeGetRequest = false
-	// Modulisation is pretty useful for large site! Or when you want to specify the correct placement for csrf checking!
-	Modulised = false
-)
+// Just to avoid ugly url patterns!  The also include HEAD request!
+// Also GET and HEAD are both considered safe according to rfc2616,
+// section 9.1.1 (http://tools.ietf.org/html/rfc2616.html#section-9.1.1)
+var IncludeGetRequest = false
+
+// Modulisation is pretty useful for large site! Or when you want to
+// specify the correct placement for csrf checking!
+var Modulised = false
 
 func getCookie(w *webby.Web) *http.Cookie {
 	cookie, err := w.Cookie(cookieName).Get()
@@ -42,6 +42,9 @@ func formCheck(w *webby.Web) {
 	}
 }
 
+/*
+CSRF Bootstrap Handler
+*/
 type Check struct{}
 
 func (_ Check) Boot(w *webby.Web) {
@@ -58,6 +61,8 @@ form_check:
 
 	formCheck(w)
 }
+
+var _check = Check{}
 
 func init() {
 	webby.HtmlFuncBoot.Register(func(w *webby.Web) {
@@ -78,6 +83,6 @@ func init() {
 			return
 		}
 
-		Check{}.Boot(w)
+		_check.Boot(w)
 	})
 }
