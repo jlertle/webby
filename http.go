@@ -22,12 +22,12 @@ func (h Http) SetCookie(cookie *http.Cookie) {
 
 // Execute Handler
 func (h Http) Exec(handler http.Handler) {
-	handler.ServeHTTP(h.w, h.w.Req)
+	http.StripPrefix(h.w.pri.curpath, handler).ServeHTTP(h.w, h.w.Req)
 }
 
 // Execute Function
-func (h Http) ExecFunc(handler func(http.ResponseWriter, *http.Request)) {
-	handler(h.w, h.w.Req)
+func (h Http) ExecFunc(handler http.HandlerFunc) {
+	h.Exec(handler)
 }
 
 // Get issues a GET to the specified URL.  If the response is one of the following
