@@ -310,7 +310,7 @@ func (ro RouteReset) View(w *Web) {
 	ro.LoadReset(w)
 }
 
-func RouteDealer(w *Web, ro RouteHandler) {
+func (w *Web) RouteDealer(ro RouteHandler) {
 	switch t := ro.(type) {
 	case methodInterface:
 		execMethodInterface(w, t)
@@ -319,8 +319,4 @@ func RouteDealer(w *Web, ro RouteHandler) {
 	default:
 		ro.View(w)
 	}
-}
-
-func (w *Web) RouteDealer(ro RouteHandler) {
-	RouteDealer(w, ro)
 }
