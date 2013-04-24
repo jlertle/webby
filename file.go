@@ -8,6 +8,6 @@ import (
 func FileServer(dir string) RouteHandler {
 	adir := dir
 	return FuncToRouteHandler(func(w *Web) {
-		http.StripPrefix(w.pri.curpath, http.FileServer(http.Dir(adir))).ServeHTTP(w, w.Req)
+		w.Http().Exec(http.FileServer(http.Dir(adir)))
 	})
 }
