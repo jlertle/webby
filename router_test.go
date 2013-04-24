@@ -5,7 +5,7 @@ import (
 )
 
 func TestRouter(t *testing.T) {
-	possible_pass := FuncToRouteHandler{func(w *Web) {
+	possible_pass := FuncToRouteHandler(func(w *Web) {
 		if w.Param.Get("title") != "test" {
 			t.Fail()
 		}
@@ -13,15 +13,15 @@ func TestRouter(t *testing.T) {
 		if w.Param.GetInt("id") != 5 {
 			t.Fail()
 		}
-	}}
+	})
 
-	pass := FuncToRouteHandler{func(w *Web) {
+	pass := FuncToRouteHandler(func(w *Web) {
 		// Do nothing, it's an automactic pass!
-	}}
+	})
 
-	fail := FuncToRouteHandler{func(w *Web) {
+	fail := FuncToRouteHandler(func(w *Web) {
 		t.Fail()
-	}}
+	})
 
 	w := &Web{
 		Param: Param{},
@@ -31,9 +31,9 @@ func TestRouter(t *testing.T) {
 			cut:     false,
 		},
 		Errors: &Errors{
-			E403: fail.Function,
-			E404: fail.Function,
-			E500: fail.Function,
+			E403: fail,
+			E404: fail,
+			E500: fail,
 		},
 	}
 
@@ -48,7 +48,7 @@ func TestRouter(t *testing.T) {
 	w.pri.path = "/55"
 	w.pri.curpath = ""
 
-	w.Errors.E404 = pass.Function
+	w.Errors.E404 = pass
 
 	route.Load(w)
 }

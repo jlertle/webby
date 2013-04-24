@@ -89,7 +89,7 @@ type routerItem struct {
 }
 
 // Route Map, use RegExp as key!
-type RouteMap map[string]func(*Web)
+type RouteMap map[string]FuncToRouteHandler
 
 // Route Handler Interface
 type RouteHandler interface {
@@ -151,8 +151,8 @@ func (ro *Router) sortout() {
 }
 
 // Register rule and function to Router
-func (ro *Router) Register(RegExpRule string, Function func(*Web)) *Router {
-	ro.register(RegExpRule, FuncToRouteHandler{Function})
+func (ro *Router) Register(RegExpRule string, Function FuncToRouteHandler) *Router {
+	ro.register(RegExpRule, Function)
 	sort.Sort(ro.routes)
 	return ro
 }
@@ -164,7 +164,7 @@ func (ro *Router) RegisterMap(routeMap RouteMap) *Router {
 	}
 
 	for rule, function := range routeMap {
-		ro.register(rule, FuncToRouteHandler{function})
+		ro.register(rule, function)
 	}
 	ro.sortout()
 	return ro
@@ -289,12 +289,10 @@ func (ro *Router) View(w *Web) {
 }
 
 // Implement RouteHandler interface!
-type FuncToRouteHandler struct {
-	Function func(*Web)
-}
+type FuncToRouteHandler func(*Web)
 
 func (fn FuncToRouteHandler) View(w *Web) {
-	fn.Function(w)
+	fn(w)
 }
 
 // Convert Router Handler to Function

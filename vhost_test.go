@@ -7,13 +7,13 @@ import (
 )
 
 func TestVhost(t *testing.T) {
-	pass := FuncToRouteHandler{func(w *Web) {
+	pass := FuncToRouteHandler(func(w *Web) {
 		// Do nothing, because it's a pass
-	}}
+	})
 
-	fail := FuncToRouteHandler{func(w *Web) {
+	fail := FuncToRouteHandler(func(w *Web) {
 		t.Fail()
-	}}
+	})
 
 	pass_router := NewBootRoute().Router(NewRouterHandlerMap(RouteHandlerMap{
 		`^/$`: pass,
@@ -32,9 +32,9 @@ func TestVhost(t *testing.T) {
 			},
 		},
 		Errors: &Errors{
-			E403: fail.Function,
-			E404: fail.Function,
-			E500: fail.Function,
+			E403: fail,
+			E404: fail,
+			E500: fail,
 		},
 		pri: &webPrivate{
 			path:    "/",
@@ -51,7 +51,7 @@ func TestVhost(t *testing.T) {
 
 	w.Req.Host = "www.example.com:1234"
 
-	w.Errors.E404 = pass.Function
+	w.Errors.E404 = pass
 
 	hosts = NewVHost(VHostMap{
 		`example.com`: fail_router,
@@ -61,19 +61,19 @@ func TestVhost(t *testing.T) {
 }
 
 func TestVhostRegExp(t *testing.T) {
-	possible_pass := FuncToRouteHandler{func(w *Web) {
+	possible_pass := FuncToRouteHandler(func(w *Web) {
 		if w.Param.Get("subdomain") != "hello" {
 			t.Fail()
 		}
-	}}
+	})
 
-	pass := FuncToRouteHandler{func(w *Web) {
+	pass := FuncToRouteHandler(func(w *Web) {
 		// Do nothing, because it's a pass
-	}}
+	})
 
-	fail := FuncToRouteHandler{func(w *Web) {
+	fail := FuncToRouteHandler(func(w *Web) {
 		t.Fail()
-	}}
+	})
 
 	possible_pass_router := NewBootRoute().Router(NewRouterHandlerMap(RouteHandlerMap{
 		`^/$`: possible_pass,
@@ -96,9 +96,9 @@ func TestVhostRegExp(t *testing.T) {
 			},
 		},
 		Errors: &Errors{
-			E403: fail.Function,
-			E404: fail.Function,
-			E500: fail.Function,
+			E403: fail,
+			E404: fail,
+			E500: fail,
 		},
 		pri: &webPrivate{
 			path:    "/",
@@ -127,7 +127,7 @@ func TestVhostRegExp(t *testing.T) {
 
 	w.Req.Host = "www.hello.com:1234"
 
-	w.Errors.E404 = pass.Function
+	w.Errors.E404 = pass
 
 	vhost = NewVHostRegExp(VHostRegExpMap{
 		rule: fail_router,
