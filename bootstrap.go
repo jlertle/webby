@@ -21,6 +21,7 @@ func (fn FuncToBootstrapHandler) Boot(w *Web) {
 type Bootstrap struct {
 	sync.RWMutex
 	boots []BootstrapHandler
+	post  bool
 }
 
 func (boot *Bootstrap) getBoots() []BootstrapHandler {
@@ -43,12 +44,12 @@ func (boot *Bootstrap) Register(functions ...FuncToBootstrapHandler) *Bootstrap 
 
 // Construct New Bootstrap.
 func NewBootstrap() *Bootstrap {
-	return &Bootstrap{}
+	return &Bootstrap{post: false}
 }
 
 // Construct New Bootstrap and Register Functions.
 func NewBootstrapReg(functions ...FuncToBootstrapHandler) *Bootstrap {
-	bo := &Bootstrap{}
+	bo := NewBootstrap()
 	bo.Register(functions...)
 	return bo
 }
@@ -63,7 +64,7 @@ func (boot *Bootstrap) RegisterHandler(handlers ...BootstrapHandler) *Bootstrap 
 
 // Construct New Bootstrap and Register Handlers.
 func NewBootstrapRegHandler(handlers ...BootstrapHandler) *Bootstrap {
-	bo := &Bootstrap{}
+	bo := NewBootstrap()
 	bo.RegisterHandler(handlers...)
 	return bo
 }
@@ -72,10 +73,15 @@ func NewBootstrapRegHandler(handlers ...BootstrapHandler) *Bootstrap {
 func (boot *Bootstrap) Load(w *Web) {
 	for _, bt := range boot.getBoots() {
 		bt.Boot(w)
-		if w.CutOut() {
+		if w.CutOut() && !boot.post {
 			return
 		}
 	}
+}
+
+func (boot *Bootstrap) PostMode() *Bootstrap {
+	boot.post = true
+	return boot
 }
 
 func (boot *Bootstrap) Boot(w *Web) {
@@ -93,11 +99,11 @@ HtmlFuncBoot is exclusively used for adding functions to html template engine.
 
 PostBoot is the last to be executed, do not write output to client at that point, it's for things like logging!
 
-You can think of them as middle-ware or filters.
+You can think of them as filters.
 */
 var (
 	MainBoot     = NewBootstrap()
 	Boot         = NewBootstrap()
 	HtmlFuncBoot = NewBootstrap()
-	PostBoot     = NewBootstrap()
+	PostBoot     = NewBootstrap().PostMode()
 )
