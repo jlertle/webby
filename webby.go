@@ -28,6 +28,13 @@ func init() {
 }
 
 var RootView RouteHandler = FuncToRouteHandler(func(w *Web) {
+	appMiddlewares := AppMiddlewares.Init(w)
+	appMiddlewares.Pre()
+	defer appMiddlewares.Post()
+	if w.CutOut() {
+		return
+	}
+
 	Boot.Load(w)
 	if w.CutOut() {
 		return
@@ -122,6 +129,14 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	defer w.debugEnd()
 
 	HtmlFuncBoot.Load(w)
+
+	if w.CutOut() {
+		return
+	}
+
+	mainMiddleware := MainMiddlewares.Init(w)
+	mainMiddleware.Pre()
+	defer mainMiddleware.Post()
 
 	if w.CutOut() {
 		return
