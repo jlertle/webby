@@ -162,13 +162,13 @@ func (c Cookie) Hour() Cookie {
 	return c.Expires(time.Now().Add(1 * time.Hour))
 }
 
-// Set to Expire after 6 Hours
-func (c Cookie) Hour6() Cookie {
+// Set to Expire after 6 Hourss
+func (c Cookie) SixHours() Cookie {
 	return c.Expires(time.Now().Add(6 * time.Hour))
 }
 
-// Set to Expire after 12 Hours
-func (c Cookie) Hour12() Cookie {
+// Set to Expire after 12 Hourss
+func (c Cookie) TwelveHours() Cookie {
 	return c.Expires(time.Now().Add(12 * time.Hour))
 }
 
@@ -177,13 +177,13 @@ func (c Cookie) Day() Cookie {
 	return c.Expires(time.Now().AddDate(0, 0, 1))
 }
 
-// Set to Expire after 1 Week
+// Set to Expire after 1 Weeks
 func (c Cookie) Week() Cookie {
 	return c.Expires(time.Now().AddDate(0, 0, 1*7))
 }
 
-// Set to Expire after 2 Week
-func (c Cookie) Week2() Cookie {
+// Set to Expire after 2 Weeks
+func (c Cookie) TwoWeeks() Cookie {
 	return c.Expires(time.Now().AddDate(0, 0, 2*7))
 }
 
@@ -192,22 +192,42 @@ func (c Cookie) Month() Cookie {
 	return c.Expires(time.Now().AddDate(0, 1, 0))
 }
 
-// Set to Expire after 3 Month
-func (c Cookie) Month3() Cookie {
+// Set to Expire after 3 Months
+func (c Cookie) ThreeMonths() Cookie {
 	return c.Expires(time.Now().AddDate(0, 3, 0))
 }
 
-// Set to Expire after 6 Month
-func (c Cookie) Month6() Cookie {
+// Set to Expire after 6 Months
+func (c Cookie) SixMonths() Cookie {
 	return c.Expires(time.Now().AddDate(0, 6, 0))
 }
 
-// Set to Expire after 9 Month
-func (c Cookie) Month9() Cookie {
+// Set to Expire after 9 Months
+func (c Cookie) NineMonths() Cookie {
 	return c.Expires(time.Now().AddDate(0, 9, 0))
 }
 
 // Set to Expire after 1 Year
 func (c Cookie) Year() Cookie {
 	return c.Expires(time.Now().AddDate(1, 0, 0))
+}
+
+// Set to Expire after 2 Years
+func (c Cookie) TwoYears() Cookie {
+	return c.Expires(time.Now().AddDate(2, 0, 0))
+}
+
+// Set to Expire after 3 Years
+func (c Cookie) ThreeYears() Cookie {
+	return c.Expires(time.Now().AddDate(3, 0, 0))
+}
+
+// Set to Expire after 4 Years
+func (c Cookie) FourYears() Cookie {
+	return c.Expires(time.Now().AddDate(4, 0, 0))
+}
+
+// Set to Expire after 5 Years
+func (c Cookie) FiveYears() Cookie {
+	return c.Expires(time.Now().AddDate(5, 0, 0))
 }
