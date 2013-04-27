@@ -24,6 +24,11 @@ type Bootstrap struct {
 	post  bool
 }
 
+// Construct New Bootstrap.
+func NewBootstrap() *Bootstrap {
+	return &Bootstrap{post: false}
+}
+
 func (boot *Bootstrap) getBoots() []BootstrapHandler {
 	boot.RLock()
 	defer boot.RUnlock()
@@ -42,31 +47,12 @@ func (boot *Bootstrap) Register(functions ...FuncToBootstrapHandler) *Bootstrap 
 	return boot
 }
 
-// Construct New Bootstrap.
-func NewBootstrap() *Bootstrap {
-	return &Bootstrap{post: false}
-}
-
-// Construct New Bootstrap and Register Functions.
-func NewBootstrapReg(functions ...FuncToBootstrapHandler) *Bootstrap {
-	bo := NewBootstrap()
-	bo.Register(functions...)
-	return bo
-}
-
 // Register Handler to Bootstrap.
 func (boot *Bootstrap) RegisterHandler(handlers ...BootstrapHandler) *Bootstrap {
 	boot.Lock()
 	defer boot.Unlock()
 	boot.boots = append(boot.boots, handlers...)
 	return boot
-}
-
-// Construct New Bootstrap and Register Handlers.
-func NewBootstrapRegHandler(handlers ...BootstrapHandler) *Bootstrap {
-	bo := NewBootstrap()
-	bo.RegisterHandler(handlers...)
-	return bo
 }
 
 // Load Functions in Bootstrap.

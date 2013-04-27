@@ -37,8 +37,8 @@ func TestRouter(t *testing.T) {
 		},
 	}
 
-	route := NewRouterHandlerMap(RouteHandlerMap{
-		`^/blogpost`: NewRouterHandlerMap(RouteHandlerMap{
+	route := NewRouter().RegisterHandlerMap(RouteHandlerMap{
+		`^/blogpost`: NewRouter().RegisterHandlerMap(RouteHandlerMap{
 			`^/(?P<title>[a-z]+)-(?P<id>\d+)/?$`: possible_pass,
 		}),
 	})

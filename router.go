@@ -94,13 +94,6 @@ func (ro *Router) RegisterMap(routeMap RouteMap) *Router {
 	return ro
 }
 
-// Construct new Router and Register Map to Router
-func NewRouterMap(routeMap RouteMap) *Router {
-	ro := &Router{}
-	ro.RegisterMap(routeMap)
-	return ro
-}
-
 // Register rule and handler to Router
 func (ro *Router) RegisterHandler(RegExpRule string, handler RouteHandler) *Router {
 	ro.register(RegExpRule, handler)
@@ -118,13 +111,6 @@ func (ro *Router) RegisterHandlerMap(routeHandlerMap RouteHandlerMap) *Router {
 		ro.register(rule, handler)
 	}
 	ro.sortout()
-	return ro
-}
-
-// Construct new Router and Register Handler Map ro Router
-func NewRouterHandlerMap(routeHandlerMap RouteHandlerMap) *Router {
-	ro := &Router{}
-	ro.RegisterHandlerMap(routeHandlerMap)
 	return ro
 }
 

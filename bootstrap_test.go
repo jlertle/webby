@@ -23,7 +23,7 @@ func TestBootstrap(t *testing.T) {
 		},
 	}
 
-	boot := NewBootstrapReg(
+	boot := NewBootstrap().Register(
 		bootItem,
 		bootItem,
 		bootItem,
@@ -40,7 +40,7 @@ func TestBootstrap(t *testing.T) {
 	expected = 3
 	count = 0
 
-	boot = NewBootstrapReg(
+	boot = NewBootstrap().Register(
 		bootItem,
 		bootItem,
 		bootCutItem,
