@@ -12,8 +12,8 @@ func TestInputRadio(t *testing.T) {
 	fmt.Println("InputRadio Test:\r\n")
 
 	form := New(
-		NewInputRadio("radio").Value("car").Get(),
-		NewInputRadio("radio").Value("motorbike").Get(),
+		NewInputRadio("radio").Value("car"),
+		NewInputRadio("radio").Value("motorbike"),
 	)
 
 	fmt.Println(form.Render())

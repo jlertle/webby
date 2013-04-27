@@ -14,6 +14,10 @@ func (se PipeSelect) Get() *Select {
 	return &se.se
 }
 
+func (se PipeSelect) GetStruct() FormHandlerExt {
+	return se.Get()
+}
+
 func (se PipeSelect) Id(id string) PipeSelect {
 	se.se.Id = id
 	return se
@@ -24,8 +28,10 @@ func (se PipeSelect) Class(class string) PipeSelect {
 	return se
 }
 
-func (se PipeSelect) Options(options ...*Option) PipeSelect {
-	se.se.Options = options
+func (se PipeSelect) Options(options ...OptionInterface) PipeSelect {
+	for _, option := range options {
+		se.se.Options = append(se.se.Options, option.Option())
+	}
 	return se
 }
 

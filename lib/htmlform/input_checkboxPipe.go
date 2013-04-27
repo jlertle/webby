@@ -12,6 +12,10 @@ func (ch PipeInputCheckbox) Get() *InputCheckbox {
 	return &ch.ch
 }
 
+func (ch PipeInputCheckbox) GetStruct() FormHandlerExt {
+	return ch.Get()
+}
+
 func (ch PipeInputCheckbox) Value(value string) PipeInputCheckbox {
 	ch.ch.Value = value
 	return ch

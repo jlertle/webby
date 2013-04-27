@@ -37,7 +37,7 @@ func (fo Label) GetError() error {
 	return nil
 }
 
-func (fo Label) GetStruct() FormHandler {
+func (fo Label) GetStruct() FormHandlerExt {
 	return fo
 }
 
@@ -61,6 +61,6 @@ func (fo Label) GetLang() Lang {
 	return nil
 }
 
-func (fo Label) Eval() FormHandler {
+func (fo Label) Eval() FormHandlerExt {
 	return fo
 }

@@ -6,7 +6,7 @@ import (
 )
 
 type gobEval interface {
-	Eval() FormHandler
+	Eval() FormHandlerExt
 }
 
 type gobFormHandler struct {

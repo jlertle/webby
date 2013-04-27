@@ -12,6 +12,10 @@ func (fi PipeInputFile) Get() *InputFile {
 	return &fi.fi
 }
 
+func (fi PipeInputFile) GetStruct() FormHandlerExt {
+	return fi.Get()
+}
+
 func (fi PipeInputFile) Id(id string) PipeInputFile {
 	fi.fi.Id = id
 	return fi

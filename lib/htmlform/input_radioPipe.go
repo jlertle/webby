@@ -12,6 +12,10 @@ func (ra PipeInputRadio) Get() *InputRadio {
 	return &ra.ra
 }
 
+func (ra PipeInputRadio) GetStruct() FormHandlerExt {
+	return ra.Get()
+}
+
 func (ra PipeInputRadio) Value(value string) PipeInputRadio {
 	ra.ra.Value = value
 	return ra

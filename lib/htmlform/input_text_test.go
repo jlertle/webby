@@ -12,8 +12,8 @@ func TestFormInputText(t *testing.T) {
 	fmt.Println("InputText Test:\r\n")
 
 	form := New(
-		NewInputText("text").Mandatory().MaxChar(8).RegExp("^([a-zA-Z]*)$", "Letters Only").Get(),
-		NewInputText("textmatch").MustMatch("text", "Does not match field above!").Get(),
+		NewInputText("text").Mandatory().MaxChar(8).RegExp("^([a-zA-Z]*)$", "Letters Only"),
+		NewInputText("textmatch").MustMatch("text", "Does not match field above!"),
 	)
 
 	fmt.Println(form.Render())

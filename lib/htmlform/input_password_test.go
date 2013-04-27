@@ -12,8 +12,8 @@ func TestFormInputPassword(t *testing.T) {
 	fmt.Println("InputPassword Test:\r\n")
 
 	form := New(
-		NewInputPassword("password").Mandatory().MaxChar(8).RegExp("^([a-zA-Z]*)$", "Letters Only").Get(),
-		NewInputPassword("passwordmatch").MustMatch("password", "Does not match field above!").Get(),
+		NewInputPassword("password").Mandatory().MaxChar(8).RegExp("^([a-zA-Z]*)$", "Letters Only"),
+		NewInputPassword("passwordmatch").MustMatch("password", "Does not match field above!"),
 	)
 
 	fmt.Println(form.Render())

@@ -171,7 +171,7 @@ func (fo *InputText) GetError() error {
 	return fo.error
 }
 
-func (fo *InputText) GetStruct() FormHandler {
+func (fo *InputText) GetStruct() FormHandlerExt {
 	return fo
 }
 
@@ -183,6 +183,6 @@ func (fo *InputText) GetLang() Lang {
 	return fo.lang
 }
 
-func (fo InputText) Eval() FormHandler {
+func (fo InputText) Eval() FormHandlerExt {
 	return &fo
 }

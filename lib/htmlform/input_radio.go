@@ -58,7 +58,7 @@ func (fo *InputRadio) GetError() error {
 	return nil
 }
 
-func (fo *InputRadio) GetStruct() FormHandler {
+func (fo *InputRadio) GetStruct() FormHandlerExt {
 	return fo
 }
 
@@ -70,6 +70,6 @@ func (fo *InputRadio) GetLang() Lang {
 	return nil
 }
 
-func (fo InputRadio) Eval() FormHandler {
+func (fo InputRadio) Eval() FormHandlerExt {
 	return &fo
 }

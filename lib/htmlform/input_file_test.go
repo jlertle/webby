@@ -9,7 +9,7 @@ func TestInputFile(t *testing.T) {
 	fmt.Println("InputFile Test:\r\n")
 
 	form := New(
-		NewInputFile("file").Mime("image/jpeg", "image/png").Get(),
+		NewInputFile("file").Mime("image/jpeg", "image/png"),
 	)
 
 	fmt.Println(form.Render())

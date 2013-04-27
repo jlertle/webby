@@ -171,7 +171,7 @@ func (fo *InputPassword) GetError() error {
 	return fo.error
 }
 
-func (fo *InputPassword) GetStruct() FormHandler {
+func (fo *InputPassword) GetStruct() FormHandlerExt {
 	return fo
 }
 
@@ -183,6 +183,6 @@ func (fo *InputPassword) GetLang() Lang {
 	return fo.lang
 }
 
-func (fo InputPassword) Eval() FormHandler {
+func (fo InputPassword) Eval() FormHandlerExt {
 	return &fo
 }

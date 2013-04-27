@@ -14,6 +14,10 @@ func (op PipeOption) Get() *Option {
 	return &op.op
 }
 
+func (op PipeOption) Option() *Option {
+	return op.Get()
+}
+
 func (op PipeOption) Value(value string) PipeOption {
 	op.op.Value = value
 	return op

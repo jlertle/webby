@@ -14,6 +14,10 @@ func (in PipeInputPassword) Get() *InputPassword {
 	return &in.in
 }
 
+func (in PipeInputPassword) GetStruct() FormHandlerExt {
+	return in.Get()
+}
+
 func (in PipeInputPassword) Value(value string) PipeInputPassword {
 	in.in.Value = value
 	return in

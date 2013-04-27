@@ -5,6 +5,10 @@ import (
 	"encoding/gob"
 )
 
+type OptionInterface interface {
+	Option() *Option
+}
+
 type Option struct {
 	Name     string
 	Value    string
@@ -14,6 +18,10 @@ type Option struct {
 
 func init() {
 	gob.Register(Option{})
+}
+
+func (op *Option) Option() *Option {
+	return op
 }
 
 func (op *Option) Render(buf *bytes.Buffer) {

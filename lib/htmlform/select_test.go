@@ -13,9 +13,9 @@ func TestSelect(t *testing.T) {
 
 	form := New(
 		NewSelect("select").Mandatory().Options(
-			NewOption("Motorcycle").Value("motorcycle").Get(),
-			NewOption("Car").Value("car").Get(),
-		).Get(),
+			NewOption("Motorcycle").Value("motorcycle"),
+			NewOption("Car").Value("car"),
+		),
 	)
 
 	fmt.Println(form.Render())

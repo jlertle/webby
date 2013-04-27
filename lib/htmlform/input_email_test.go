@@ -12,8 +12,8 @@ func TestInputEmail(t *testing.T) {
 	fmt.Println("InputEmail Test:\r\n")
 
 	form := New(
-		NewInputEmail("email").Get(),
-		NewInputEmail("emailconfirm").MustMatch("email", "Must match field above!").Get(),
+		NewInputEmail("email"),
+		NewInputEmail("emailconfirm").MustMatch("email", "Must match field above!"),
 	)
 
 	fmt.Println(form.Render())

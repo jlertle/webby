@@ -95,7 +95,7 @@ func (fo *InputCheckbox) GetError() error {
 	return fo.error
 }
 
-func (fo *InputCheckbox) GetStruct() FormHandler {
+func (fo *InputCheckbox) GetStruct() FormHandlerExt {
 	return fo
 }
 
@@ -107,6 +107,6 @@ func (fo *InputCheckbox) GetLang() Lang {
 	return fo.lang
 }
 
-func (fo InputCheckbox) Eval() FormHandler {
+func (fo InputCheckbox) Eval() FormHandlerExt {
 	return &fo
 }

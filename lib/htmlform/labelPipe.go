@@ -14,6 +14,10 @@ func (la PipeLabel) Get() Label {
 	return la.la
 }
 
+func (la PipeLabel) GetStruct() FormHandlerExt {
+	return la.Get()
+}
+
 func (la PipeLabel) For(_for string) PipeLabel {
 	la.la.For = _for
 	return la

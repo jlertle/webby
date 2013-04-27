@@ -114,7 +114,7 @@ func (fo *InputEmail) GetError() error {
 	return fo.error
 }
 
-func (fo *InputEmail) GetStruct() FormHandler {
+func (fo *InputEmail) GetStruct() FormHandlerExt {
 	return fo
 }
 
@@ -126,6 +126,6 @@ func (fo *InputEmail) GetLang() Lang {
 	return fo.lang
 }
 
-func (fo InputEmail) Eval() FormHandler {
+func (fo InputEmail) Eval() FormHandlerExt {
 	return &fo
 }

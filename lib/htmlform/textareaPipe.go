@@ -14,6 +14,10 @@ func (te PipeTextarea) Get() *Textarea {
 	return &te.te
 }
 
+func (te PipeTextarea) GetStruct() FormHandlerExt {
+	return te.Get()
+}
+
 func (te PipeTextarea) Value(value string) PipeTextarea {
 	te.te.Value = value
 	return te

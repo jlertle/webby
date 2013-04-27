@@ -101,7 +101,7 @@ func (fo *Select) IsClass() bool {
 	return len(fo.Class) > 0
 }
 
-func (fo *Select) GetStruct() FormHandler {
+func (fo *Select) GetStruct() FormHandlerExt {
 	return fo
 }
 
@@ -113,6 +113,6 @@ func (fo *Select) GetLang() Lang {
 	return fo.lang
 }
 
-func (fo Select) Eval() FormHandler {
+func (fo Select) Eval() FormHandlerExt {
 	return &fo
 }

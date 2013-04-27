@@ -12,6 +12,10 @@ func (em PipeInputEmail) Get() *InputEmail {
 	return &em.em
 }
 
+func (em PipeInputEmail) GetStruct() FormHandlerExt {
+	return em.Get()
+}
+
 func (em PipeInputEmail) Value(value string) PipeInputEmail {
 	em.em.Value = value
 	return em

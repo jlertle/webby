@@ -103,7 +103,7 @@ func (f FormError) Error() string {
 
 type Form struct {
 	lang     Lang
-	fields   []FormHandler
+	fields   []FormHandlerExt
 	allowGet bool
 }
 
@@ -113,7 +113,16 @@ func init() {
 
 // Construct New Form Helper
 func New(formhandlers ...FormHandler) *Form {
-	f := &Form{fields: formhandlers, allowGet: false}
+	f := &Form{fields: []FormHandlerExt{}, allowGet: false}
+
+	for _, formhandler := range formhandlers {
+		switch t := formhandler.(type) {
+		case FormHandlerExt:
+			f.fields = append(f.fields, t)
+		default:
+			f.fields = append(f.fields, formhandler.GetStruct())
+		}
+	}
 
 	return f.Lang(defaultLang)
 }

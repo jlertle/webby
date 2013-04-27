@@ -9,7 +9,7 @@ func TestLabelForm(t *testing.T) {
 	fmt.Println("Label Test: \r\n")
 
 	form := New(
-		NewLabel("Label").For("label").Id("Label").Class("Label").Get(),
+		NewLabel("Label").For("label").Id("Label").Class("Label"),
 	)
 
 	fmt.Println(form.Render())

@@ -125,7 +125,7 @@ func (fo *InputFile) IsClass() bool {
 	return len(fo.Class) > 0
 }
 
-func (fo *InputFile) GetStruct() FormHandler {
+func (fo *InputFile) GetStruct() FormHandlerExt {
 	return fo
 }
 
@@ -137,6 +137,6 @@ func (fo *InputFile) GetLang() Lang {
 	return fo.lang
 }
 
-func (fo InputFile) Eval() FormHandler {
+func (fo InputFile) Eval() FormHandlerExt {
 	return &fo
 }

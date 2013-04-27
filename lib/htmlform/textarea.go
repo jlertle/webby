@@ -127,7 +127,7 @@ func (fo *Textarea) GetError() error {
 	return fo.error
 }
 
-func (fo *Textarea) GetStruct() FormHandler {
+func (fo *Textarea) GetStruct() FormHandlerExt {
 	return fo
 }
 
@@ -139,6 +139,6 @@ func (fo *Textarea) GetLang() Lang {
 	return fo.lang
 }
 
-func (fo Textarea) Eval() FormHandler {
+func (fo Textarea) Eval() FormHandlerExt {
 	return &fo
 }

@@ -14,6 +14,10 @@ func (in PipeInputText) Get() *InputText {
 	return &in.in
 }
 
+func (in PipeInputText) GetStruct() FormHandlerExt {
+	return in.Get()
+}
+
 func (in PipeInputText) Value(value string) PipeInputText {
 	in.in.Value = value
 	return in
