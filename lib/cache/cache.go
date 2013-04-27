@@ -278,12 +278,12 @@ func (ca PipeCache) Hour() PipeCache {
 }
 
 // Set to Expire after 6 Hours
-func (ca PipeCache) Hour6() PipeCache {
+func (ca PipeCache) SixHours() PipeCache {
 	return ca.Expire(time.Now().Add(6 * time.Hour))
 }
 
 // Set to Expire after 12 Hours
-func (ca PipeCache) Hour12() PipeCache {
+func (ca PipeCache) TwelveHours() PipeCache {
 	return ca.Expire(time.Now().Add(12 * time.Hour))
 }
 
@@ -298,7 +298,7 @@ func (ca PipeCache) Week() PipeCache {
 }
 
 // Set to Expire after 2 Week
-func (ca PipeCache) Week2() PipeCache {
+func (ca PipeCache) TwoWeeks() PipeCache {
 	return ca.Expire(time.Now().AddDate(0, 0, 2*7))
 }
 
@@ -308,23 +308,43 @@ func (ca PipeCache) Month() PipeCache {
 }
 
 // Set to Expire after 3 Month
-func (ca PipeCache) Month3() PipeCache {
+func (ca PipeCache) ThreeMonths() PipeCache {
 	return ca.Expire(time.Now().AddDate(0, 3, 0))
 }
 
 // Set to Expire after 6 Month
-func (ca PipeCache) Month6() PipeCache {
+func (ca PipeCache) SixMonths() PipeCache {
 	return ca.Expire(time.Now().AddDate(0, 6, 0))
 }
 
 // Set to Expire after 9 Month
-func (ca PipeCache) Month9() PipeCache {
+func (ca PipeCache) NineMonths() PipeCache {
 	return ca.Expire(time.Now().AddDate(0, 9, 0))
 }
 
 // Set to Expire after 1 Year
 func (ca PipeCache) Year() PipeCache {
 	return ca.Expire(time.Now().AddDate(1, 0, 0))
+}
+
+// Set to Expire after 2 Years
+func (ca PipeCache) TwoYears() PipeCache {
+	return ca.Expire(time.Now().AddDate(2, 0, 0))
+}
+
+// Set to Expire after 3 Years
+func (ca PipeCache) ThreeYears() PipeCache {
+	return ca.Expire(time.Now().AddDate(3, 0, 0))
+}
+
+// Set to Expire after 4 Years
+func (ca PipeCache) FourYears() PipeCache {
+	return ca.Expire(time.Now().AddDate(4, 0, 0))
+}
+
+// Set to Expire after 5 Years
+func (ca PipeCache) FiveYears() PipeCache {
+	return ca.Expire(time.Now().AddDate(5, 0, 0))
 }
 
 // Get Cache!
