@@ -44,18 +44,27 @@ func (ch *PipeChannel) Ttl(ttl int64) *PipeChannel {
 	return ch
 }
 
-func (ch *PipeChannel) Item(item ...Item) *PipeChannel {
-	ch.ch.Item = item
+func (ch *PipeChannel) Item(items ...ItemInterface) *PipeChannel {
+	if ch.ch.Item == nil {
+		ch.ch.Item = []Item{}
+	}
+	for _, item := range items {
+		ch.ch.Item = append(ch.ch.Item, item.Get())
+	}
 	return ch
 }
 
-func (ch *PipeChannel) AddItem(item Item) *PipeChannel {
-	ch.ch.Item = append(ch.ch.Item, item)
+func (ch *PipeChannel) AddItem(item ItemInterface) *PipeChannel {
+	ch.ch.Item = append(ch.ch.Item, item.Get())
 	return ch
 }
 
-func (ch PipeChannel) Get() Channel {
-	return ch.ch
+func (ch PipeChannel) RSS() string {
+	return ch.ch.RSS()
+}
+
+func (ch PipeChannel) Atom() string {
+	return ch.ch.Atom()
 }
 
 type PipeItem struct {

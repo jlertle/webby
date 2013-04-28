@@ -19,6 +19,11 @@ type Channel struct {
 	Item          []Item
 }
 
+type ChannelInterface interface {
+	Atom() string
+	RSS() string
+}
+
 // Item Structure
 type Item struct {
 	Title       string
@@ -30,13 +35,23 @@ type Item struct {
 	Email       string
 }
 
+func (it Item) Get() Item {
+	return it
+}
+
+type ItemInterface interface {
+	Get() Item
+}
+
 func init() {
 	gob.Register(Channel{})
 	gob.Register(Item{})
+	gob.Register(PipeChannel{})
+	gob.Register(PipeItem{})
 }
 
 type XmlFeed interface {
-	Feed(*webby.Web) Channel
+	Feed(*webby.Web) ChannelInterface
 }
 
 type AtomRouteHandler struct {
