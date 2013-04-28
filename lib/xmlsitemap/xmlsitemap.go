@@ -5,13 +5,21 @@ import (
 	"time"
 )
 
-type UrlSet []Url
+type UrlSet []UrlInterface
 
 type Url struct {
 	Loc        string
 	LastMod    time.Time
 	ChangeFreq string
 	Priority   float64
+}
+
+func (u Url) Get() Url {
+	return u
+}
+
+type UrlInterface interface {
+	Get() Url
 }
 
 // Chainable version of Url

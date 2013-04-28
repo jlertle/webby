@@ -23,11 +23,12 @@ type url struct {
 func (ur UrlSet) Render() string {
 	urls := []url{}
 	for _, a_url := range ur {
+		aaurl := a_url.Get()
 		urls = append(urls, url{
-			Loc:        a_url.Loc,
-			LastMod:    a_url.LastMod.UTC().Format(time.RFC3339),
-			ChangeFreq: a_url.ChangeFreq,
-			Priority:   a_url.Priority,
+			Loc:        aaurl.Loc,
+			LastMod:    aaurl.LastMod.UTC().Format(time.RFC3339),
+			ChangeFreq: aaurl.ChangeFreq,
+			Priority:   aaurl.Priority,
 		})
 	}
 

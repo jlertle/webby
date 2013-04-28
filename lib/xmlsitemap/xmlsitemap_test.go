@@ -9,11 +9,8 @@ import (
 func TestSiteMap(t *testing.T) {
 	urls := UrlSet{}
 
-	NewUrl().Loc("http://cj-jackson.com").LastMod(
-		time.Now()).ChangeFreq("daily").Priority(0.5).Get()
-
 	urls = append(urls, NewUrl().Loc("http://cj-jackson.com").LastMod(
-		time.Now()).ChangeFreq("daily").Priority(0.5).Get())
+		time.Now()).ChangeFreq("daily").Priority(0.5))
 
 	fmt.Println(urls.Render())
 }
