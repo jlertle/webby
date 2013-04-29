@@ -2,6 +2,7 @@ package webby
 
 import (
 	"io/ioutil"
+	"net"
 	"regexp"
 	"strconv"
 	"strings"
@@ -75,5 +76,6 @@ var stripPortFromAddr = regexp.MustCompile("^(.*)(:(\\d+))$")
 
 // Get Remote Address (IP Address) without port number!
 func (w *Web) RemoteAddr() string {
-	return stripPortFromAddr.FindStringSubmatch(w.Req.RemoteAddr)[1]
+	ip, _, _ := net.SplitHostPort(w.Req.RemoteAddr)
+	return ip
 }
