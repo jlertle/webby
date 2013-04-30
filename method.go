@@ -41,6 +41,13 @@ func autoPopulateField(w *Web, vc reflect.Value) {
 			field.Set(reflect.ValueOf(w.Param.GetFloat32(name)))
 		case float64:
 			field.Set(reflect.ValueOf(w.Param.GetFloat64(name)))
+		default:
+			if w.Meta[name] != nil {
+				vcc := reflect.ValueOf(w.Meta[name])
+				if field.Kind() == vcc.Kind() {
+					field.Set(vcc)
+				}
+			}
 		}
 	}
 }
