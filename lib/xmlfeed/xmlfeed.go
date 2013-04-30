@@ -46,8 +46,6 @@ type ItemInterface interface {
 func init() {
 	gob.Register(Channel{})
 	gob.Register(Item{})
-	gob.Register(PipeChannel{})
-	gob.Register(PipeItem{})
 }
 
 type XmlFeed interface {

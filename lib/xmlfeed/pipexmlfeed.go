@@ -59,12 +59,8 @@ func (ch *PipeChannel) AddItem(item ItemInterface) *PipeChannel {
 	return ch
 }
 
-func (ch PipeChannel) RSS() string {
-	return ch.ch.RSS()
-}
-
-func (ch PipeChannel) Atom() string {
-	return ch.ch.Atom()
+func (ch *PipeChannel) Get() Channel {
+	return ch.ch
 }
 
 type PipeItem struct {
