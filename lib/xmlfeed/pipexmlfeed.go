@@ -5,7 +5,7 @@ import (
 )
 
 type PipeChannel struct {
-	ch Channel
+	Ch Channel
 }
 
 func NewChannel(title string) *PipeChannel {
@@ -15,52 +15,60 @@ func NewChannel(title string) *PipeChannel {
 }
 
 func (ch *PipeChannel) Description(description string) *PipeChannel {
-	ch.ch.Description = description
+	ch.Ch.Description = description
 	return ch
 }
 
 func (ch *PipeChannel) Link(link string) *PipeChannel {
-	ch.ch.Link = link
+	ch.Ch.Link = link
 	return ch
 }
 
 func (ch *PipeChannel) LastBuildDate(lastBuildDate time.Time) *PipeChannel {
-	ch.ch.LastBuildDate = lastBuildDate
+	ch.Ch.LastBuildDate = lastBuildDate
 	return ch
 }
 
 func (ch *PipeChannel) PubDate(pubDate time.Time) *PipeChannel {
-	ch.ch.PubDate = pubDate
+	ch.Ch.PubDate = pubDate
 	return ch
 }
 
 func (ch *PipeChannel) Updated(updated time.Time) *PipeChannel {
-	ch.ch.Updated = updated
+	ch.Ch.Updated = updated
 	return ch
 }
 
 func (ch *PipeChannel) Ttl(ttl int64) *PipeChannel {
-	ch.ch.Ttl = ttl
+	ch.Ch.Ttl = ttl
 	return ch
 }
 
 func (ch *PipeChannel) Item(items ...ItemInterface) *PipeChannel {
-	if ch.ch.Item == nil {
-		ch.ch.Item = []Item{}
+	if ch.Ch.Item == nil {
+		ch.Ch.Item = []Item{}
 	}
 	for _, item := range items {
-		ch.ch.Item = append(ch.ch.Item, item.Get())
+		ch.Ch.Item = append(ch.Ch.Item, item.Get())
 	}
 	return ch
 }
 
 func (ch *PipeChannel) AddItem(item ItemInterface) *PipeChannel {
-	ch.ch.Item = append(ch.ch.Item, item.Get())
+	ch.Ch.Item = append(ch.Ch.Item, item.Get())
 	return ch
 }
 
 func (ch *PipeChannel) Get() Channel {
-	return ch.ch
+	return ch.Ch
+}
+
+func (ch PipeChannel) Atom() string {
+	return ch.Ch.Atom()
+}
+
+func (ch PipeChannel) RSS() string {
+	return ch.Ch.RSS()
 }
 
 type PipeItem struct {
