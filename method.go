@@ -5,13 +5,17 @@ import (
 	"strings"
 )
 
-func autoPopulateField(w *Web, vc reflect.Value) {
+func autoPopulateFields(w *Web, vc reflect.Value) {
 	s := vc.Elem()
 	typeOfT := s.Type()
 	for i := 0; i < s.NumField(); i++ {
 		field := s.Field(i)
 		name := typeOfT.Field(i).Name
 		if name == "W" || !field.CanSet() {
+			continue
+		}
+		if w.Param.Get(name) == "" {
+			autoPopulateFieldByMeta(w, field, name)
 			continue
 		}
 		switch field.Interface().(type) {
@@ -42,13 +46,18 @@ func autoPopulateField(w *Web, vc reflect.Value) {
 		case float64:
 			field.Set(reflect.ValueOf(w.Param.GetFloat64(name)))
 		default:
-			if w.Meta[name] != nil {
-				vcc := reflect.ValueOf(w.Meta[name])
-				if field.Kind() == vcc.Kind() {
-					field.Set(vcc)
-				}
-			}
+			autoPopulateFieldByMeta(w, field, name)
 		}
+	}
+}
+
+func autoPopulateFieldByMeta(w *Web, field reflect.Value, name string) {
+	if w.Meta[name] == nil {
+		return
+	}
+	vcc := reflect.ValueOf(w.Meta[name])
+	if field.Kind() == vcc.Kind() {
+		field.Set(vcc)
 	}
 }
 
@@ -60,7 +69,7 @@ func execMethodInterface(w *Web, me methodInterface) {
 	in[0] = reflect.ValueOf(w)
 	view.Call(in)
 
-	autoPopulateField(w, vc)
+	autoPopulateFields(w, vc)
 
 	in = make([]reflect.Value, 0)
 	method := vc.MethodByName("Prepare")
