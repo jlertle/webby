@@ -85,7 +85,9 @@ func execMethodInterface(w *Web, me MethodInterface) {
 		return
 	}
 
-	if w.Is().WebSocketRequest() {
+	is := w.Is()
+
+	if is.WebSocketRequest() {
 		method = vc.MethodByName("Ws")
 		method.Call(in)
 		if w.CutOut() {
@@ -100,7 +102,7 @@ func execMethodInterface(w *Web, me MethodInterface) {
 		goto requestDealer
 	}
 
-	if w.Is().AjaxRequest() {
+	if is.AjaxRequest() {
 		method = vc.MethodByName("Ajax")
 		method.Call(in)
 		if w.CutOut() {
