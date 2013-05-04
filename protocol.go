@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func execProtocolInterface(w *Web, pr protocolInterface) {
+func execProtocolInterface(w *Web, pr ProtocolInterface) {
 	vc := reflect.New(reflect.Indirect(reflect.ValueOf(pr)).Type())
 
 	view := vc.MethodByName("View")
@@ -25,7 +25,7 @@ func execProtocolInterface(w *Web, pr protocolInterface) {
 	}
 }
 
-type protocolInterface interface {
+type ProtocolInterface interface {
 	View(*Web)
 	Http()
 	Https()

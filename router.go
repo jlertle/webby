@@ -222,9 +222,9 @@ func (ro RouteReset) View(w *Web) {
 
 func (w *Web) RouteDealer(ro RouteHandler) {
 	switch t := ro.(type) {
-	case methodInterface:
+	case MethodInterface:
 		execMethodInterface(w, t)
-	case protocolInterface:
+	case ProtocolInterface:
 		execProtocolInterface(w, t)
 	default:
 		ro.View(w)

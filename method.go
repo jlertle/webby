@@ -5,6 +5,9 @@ import (
 	"strings"
 )
 
+/*
+Populate Struct Field Automatically
+*/
 func autoPopulateFields(w *Web, vc reflect.Value) {
 	s := vc.Elem()
 	typeOfT := s.Type()
@@ -51,6 +54,9 @@ func autoPopulateFields(w *Web, vc reflect.Value) {
 	}
 }
 
+/*
+Populate Field by Meta
+*/
 func autoPopulateFieldByMeta(w *Web, field reflect.Value, name string) {
 	if w.Meta[name] == nil {
 		return
@@ -61,7 +67,7 @@ func autoPopulateFieldByMeta(w *Web, field reflect.Value, name string) {
 	}
 }
 
-func execMethodInterface(w *Web, me methodInterface) {
+func execMethodInterface(w *Web, me MethodInterface) {
 	vc := reflect.New(reflect.Indirect(reflect.ValueOf(me)).Type())
 
 	view := vc.MethodByName("View")
@@ -124,7 +130,7 @@ func methodNotAllowed(w *Web) {
 	w.Fmt().Print("405 Method Not Allowed")
 }
 
-type methodInterface interface {
+type MethodInterface interface {
 	View(*Web)
 	Prepare()
 	Ws()
