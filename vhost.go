@@ -134,14 +134,7 @@ func (vh *VHostRegExp) View(w *Web) {
 			continue
 		}
 
-		names := host.RegExpComplied.SubexpNames()
-		matches := host.RegExpComplied.FindStringSubmatch(w.Req.Host)
-
-		for key, name := range names {
-			if name != "" {
-				w.Param.Set(name, matches[key])
-			}
-		}
+		w.pathDealer(host.RegExpComplied, vHostStr(w.Req.Host))
 
 		w.RouteDealer(host.Route)
 		return

@@ -1,5 +1,10 @@
 package webby
 
+import (
+	"fmt"
+	"regexp"
+)
+
 type Param map[string]string
 
 func (pa Param) Set(name, value string) {
@@ -74,4 +79,33 @@ func (pa Param) GetFloat64(name string) float64 {
 
 func (pa Param) GetFloat32(name string) float32 {
 	return float32(pa.GetFloat64(name))
+}
+
+type pathStr string
+
+func (str pathStr) String() string {
+	return string(str)
+}
+
+type vHostStr string
+
+func (str vHostStr) String() string {
+	return string(str)
+}
+
+func (w *Web) pathDealer(re *regexp.Regexp, str fmt.Stringer) {
+	names := re.SubexpNames()
+	matches := re.FindStringSubmatch(str.String())
+
+	for key, name := range names {
+		if name != "" {
+			w.Param.Set(name, matches[key])
+		}
+	}
+
+	switch str.(type) {
+	case pathStr:
+		w.pri.curpath += matches[0]
+		w.pri.path = w.pri.path[re.FindStringIndex(w.pri.path)[1]:]
+	}
 }

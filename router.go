@@ -125,18 +125,7 @@ func (ro *Router) load(w *Web, reset bool) bool {
 			continue
 		}
 
-		names := route.RegExpComplied.SubexpNames()
-		matches := route.RegExpComplied.FindStringSubmatch(w.pri.path)
-
-		w.pri.curpath += matches[0]
-
-		for key, name := range names {
-			if name != "" {
-				w.Param.Set(name, matches[key])
-			}
-		}
-
-		w.pri.path = w.pri.path[route.RegExpComplied.FindStringIndex(w.pri.path)[1]:]
+		w.pathDealer(route.RegExpComplied, pathStr(w.pri.path))
 
 		w.RouteDealer(route.Route)
 		return true
