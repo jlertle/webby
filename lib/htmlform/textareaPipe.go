@@ -62,7 +62,7 @@ func (te PipeTextarea) Placeholder(placeholder string) PipeTextarea {
 	return te
 }
 
-func (te PipeTextarea) Extra(extra func(*Validation) error) PipeTextarea {
+func (te PipeTextarea) Extra(extra ExtraFunc) PipeTextarea {
 	te.te.extra = extra
 	return te
 }

@@ -177,7 +177,7 @@ validation:
 
 	valid := true
 
-	val := &Validation{values, files, false}
+	val := &Validation{values, files, false, CurVal("")}
 
 	for _, field := range f.fields {
 		field.SetError(nil)
@@ -186,6 +186,7 @@ validation:
 			field.SetError(err)
 			valid = false
 		}
+		val.CurVal = CurVal("")
 	}
 
 	return valid
@@ -226,7 +227,7 @@ func (f *Form) ValidateSingle(name, value, mime string) error {
 			Header: mimeheader}},
 	}
 
-	val := &Validation{values, files, true}
+	val := &Validation{values, files, true, CurVal("")}
 
 	for _, field := range f.fields {
 		switch t := field.(type) {
@@ -290,12 +291,81 @@ func init() {
 	})
 }
 
+type CurVal string
+
+func (cur CurVal) String() string {
+	return string(cur)
+}
+
+func (cur CurVal) Int64() int64 {
+	num, err := toInt(cur.String())
+	if err != nil {
+		return int64(0)
+	}
+	return num
+}
+
+func (cur CurVal) Int() int {
+	return int(cur.Int64())
+}
+
+func (cur CurVal) Int32() int32 {
+	return int32(cur.Int64())
+}
+
+func (cur CurVal) Int16() int16 {
+	return int16(cur.Int64())
+}
+
+func (cur CurVal) Int8() int8 {
+	return int8(cur.Int64())
+}
+
+func (cur CurVal) Uint64() uint64 {
+	num, err := strconv.ParseUint(cur.String(), 10, 64)
+	if err != nil {
+		return uint64(0)
+	}
+	return num
+}
+
+func (cur CurVal) Uint() uint {
+	return uint(cur.Uint64())
+}
+
+func (cur CurVal) Uint32() uint32 {
+	return uint32(cur.Uint64())
+}
+
+func (cur CurVal) Uint16() uint16 {
+	return uint16(cur.Uint64())
+}
+
+func (cur CurVal) Uint8() uint8 {
+	return uint8(cur.Uint64())
+}
+
+func (cur CurVal) Float64() float64 {
+	num, err := strconv.ParseFloat(cur.String(), 64)
+	if err != nil {
+		return float64(0)
+	}
+	return num
+}
+
+func (cur CurVal) Float32() float32 {
+	return float32(cur.Float64())
+}
+
 type Validation struct {
 	Val    Values
 	Files  FileHeaders
 	Single bool
+	CurVal CurVal
 }
 
 func (val *Validation) GetAll() (Values, FileHeaders, bool) {
 	return val.Val, val.Files, val.Single
 }
+
+type ExtraFunc func(*Validation) error

@@ -41,8 +41,3 @@ func (fi PipeInputFile) Size(nbyte int64, errMsg string) PipeInputFile {
 	fi.fi.SizeErr = errMsg
 	return fi
 }
-
-func (fi PipeInputFile) Extra(extra func(*Validation) error) PipeInputFile {
-	fi.fi.extra = extra
-	return fi
-}

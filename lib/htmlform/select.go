@@ -11,7 +11,6 @@ type Select struct {
 	Class     string
 	Options   []*Option
 	Mandatory bool
-	extra     func(*Validation) error
 	error     error
 	lang      Lang
 }
@@ -54,28 +53,12 @@ func (fo *Select) Validate(val *Validation) error {
 		}
 	}
 
-	possible_nil := func() error {
-		var err error
-		if fo.extra == nil {
-			goto skipextra
-		}
-
-		err = fo.extra(val)
-		if err != nil {
-			return err
-		}
-
-	skipextra:
-
+	if truth {
 		return nil
 	}
 
-	if truth {
-		return possible_nil()
-	}
-
 	if !fo.Mandatory {
-		return possible_nil()
+		return nil
 	}
 
 	return FormError(fo.lang["ErrSelectOptionIsRequired"])

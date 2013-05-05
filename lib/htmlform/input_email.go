@@ -18,7 +18,7 @@ type InputEmail struct {
 	MustMatch    string
 	MustMatchErr string
 	Placeholder  string
-	extra        func(*Validation) error
+	extra        ExtraFunc
 	error        error
 	lang         Lang
 }
@@ -47,6 +47,7 @@ func (fo InputEmail) Validate(val *Validation) error {
 	}
 
 	fo.Value = strings.TrimSpace(values.Get(fo.Name))
+	val.CurVal = CurVal(fo.Value)
 
 	var MatchValue string
 
@@ -124,6 +125,10 @@ func (fo *InputEmail) SetLang(lang Lang) {
 
 func (fo *InputEmail) GetLang() Lang {
 	return fo.lang
+}
+
+func (fo *InputEmail) Extra(extra ExtraFunc) {
+	fo.extra = extra
 }
 
 func (fo InputEmail) Eval() FormHandlerExt {

@@ -20,7 +20,7 @@ type InputText struct {
 	MustMatch    string
 	MustMatchErr string
 	Placeholder  string
-	extra        func(*Validation) error
+	extra        ExtraFunc
 	error        error
 	lang         Lang
 }
@@ -54,6 +54,7 @@ func (fo *InputText) Validate(val *Validation) error {
 	}
 
 	fo.Value = strings.TrimSpace(values.Get(fo.Name))
+	val.CurVal = CurVal(fo.Value)
 
 	var MatchValue string
 	if len(fo.MustMatch) > 0 {
@@ -181,6 +182,10 @@ func (fo *InputText) SetLang(lang Lang) {
 
 func (fo *InputText) GetLang() Lang {
 	return fo.lang
+}
+
+func (fo *InputText) Extra(extra ExtraFunc) {
+	fo.extra = extra
 }
 
 func (fo InputText) Eval() FormHandlerExt {

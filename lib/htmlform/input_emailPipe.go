@@ -42,7 +42,7 @@ func (em PipeInputEmail) Placeholder(placeholder string) PipeInputEmail {
 	return em
 }
 
-func (em PipeInputEmail) Extra(extra func(*Validation) error) PipeInputEmail {
+func (em PipeInputEmail) Extra(extra ExtraFunc) PipeInputEmail {
 	em.em.extra = extra
 	return em
 }

@@ -64,7 +64,7 @@ func (in PipeInputPassword) Placeholder(placeholder string) PipeInputPassword {
 	return in
 }
 
-func (in PipeInputPassword) Extra(extra func(*Validation) error) PipeInputPassword {
+func (in PipeInputPassword) Extra(extra ExtraFunc) PipeInputPassword {
 	in.in.extra = extra
 	return in
 }

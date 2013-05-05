@@ -17,7 +17,7 @@ type Textarea struct {
 	Rows        int
 	Cols        int
 	Placeholder string
-	extra       func(*Validation) error
+	extra       ExtraFunc
 	error       error
 	lang        Lang
 }
@@ -55,6 +55,7 @@ func (fo *Textarea) Validate(val *Validation) error {
 	}
 
 	fo.Value = strings.TrimSpace(values.Get(fo.Name))
+	val.CurVal = CurVal(fo.Value)
 
 	if fo.MinChar <= 0 {
 		goto skipmin
@@ -137,6 +138,10 @@ func (fo *Textarea) SetLang(lang Lang) {
 
 func (fo *Textarea) GetLang() Lang {
 	return fo.lang
+}
+
+func (fo *Textarea) Extra(extra ExtraFunc) {
+	fo.extra = extra
 }
 
 func (fo Textarea) Eval() FormHandlerExt {
