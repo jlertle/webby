@@ -55,6 +55,7 @@ type webPrivate struct {
 	firstWrite bool
 	cmd        map[string]func(interface{}) interface{}
 	html       *htmlDefault
+	session    *SessionAdv
 }
 
 // The Framework Structure, it's implement the interfaces of 'net/http.ResponseWriter',
