@@ -250,14 +250,16 @@ func (w *Web) debugEnd() {
 	w.debuginfo("END  ")
 }
 
+var _web = Web{}
+
 func secure(res http.ResponseWriter, req *http.Request) {
 	req.Header.Set("X-Secure-Mode", "1")
-	(Web{}).ServeHTTP(res, req)
+	_web.ServeHTTP(res, req)
 }
 
 func nonsecure(res http.ResponseWriter, req *http.Request) {
 	req.Header.Del("X-Secure-Mode")
-	(Web{}).ServeHTTP(res, req)
+	_web.ServeHTTP(res, req)
 }
 
 // Start Http Server
