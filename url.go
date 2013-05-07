@@ -70,6 +70,14 @@ func (w *Web) Url() Url {
 
 // Get Absolute URL, you can leave relative_url blank just to get the root url.
 func (u Url) Absolute(relative_url string) string {
+	if u.w.Is().Secure() {
+		return u.AbsoluteHttps(relative_url)
+	}
+	return u.AbsoluteHttp(relative_url)
+}
+
+// Get Absolute URL (http), you can leave relative_url blank just to get the root url.
+func (u Url) AbsoluteHttp(relative_url string) string {
 	w := u.w
 	if w.Req.URL.Host != "" {
 		return "http://" + w.Req.URL.Host + relative_url
