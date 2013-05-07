@@ -3,7 +3,6 @@ package webby
 import (
 	"io/ioutil"
 	"net"
-	"regexp"
 	"strconv"
 	"strings"
 )
@@ -78,8 +77,6 @@ func (w *Web) initSecure() {
 		w.Env.Del("X-Secure-Mode")
 	}
 }
-
-var stripPortFromAddr = regexp.MustCompile("^(.*)(:(\\d+))$")
 
 // Get Remote Address (IP Address) without port number!
 func (w *Web) RemoteAddr() string {
