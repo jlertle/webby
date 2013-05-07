@@ -119,6 +119,7 @@ func (_ Web) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	w.initTrueHost()
 	w.initTrueRemoteAddr()
 	w.initTruePath()
+	w.initSecure()
 	w.initSession()
 
 	defer w.recover()
@@ -249,14 +250,24 @@ func (w *Web) debugEnd() {
 	w.debuginfo("END  ")
 }
 
+func secure(res http.ResponseWriter, req *http.Request) {
+	req.Header.Set("X-Secure-Mode", "1")
+	(Web{}).ServeHTTP(res, req)
+}
+
+func nonsecure(res http.ResponseWriter, req *http.Request) {
+	req.Header.Del("X-Secure-Mode")
+	(Web{}).ServeHTTP(res, req)
+}
+
 // Start Http Server
 func StartHttp(addr string) error {
-	return http.ListenAndServe(addr, Web{})
+	return http.ListenAndServe(addr, http.HandlerFunc(nonsecure))
 }
 
 // Start Http Server with TLS
 func StartHttpTLS(addr string, certFile string, keyFile string) error {
-	return http.ListenAndServeTLS(addr, certFile, keyFile, Web{})
+	return http.ListenAndServeTLS(addr, certFile, keyFile, http.HandlerFunc(secure))
 }
 
 // Start FastCGI Server
@@ -264,11 +275,11 @@ func StartFastCGI(l net.Listener) error {
 	if l == nil {
 		os.Stderr = nil
 	}
-	return fcgi.Serve(l, Web{})
+	return fcgi.Serve(l, http.HandlerFunc(nonsecure))
 }
 
 // Start CGI, disables Stderr completely. (Due to the way how IIS handlers Stderr)
 func StartCGI() error {
 	os.Stderr = nil
-	return cgi.Serve(Web{})
+	return cgi.Serve(http.HandlerFunc(nonsecure))
 }

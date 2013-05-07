@@ -72,6 +72,13 @@ func (w *Web) initTruePath() {
 	}
 }
 
+func (w *Web) initSecure() {
+	if w.Env.Get("X-Secure-Mode") == "1" {
+		w.Req.Method = "S" + w.Req.Method
+		w.Env.Del("X-Secure-Mode")
+	}
+}
+
 var stripPortFromAddr = regexp.MustCompile("^(.*)(:(\\d+))$")
 
 // Get Remote Address (IP Address) without port number!
