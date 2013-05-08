@@ -72,7 +72,7 @@ func (w *Web) initTruePath() {
 }
 
 func (w *Web) initSecure() {
-	if w.Env.Get("X-Secure-Mode") == "1" {
+	if w.Env.Get("X-Secure-Mode") != "" {
 		w.Req.Proto = "S" + w.Req.Proto
 		w.Env.Del("X-Secure-Mode")
 	}
