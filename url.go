@@ -96,8 +96,53 @@ func (u Url) AbsoluteHttps(relative_url string) string {
 	return relative_url
 }
 
+// Shortcut to Reverse
 func (u Url) Reverse(name string, a ...interface{}) string {
 	return URLRev.Print(name, a...)
+}
+
+func (u Url) code301() int {
+	if u.w.Status == 200 {
+		return 301
+	}
+	return u.w.Status
+}
+
+func (u Url) code303() int {
+	if u.w.Status == 200 {
+		return 303
+	}
+	return u.w.Status
+}
+
+// Convert current path to Https
+func (u Url) ToHttps() {
+	defer u.w.WriteHeader(u.code301())
+	u.w.Header().Set("Location", u.AbsoluteHttps(u.w.Req.URL.Path))
+}
+
+// Convert current path to Http
+func (u Url) ToHttp() {
+	defer u.w.WriteHeader(u.code301())
+	u.w.Header().Set("Location", u.AbsoluteHttp(u.w.Req.URL.Path))
+}
+
+// Redirect client to relative_url
+func (u Url) Redirect(relative_url string) {
+	defer u.w.WriteHeader(u.code303())
+	u.w.Header().Set("Location", u.Absolute(relative_url))
+}
+
+// Redirect client to relative_url (Http Only)
+func (u Url) RedirectHttp(relative_url string) {
+	defer u.w.WriteHeader(u.code303())
+	u.w.Header().Set("Location", u.AbsoluteHttp(relative_url))
+}
+
+// Redirect client to relative_url (Https Only)
+func (u Url) RedirectHttps(relative_url string) {
+	defer u.w.WriteHeader(u.code303())
+	u.w.Header().Set("Location", u.AbsoluteHttps(relative_url))
 }
 
 func init() {
