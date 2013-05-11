@@ -211,9 +211,9 @@ func (w *Web) WriteHeader(num int) {
 func (w *Web) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	w.pri.cut = true
 
-	switch t := w.web.(type) {
-	case http.Hijacker:
-		return t.Hijack()
+	hj, ok := w.web.(http.Hijacker)
+	if ok {
+		return hj.Hijack()
 	}
 
 	return nil, nil, ErrorStr("Connection is not Hijackable")
@@ -221,9 +221,9 @@ func (w *Web) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 
 // Flush sends any buffered data to the client.
 func (w *Web) Flush() {
-	switch t := w.web.(type) {
-	case http.Flusher:
-		t.Flush()
+	fl, ok := w.web.(http.Flusher)
+	if ok {
+		fl.Flush()
 	}
 }
 
