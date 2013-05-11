@@ -210,6 +210,12 @@ func (ro RouteReset) View(w *Web) {
 }
 
 func (w *Web) RouteDealer(ro RouteHandler) {
+	for _, routeAssert := range _routeAsserter {
+		if routeAssert.Assert(w, ro) {
+			return
+		}
+	}
+
 	switch t := ro.(type) {
 	case MethodInterface:
 		execMethodInterface(w, t)
@@ -217,5 +223,27 @@ func (w *Web) RouteDealer(ro RouteHandler) {
 		execProtocolInterface(w, t)
 	default:
 		ro.View(w)
+	}
+}
+
+type RouteAsserter interface {
+	Assert(*Web, RouteHandler) bool
+}
+
+type RouteAsserterFunc func(*Web, RouteHandler) bool
+
+func (ra RouteAsserterFunc) Assert(w *Web, ro RouteHandler) bool {
+	return ra(w, ro)
+}
+
+var _routeAsserter = []RouteAsserter{}
+
+func RegisterRouteAsserter(ra ...RouteAsserter) {
+	_routeAsserter = append(_routeAsserter, ra...)
+}
+
+func RegisterRouteAsserterFunc(ra ...RouteAsserterFunc) {
+	for _, raa := range ra {
+		RegisterRouteAsserter(raa)
 	}
 }
